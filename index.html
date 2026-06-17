@@ -11,7 +11,7 @@
   --text:#1A1A2E;--text2:#4A4A6A;--text3:#8A8AAA;
   --border:#E2E4E9;--shadow:0 2px 16px rgba(0,0,0,.08);
   --blue:#1A3A8F;--red:#C00000;--gold:#F4A020;
-  --radius:14px;--radius-sm:8px;
+  --radius:16px;--radius-sm:10px;
 }
 [data-theme="dark"]{
   --bg:#0A0F1E;--bg2:#111827;--bg3:#1A2236;
@@ -22,7 +22,8 @@
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
 a{text-decoration:none;color:inherit}
 
-nav{background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;transition:background .3s}
+/* NAV */
+nav{background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
 [data-theme="dark"] nav{background:rgba(10,15,30,.85)}
 .nav-inner{max-width:1200px;margin:0 auto;padding:0 28px;height:68px;display:flex;align-items:center;justify-content:space-between}
 .nav-logo{display:flex;align-items:center;gap:14px}
@@ -30,18 +31,16 @@ nav{background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1p
 .nav-product{font-size:13px;font-weight:700;color:var(--blue);line-height:1.2}
 .nav-product span{display:block;font-weight:400;color:var(--text2);font-size:11px;margin-top:1px}
 .nav-right{display:flex;align-items:center;gap:10px}
-.btn-theme{background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;color:var(--text2);font-size:15px;transition:.2s;line-height:1}
-.btn-theme:hover{background:var(--bg3)}
-.btn-login{background:linear-gradient(135deg,#1A3A8F,#2B5CE6);color:white;border:none;border-radius:99px;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer;transition:.2s}
-.btn-login:hover{opacity:.9;transform:translateY(-1px)}
+.btn-theme{background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;color:var(--text2);font-size:15px}
+.btn-entrar{background:linear-gradient(135deg,#1A3A8F,#2B5CE6);color:white;border:none;border-radius:99px;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer}
 .user-pill{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:99px;padding:4px 14px 4px 4px;font-size:13px;color:var(--text2)}
 .user-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#1A3A8F,#2B5CE6);display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700}
 .btn-logout{background:none;border:none;color:var(--red);font-size:12px;cursor:pointer;margin-left:4px}
 
+/* HERO */
 .hero{background:linear-gradient(135deg,#060D1F 0%,#0D1B3E 50%,#0A1628 100%);color:white;padding:80px 28px 90px;position:relative;overflow:hidden;min-height:520px;display:flex;align-items:center}
 .hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(100,150,255,.15) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
 .hero-glow{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(43,92,230,.18) 0%,transparent 70%);top:-100px;right:5%;pointer-events:none}
-.hero-glow2{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(244,160,32,.1) 0%,transparent 70%);bottom:-50px;left:10%;pointer-events:none}
 .hero-inner{max-width:1200px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 420px;gap:60px;align-items:center;position:relative;z-index:1}
 .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(43,92,230,.2);border:1px solid rgba(43,92,230,.4);border-radius:99px;padding:5px 16px;font-size:12px;font-weight:500;margin-bottom:24px;color:#A8C4FF}
 .hero-badge::before{content:'';width:8px;height:8px;border-radius:50%;background:#4CF0A0;box-shadow:0 0 8px #4CF0A0;animation:pulse 2s ease-in-out infinite}
@@ -49,12 +48,14 @@ nav{background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1p
 .hero h1{font-size:clamp(30px,4.5vw,52px);font-weight:800;line-height:1.1;margin-bottom:20px;letter-spacing:-.02em}
 .hero h1 em{font-style:normal;background:linear-gradient(90deg,#4A9EFF,#7B61FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero p{font-size:17px;color:rgba(255,255,255,.65);margin-bottom:36px;line-height:1.7;max-width:480px}
-.btn-hero-primary{background:linear-gradient(135deg,#2B5CE6,#7B61FF);color:white;border:none;border-radius:99px;padding:14px 28px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s}
-.btn-hero-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(43,92,230,.4)}
+.btn-hero{background:linear-gradient(135deg,#2B5CE6,#7B61FF);color:white;border:none;border-radius:99px;padding:14px 28px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s}
+.btn-hero:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(43,92,230,.4)}
 .hero-stats{display:flex;gap:32px;margin-top:40px;padding-top:32px;border-top:1px solid rgba(255,255,255,.1)}
 .stat-n{font-size:26px;font-weight:800;color:white}
 .stat-l{font-size:12px;color:rgba(255,255,255,.45);margin-top:2px}
-.hero-visual{display:flex;justify-content:center;align-items:center;position:relative}
+
+/* DOCUMENTO ANIMADO */
+.hero-visual{display:flex;justify-content:center;align-items:center}
 .doc-float{animation:float 4s ease-in-out infinite}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
 .doc-shadow{width:200px;height:20px;background:rgba(43,92,230,.25);border-radius:50%;margin:0 auto;filter:blur(10px);animation:shadow-pulse 4s ease-in-out infinite}
@@ -62,63 +63,70 @@ nav{background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1p
 .doc-wrap{position:relative;margin-bottom:16px}
 .doc-svg{width:220px;height:auto;filter:drop-shadow(0 20px 40px rgba(43,92,230,.35))}
 .particle{position:absolute;border-radius:50%;animation:float-p 3s ease-in-out infinite}
-@keyframes float-p{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-10px) rotate(180deg)}}
+@keyframes float-p{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 .p1{width:8px;height:8px;background:#4CF0A0;top:10%;left:5%;animation-delay:.5s;opacity:.7}
 .p2{width:6px;height:6px;background:#4A9EFF;top:20%;right:8%;animation-delay:1s;opacity:.6}
 .p3{width:10px;height:10px;background:#F4A020;bottom:25%;right:4%;animation-delay:1.5s;opacity:.5;border-radius:2px}
 .p4{width:5px;height:5px;background:#7B61FF;bottom:35%;left:8%;animation-delay:.8s;opacity:.6}
 .p5{width:7px;height:7px;background:#4CF0A0;top:55%;right:15%;animation-delay:2s;opacity:.4}
 
-/* AUTH CARD */
-.auth-wrap{max-width:440px;margin:56px auto;padding:0 24px}
-.auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:40px;box-shadow:var(--shadow)}
-.auth-icon{width:52px;height:52px;background:linear-gradient(135deg,#1A3A8F,#2B5CE6);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:26px}
-.auth-card h2{font-size:21px;font-weight:700;margin-bottom:6px}
-.auth-card p{font-size:14px;color:var(--text2);margin-bottom:28px;line-height:1.55}
-.tabs{display:flex;gap:0;margin-bottom:28px;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
-.tab{flex:1;padding:9px;font-size:13px;font-weight:600;border:none;cursor:pointer;background:transparent;color:var(--text2);transition:.2s}
+/* AUTH */
+.auth-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:20px}
+.auth-overlay.show{display:flex}
+.auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);width:100%;max-width:440px;padding:36px;box-shadow:0 24px 64px rgba(0,0,0,.2);position:relative;max-height:90vh;overflow-y:auto}
+.auth-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text3);line-height:1}
+.auth-icon{width:52px;height:52px;background:linear-gradient(135deg,#1A3A8F,#2B5CE6);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;font-size:26px}
+.auth-card h2{font-size:21px;font-weight:700;margin-bottom:6px;color:var(--text)}
+.auth-card p{font-size:14px;color:var(--text2);margin-bottom:24px;line-height:1.55}
+.tabs{display:flex;margin-bottom:24px;border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.tab{flex:1;padding:10px;font-size:13px;font-weight:600;border:none;cursor:pointer;background:transparent;color:var(--text2);transition:.2s}
 .tab.active{background:linear-gradient(135deg,#1A3A8F,#2B5CE6);color:white}
-.field{margin-bottom:16px}
-.field label{display:block;font-size:11px;font-weight:700;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em}
-.field input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg3);color:var(--text);font-size:14px;transition:.2s}
-.field input:focus{outline:none;border-color:#2B5CE6;background:var(--bg2)}
-.btn-full{width:100%;background:linear-gradient(135deg,#1A3A8F,#2B5CE6);color:white;border:none;border-radius:99px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s;letter-spacing:.01em}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em}
+.field input,.field select{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg3);color:var(--text);font-size:14px;transition:.2s;font-family:inherit}
+.field input:focus,.field select:focus{outline:none;border-color:#2B5CE6;background:var(--bg2)}
+.btn-full{width:100%;background:linear-gradient(135deg,#1A3A8F,#2B5CE6);color:white;border:none;border-radius:99px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s;margin-top:4px}
 .btn-full:hover{opacity:.9;transform:translateY(-1px)}
 .btn-full:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.auth-note{font-size:12px;color:var(--text3);text-align:center;margin-top:14px;line-height:1.5}
-.msg{border-radius:8px;padding:12px 16px;font-size:13px;margin-top:14px;display:none}
+.auth-note{font-size:12px;color:var(--text3);text-align:center;margin-top:12px;line-height:1.5}
+.msg{border-radius:8px;padding:11px 14px;font-size:13px;margin-top:12px;display:none}
 .msg-ok{background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46}
 .msg-err{background:#FEE2E2;border:1px solid #FCA5A5;color:#991B1B}
 
 /* OTP */
-.otp-wrap{text-align:center}
-.otp-email-display{font-weight:700;color:var(--blue);word-break:break-all}
-.otp-inputs{display:flex;gap:10px;justify-content:center;margin:20px 0}
-.otp-inputs input{width:48px;height:56px;text-align:center;font-size:22px;font-weight:700;border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--bg3);color:var(--text);transition:.2s}
+.otp-center{text-align:center}
+.otp-email-show{font-weight:700;color:#2B5CE6;word-break:break-all;font-size:14px;margin:6px 0 20px}
+.otp-inputs{display:flex;gap:8px;justify-content:center;margin:0 0 20px;flex-wrap:nowrap}
+.otp-inputs input{width:44px;height:52px;text-align:center;font-size:20px;font-weight:700;border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--bg3);color:var(--text);transition:.2s;flex-shrink:0}
 .otp-inputs input:focus{outline:none;border-color:#2B5CE6;background:var(--bg2)}
-.btn-resend{background:none;border:none;color:#2B5CE6;font-size:13px;cursor:pointer;margin-top:8px}
-.btn-resend:disabled{color:var(--text3);cursor:not-allowed}
+.btn-link{background:none;border:none;color:#2B5CE6;font-size:13px;cursor:pointer;margin-top:6px}
+.btn-link:disabled{color:var(--text3);cursor:not-allowed}
+.btn-voltar{background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;margin-top:6px;display:block;margin-left:auto;margin-right:auto}
+
+/* SEPARADOR */
+.sep{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--text3);font-size:12px}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:var(--border)}
 
 /* MAIN */
 #mainContent{display:none;max-width:1200px;margin:0 auto;padding:48px 28px}
-.section-title{font-size:24px;font-weight:700;color:var(--text);margin-bottom:6px}
-.section-sub{font-size:14px;color:var(--text2);margin-top:4px;margin-bottom:28px}
+.section-title{font-size:24px;font-weight:700;color:var(--text);margin-bottom:4px}
+.section-sub{font-size:14px;color:var(--text2);margin-bottom:28px}
 .search-wrap{position:relative;margin-bottom:32px;max-width:480px}
 .search-wrap input{width:100%;padding:12px 16px 12px 44px;border:1.5px solid var(--border);border-radius:99px;background:var(--bg2);color:var(--text);font-size:14px;transition:.2s}
 .search-wrap input:focus{outline:none;border-color:#2B5CE6}
-.search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:17px}
+.search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--text3)}
 .areas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
 .area-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s;display:block}
 .area-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.12);border-color:rgba(43,92,230,.3)}
 .card-stripe{height:3px}
 .card-body{padding:22px}
 .card-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
-.card-icon-wrap{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.card-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .card-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px}
 .card-count{font-size:11px;color:var(--text3)}
 .card-desc{font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:16px}
 .card-footer{display:flex;align-items:center;justify-content:space-between}
-.card-tag{font-size:11px;color:var(--text3);background:var(--bg3);padding:3px 10px;border-radius:99px;border:0.5px solid var(--border)}
+.card-tag{font-size:11px;color:var(--text3);background:var(--bg3);padding:3px 10px;border-radius:99px;border:.5px solid var(--border)}
 .card-cta{font-size:12px;font-weight:600;color:#2B5CE6}
 
 footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28px;margin-top:56px}
@@ -132,6 +140,7 @@ footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28p
   .hero-visual{display:none}
   .hero{padding:60px 20px 70px}
   #mainContent{padding:32px 16px}
+  .otp-inputs input{width:38px;height:46px;font-size:18px}
 }
 </style>
 </head>
@@ -151,11 +160,11 @@ footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28p
     </div>
     <div class="nav-right">
       <button class="btn-theme" onclick="toggleTheme()" id="themeBtn">🌙</button>
-      <div id="navLogin"><button class="btn-login" onclick="irParaAuth()">Entrar</button></div>
+      <div id="navLogin"><button class="btn-entrar" onclick="abrirAuth('login')">Entrar</button></div>
       <div id="navUser" style="display:none">
         <div class="user-pill">
           <div class="user-avatar" id="userInitial">P</div>
-          <span id="userEmailNav">docente</span>
+          <span id="userNomeNav">Docente</span>
           <button class="btn-logout" onclick="logout()">Sair</button>
         </div>
       </div>
@@ -167,13 +176,12 @@ footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28p
 <div class="hero">
   <div class="hero-dots"></div>
   <div class="hero-glow"></div>
-  <div class="hero-glow2"></div>
   <div class="hero-inner">
     <div>
       <div class="hero-badge">✦ Plataforma Docente Inteligente · SENAI Bahia</div>
       <h1>Agentes de IA para<br><em>Docentes SENAI</em></h1>
       <p>Planos de aula, situações de aprendizagem, avaliações e muito mais — alinhados ao MSEP e Itinerários Nacionais, gerados em segundos.</p>
-      <button class="btn-hero-primary" onclick="irParaAuth()">Acessar agora →</button>
+      <button class="btn-hero" onclick="abrirAuth('cadastro')">Cadastrar-se →</button>
       <div class="hero-stats">
         <div class="stat"><div class="stat-n">19</div><div class="stat-l">Áreas técnicas</div></div>
         <div class="stat"><div class="stat-n">9</div><div class="stat-l">Tipos de material</div></div>
@@ -220,62 +228,104 @@ footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28p
   </div>
 </div>
 
-<!-- AUTH -->
-<div id="authWrap" style="display:none">
-  <div class="auth-wrap">
-    <div class="auth-card">
-      <div class="auth-icon">🤖</div>
+<!-- AUTH MODAL -->
+<div class="auth-overlay" id="authOverlay" onclick="fecharAuthClick(event)">
+  <div class="auth-card" id="authCard">
+    <button class="auth-close" onclick="fecharAuth()">✕</button>
 
-      <!-- STEP 1: Email -->
-      <div id="stepEmail">
-        <div class="tabs">
-          <button class="tab active" id="tabLogin" onclick="setTab('login')">Entrar</button>
-          <button class="tab" id="tabCadastro" onclick="setTab('cadastro')">Cadastrar</button>
-        </div>
-        <h2 id="authTitle">Bem-vindo de volta</h2>
-        <p id="authDesc">Digite seu e-mail institucional SENAI Bahia para receber o código de acesso.</p>
-        <div class="field">
-          <label>E-mail institucional</label>
-          <input type="email" id="emailInput" placeholder="nome@ba.docente.senai.br" autocomplete="email">
-        </div>
-        <button class="btn-full" id="btnEnviar" onclick="enviarOTP()">Enviar código →</button>
-        <div class="msg msg-err" id="msgEmailErr"></div>
-        <p class="auth-note">Apenas e-mails <strong>@ba.docente.senai.br</strong> são aceitos.<br>Um código de 6 dígitos será enviado para seu e-mail.</p>
-      </div>
-
-      <!-- STEP 2: OTP -->
-      <div id="stepOTP" style="display:none">
-        <div class="otp-wrap">
-          <div style="font-size:36px;margin-bottom:12px">📧</div>
-          <h2>Verifique seu e-mail</h2>
-          <p style="color:var(--text2);font-size:14px;margin:10px 0 6px">Enviamos um código de 6 dígitos para</p>
-          <div class="otp-email-display" id="otpEmailDisplay"></div>
-          <div class="otp-inputs">
-            <input type="text" maxlength="1" class="otp-digit" id="d0" oninput="moveNext(0)" onkeydown="movePrev(event,0)">
-            <input type="text" maxlength="1" class="otp-digit" id="d1" oninput="moveNext(1)" onkeydown="movePrev(event,1)">
-            <input type="text" maxlength="1" class="otp-digit" id="d2" oninput="moveNext(2)" onkeydown="movePrev(event,2)">
-            <input type="text" maxlength="1" class="otp-digit" id="d3" oninput="moveNext(3)" onkeydown="movePrev(event,3)">
-            <input type="text" maxlength="1" class="otp-digit" id="d4" oninput="moveNext(4)" onkeydown="movePrev(event,4)">
-            <input type="text" maxlength="1" class="otp-digit" id="d5" oninput="moveNext(5)" onkeydown="movePrev(event,5)">
-            <input type="text" maxlength="1" class="otp-digit" id="d6" oninput="moveNext(6)" onkeydown="movePrev(event,6)">
-            <input type="text" maxlength="1" class="otp-digit" id="d7" oninput="moveNext(7)" onkeydown="movePrev(event,7)">
-          </div>
-          <button class="btn-full" id="btnVerificar" onclick="verificarOTP()">Verificar código</button>
-          <div class="msg msg-err" id="msgOTPErr" style="margin-top:12px"></div>
-          <div class="msg msg-ok" id="msgOTPOk" style="margin-top:12px"></div>
-          <br>
-          <button class="btn-resend" id="btnReenviar" onclick="reenviarOTP()">Reenviar código</button>
-          <br>
-          <button style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;margin-top:8px" onclick="voltarEmail()">← Trocar e-mail</button>
-        </div>
-      </div>
+    <!-- LOGIN -->
+    <div id="stepLogin" style="display:none">
+      <div class="auth-icon">🔐</div>
+      <h2>Bem-vindo de volta</h2>
+      <p>Entre com seu e-mail e senha para acessar os agentes.</p>
+      <div class="field"><label>E-mail institucional</label><input type="email" id="loginEmail" placeholder="nome@ba.docente.senai.br"></div>
+      <div class="field"><label>Senha</label><input type="password" id="loginSenha" placeholder="••••••••" onkeydown="if(event.key==='Enter')fazerLogin()"></div>
+      <button class="btn-full" id="btnLogin" onclick="fazerLogin()">Entrar</button>
+      <div class="msg msg-err" id="msgLoginErr"></div>
+      <div class="sep">ou</div>
+      <button class="btn-full" style="background:var(--bg3);color:var(--text2);border:1.5px solid var(--border)" onclick="abrirAuth('cadastro')">Criar conta →</button>
     </div>
+
+    <!-- CADASTRO STEP 1: EMAIL -->
+    <div id="stepCadEmail" style="display:none">
+      <div class="auth-icon">🤖</div>
+      <h2>Criar conta</h2>
+      <p>Digite seu e-mail institucional. Enviaremos um código de verificação.</p>
+      <div class="field"><label>E-mail institucional</label><input type="email" id="cadEmail" placeholder="nome@ba.docente.senai.br"></div>
+      <button class="btn-full" id="btnEnviarOTP" onclick="enviarOTP()">Enviar código de verificação →</button>
+      <div class="msg msg-err" id="msgCadErr"></div>
+      <p class="auth-note">Apenas e-mails <strong>@ba.docente.senai.br</strong> são aceitos.</p>
+      <div class="sep">já tem conta?</div>
+      <button class="btn-full" style="background:var(--bg3);color:var(--text2);border:1.5px solid var(--border)" onclick="abrirAuth('login')">Entrar →</button>
+    </div>
+
+    <!-- CADASTRO STEP 2: OTP -->
+    <div id="stepOTP" style="display:none">
+      <div class="auth-icon">📧</div>
+      <h2>Verifique seu e-mail</h2>
+      <p style="margin-bottom:4px">Código de 8 dígitos enviado para:</p>
+      <div class="otp-email-show" id="otpEmailShow"></div>
+      <div class="otp-inputs" id="otpInputs">
+        <input type="text" inputmode="numeric" maxlength="1" id="d0" oninput="moveNext(0)" onkeydown="movePrev(event,0)">
+        <input type="text" inputmode="numeric" maxlength="1" id="d1" oninput="moveNext(1)" onkeydown="movePrev(event,1)">
+        <input type="text" inputmode="numeric" maxlength="1" id="d2" oninput="moveNext(2)" onkeydown="movePrev(event,2)">
+        <input type="text" inputmode="numeric" maxlength="1" id="d3" oninput="moveNext(3)" onkeydown="movePrev(event,3)">
+        <input type="text" inputmode="numeric" maxlength="1" id="d4" oninput="moveNext(4)" onkeydown="movePrev(event,4)">
+        <input type="text" inputmode="numeric" maxlength="1" id="d5" oninput="moveNext(5)" onkeydown="movePrev(event,5)">
+        <input type="text" inputmode="numeric" maxlength="1" id="d6" oninput="moveNext(6)" onkeydown="movePrev(event,6)">
+        <input type="text" inputmode="numeric" maxlength="1" id="d7" oninput="moveNext(7)" onkeydown="movePrev(event,7)">
+      </div>
+      <button class="btn-full" id="btnVerOTP" onclick="verificarOTP()">Verificar código</button>
+      <div class="msg msg-err" id="msgOTPErr"></div>
+      <br>
+      <button class="btn-link" id="btnReenviar" onclick="reenviarOTP()">Reenviar código</button>
+      <button class="btn-voltar" onclick="irStep('stepCadEmail')">← Trocar e-mail</button>
+    </div>
+
+    <!-- CADASTRO STEP 3: PERFIL -->
+    <div id="stepPerfil" style="display:none">
+      <div class="auth-icon">👤</div>
+      <h2>Complete seu cadastro</h2>
+      <p>Preencha seus dados para finalizar o acesso à plataforma.</p>
+      <div class="field"><label>Nome completo</label><input type="text" id="cadNome" placeholder="Seu nome completo"></div>
+      <div class="field">
+        <label>Área técnica principal</label>
+        <select id="cadArea">
+          <option value="">Selecione sua área...</option>
+          <option>Alimentos e Bebidas</option>
+          <option>Automação e Mecatrônica</option>
+          <option>Automotiva</option>
+          <option>Couro e Calçados</option>
+          <option>DS e Informática para Internet</option>
+          <option>Edificações</option>
+          <option>Eletroeletrônica</option>
+          <option>Energias Renováveis</option>
+          <option>Gestão</option>
+          <option>Gráfica e Mídias</option>
+          <option>Logística</option>
+          <option>Redes de Computadores</option>
+          <option>Metalmecânica Geral</option>
+          <option>Petróleo e Gás</option>
+          <option>Química</option>
+          <option>Refrigeração e Climatização</option>
+          <option>Segurança do Trabalho</option>
+          <option>Telecomunicações</option>
+          <option>Vestuário</option>
+        </select>
+      </div>
+      <div class="field"><label>Criar senha de acesso</label><input type="password" id="cadSenha" placeholder="Mínimo 8 caracteres"></div>
+      <div class="field"><label>Confirmar senha</label><input type="password" id="cadSenha2" placeholder="Repita a senha"></div>
+      <button class="btn-full" id="btnCadastrar" onclick="finalizarCadastro()">Finalizar cadastro →</button>
+      <div class="msg msg-err" id="msgPerfilErr"></div>
+      <div class="msg msg-ok" id="msgPerfilOk"></div>
+    </div>
+
   </div>
 </div>
 
 <!-- CONTEÚDO -->
 <div id="mainContent">
-  <div style="margin-bottom:32px">
+  <div style="margin-bottom:28px">
     <div class="section-title">Escolha a área técnica</div>
     <div class="section-sub">Selecione sua área e gere materiais alinhados ao MSEP e ao Itinerário Nacional SENAI</div>
   </div>
@@ -289,7 +339,7 @@ footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28p
 <footer>
   <div class="footer-inner">
     <div style="display:flex;align-items:center;gap:12px">
-      <svg height="28" viewBox="0 0 220 70" xmlns="http://www.w3.org/2000/svg">
+      <svg height="26" viewBox="0 0 220 70" xmlns="http://www.w3.org/2000/svg">
         <text x="0" y="58" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="68" fill="#1A3A8F" letter-spacing="-2">SEN</text>
         <text x="144" y="58" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="68" fill="#1A3A8F">A</text>
         <text x="192" y="58" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="68" fill="#1A3A8F" transform="skewX(-8)">i</text>
@@ -302,16 +352,12 @@ footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28p
 </footer>
 
 <script>
-// ── SUPABASE ─────────────────────────────────────────────────
-const SUPA_URL = "https://afvdrtmmxgvuyipsnatq.supabase.co";
-const SUPA_KEY = "sb_publishable_-Gi-ZXwN14vLzz2iHcvWfg_NdCy7lvG";
-const DOMAIN = "ba.docente.senai.br";
-const PROXY = "https://hub-mqct-proxy.vercel.app/api/gemini";
+const SUPA_URL="https://afvdrtmmxgvuyipsnatq.supabase.co";
+const SUPA_KEY="sb_publishable_-Gi-ZXwN14vLzz2iHcvWfg_NdCy7lvG";
+const DOMAIN="ba.docente.senai.br";
+const {createClient}=supabase;
+const sb=createClient(SUPA_URL,SUPA_KEY);
 
-const { createClient } = supabase;
-const sb = createClient(SUPA_URL, SUPA_KEY);
-
-// ── ÁREAS ────────────────────────────────────────────────────
 const AREAS=[
   {id:"alimentos",emoji:"🍽️",title:"Alimentos e Bebidas",desc:"Técnico em Alimentos, Confeitaria, Panificação, Cervejaria, Gastronomia e Agroindústria.",cursos:6,cor:"#F4A020",bg:"#FFF8EC",file:"areas/alimentos.html"},
   {id:"automacao",emoji:"⚙️",title:"Automação e Mecatrônica",desc:"Técnico em Automação Industrial, Mecatrônica e Eletromecânica.",cursos:3,cor:"#0055B8",bg:"#E8F0FF",file:"areas/automacao.html"},
@@ -334,64 +380,66 @@ const AREAS=[
   {id:"vestuario",emoji:"👗",title:"Vestuário",desc:"Técnico em Vestuário, Modelagem e Produção de Moda.",cursos:3,cor:"#880E4F",bg:"#FCEAF4",file:"areas/vestuario.html"},
 ];
 
-// ── ESTADO ───────────────────────────────────────────────────
-let emailAtual = "", tabAtual = "login", resendTimer = null;
+let emailAtual="",resendTimer=null;
 
-// ── UI HELPERS ───────────────────────────────────────────────
-function irParaAuth(){
-  document.getElementById("authWrap").style.display="block";
-  document.getElementById("authWrap").scrollIntoView({behavior:"smooth"});
+// ── MODAL ────────────────────────────────────────────────────
+function abrirAuth(tipo){
+  document.getElementById("authOverlay").classList.add("show");
+  irStep(tipo==="login"?"stepLogin":"stepCadEmail");
+}
+function fecharAuth(){document.getElementById("authOverlay").classList.remove("show");}
+function fecharAuthClick(e){if(e.target===document.getElementById("authOverlay"))fecharAuth();}
+function irStep(id){
+  ["stepLogin","stepCadEmail","stepOTP","stepPerfil"].forEach(s=>document.getElementById(s).style.display="none");
+  document.getElementById(id).style.display="block";
+  document.getElementById("authCard").scrollTop=0;
 }
 
-function setTab(tab){
-  tabAtual = tab;
-  document.getElementById("tabLogin").className = "tab"+(tab==="login"?" active":"");
-  document.getElementById("tabCadastro").className = "tab"+(tab==="cadastro"?" active":"");
-  document.getElementById("authTitle").textContent = tab==="login"?"Bem-vindo de volta":"Criar conta";
-  document.getElementById("authDesc").textContent = tab==="login"
-    ? "Digite seu e-mail institucional para receber o código de acesso."
-    : "Cadastre-se com seu e-mail @ba.docente.senai.br para acessar os agentes.";
-  document.getElementById("msgEmailErr").style.display="none";
+// ── HELPERS ──────────────────────────────────────────────────
+function showErr(id,msg){const e=document.getElementById(id);e.textContent=msg;e.style.display="block";}
+function showOk(id,msg){const e=document.getElementById(id);e.textContent=msg;e.style.display="block";}
+function hideMsg(...ids){ids.forEach(id=>document.getElementById(id).style.display="none");}
+function setLoading(btnId,loading,txt){
+  const b=document.getElementById(btnId);
+  b.disabled=loading;
+  b.innerHTML=loading?`<span class="spinner"></span>${txt}...`:txt;
 }
 
-function showErr(id, msg){ const el=document.getElementById(id); el.textContent=msg; el.style.display="block"; }
-function hideMsg(id){ document.getElementById(id).style.display="none"; }
+// ── LOGIN ────────────────────────────────────────────────────
+async function fazerLogin(){
+  const email=document.getElementById("loginEmail").value.trim().toLowerCase();
+  const senha=document.getElementById("loginSenha").value;
+  hideMsg("msgLoginErr");
+  if(!email.endsWith("@"+DOMAIN)){showErr("msgLoginErr","❌ Use seu e-mail @"+DOMAIN);return;}
+  if(senha.length<6){showErr("msgLoginErr","❌ Senha muito curta.");return;}
+  setLoading("btnLogin",true,"Entrando");
+  const{data,error}=await sb.auth.signInWithPassword({email,password:senha});
+  setLoading("btnLogin",false,"Entrar");
+  if(error){showErr("msgLoginErr","❌ E-mail ou senha incorretos.");return;}
+  fecharAuth();
+  await carregarEMostrarHub(data.user);
+}
 
-// ── OTP FLOW ─────────────────────────────────────────────────
+// ── CADASTRO: OTP ────────────────────────────────────────────
 async function enviarOTP(){
-  const email = document.getElementById("emailInput").value.trim().toLowerCase();
-  hideMsg("msgEmailErr");
-  if(!email.endsWith("@"+DOMAIN)){
-    showErr("msgEmailErr","❌ Use seu e-mail @"+DOMAIN);return;
-  }
-  const btn = document.getElementById("btnEnviar");
-  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Enviando...';
-
-  const { error } = await sb.auth.signInWithOtp({
-    email,
-    options:{
-      shouldCreateUser: true,
-      emailRedirectTo: null,  // força OTP, não magic link
-    }
-  });
-
-  btn.disabled=false; btn.innerHTML="Enviar código →";
-
-  if(error){
-    showErr("msgEmailErr","❌ "+error.message); return;
-  }
-  emailAtual = email;
-  document.getElementById("stepEmail").style.display="none";
-  document.getElementById("stepOTP").style.display="block";
-  document.getElementById("otpEmailDisplay").textContent = email;
+  const email=document.getElementById("cadEmail").value.trim().toLowerCase();
+  hideMsg("msgCadErr");
+  if(!email.endsWith("@"+DOMAIN)){showErr("msgCadErr","❌ Use seu e-mail @"+DOMAIN);return;}
+  setLoading("btnEnviarOTP",true,"Enviando");
+  const{error}=await sb.auth.signInWithOtp({email,options:{shouldCreateUser:true}});
+  setLoading("btnEnviarOTP",false,"Enviar código de verificação →");
+  if(error){showErr("msgCadErr","❌ "+error.message);return;}
+  emailAtual=email;
+  document.getElementById("otpEmailShow").textContent=email;
+  irStep("stepOTP");
   document.getElementById("d0").focus();
-  iniciarTimerReenvio();
+  iniciarTimer();
 }
 
 function moveNext(i){
-  const v = document.getElementById("d"+i).value;
-  if(v && i<7) document.getElementById("d"+(i+1)).focus();
-  if(i===7) verificarOTP();
+  const v=document.getElementById("d"+i).value;
+  if(v&&i<7)document.getElementById("d"+(i+1)).focus();
+  if(i===7)verificarOTP();
 }
 function movePrev(e,i){
   if(e.key==="Backspace"&&!document.getElementById("d"+i).value&&i>0)
@@ -399,75 +447,91 @@ function movePrev(e,i){
 }
 
 async function verificarOTP(){
-  const token = [0,1,2,3,4,5,6,7].map(i=>document.getElementById("d"+i).value).join("");
-  if(token.length<8){ showErr("msgOTPErr","❌ Digite os 8 dígitos."); return; }
-  hideMsg("msgOTPErr"); hideMsg("msgOTPOk");
-  const btn = document.getElementById("btnVerificar");
-  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Verificando...';
-
-  const { data, error } = await sb.auth.verifyOtp({
-    email: emailAtual, token, type:"email"
-  });
-
-  btn.disabled=false; btn.innerHTML="Verificar código";
-
-  if(error){ showErr("msgOTPErr","❌ Código inválido ou expirado. Tente novamente."); return; }
-
-  const msgOk = document.getElementById("msgOTPOk");
-  msgOk.textContent="✅ Verificado! Carregando plataforma...";
-  msgOk.style.display="block";
-  setTimeout(()=>mostrarHub(data.user), 800);
+  const token=[0,1,2,3,4,5,6,7].map(i=>document.getElementById("d"+i).value).join("");
+  hideMsg("msgOTPErr");
+  if(token.length<8){showErr("msgOTPErr","❌ Digite os 8 dígitos.");return;}
+  setLoading("btnVerOTP",true,"Verificando");
+  const{error}=await sb.auth.verifyOtp({email:emailAtual,token,type:"email"});
+  setLoading("btnVerOTP",false,"Verificar código");
+  if(error){showErr("msgOTPErr","❌ Código inválido ou expirado. Tente novamente.");return;}
+  irStep("stepPerfil");
 }
 
 async function reenviarOTP(){
-  const btn = document.getElementById("btnReenviar");
-  btn.disabled=true;
-  await sb.auth.signInWithOtp({ email: emailAtual, options:{ shouldCreateUser:true }});
-  iniciarTimerReenvio();
+  await sb.auth.signInWithOtp({email:emailAtual,options:{shouldCreateUser:true}});
+  iniciarTimer();
 }
 
-function iniciarTimerReenvio(){
-  let t = 60;
-  const btn = document.getElementById("btnReenviar");
-  btn.disabled=true; btn.textContent=`Reenviar em ${t}s`;
-  if(resendTimer) clearInterval(resendTimer);
-  resendTimer = setInterval(()=>{
-    t--;
-    btn.textContent=`Reenviar em ${t}s`;
-    if(t<=0){ clearInterval(resendTimer); btn.disabled=false; btn.textContent="Reenviar código"; }
+function iniciarTimer(){
+  let t=60;const btn=document.getElementById("btnReenviar");
+  btn.disabled=true;btn.textContent=`Reenviar em ${t}s`;
+  if(resendTimer)clearInterval(resendTimer);
+  resendTimer=setInterval(()=>{
+    t--;btn.textContent=`Reenviar em ${t}s`;
+    if(t<=0){clearInterval(resendTimer);btn.disabled=false;btn.textContent="Reenviar código";}
   },1000);
 }
 
-function voltarEmail(){
-  document.getElementById("stepOTP").style.display="none";
-  document.getElementById("stepEmail").style.display="block";
-  [0,1,2,3,4,5].forEach(i=>document.getElementById("d"+i).value="");
+// ── CADASTRO: PERFIL ─────────────────────────────────────────
+async function finalizarCadastro(){
+  const nome=document.getElementById("cadNome").value.trim();
+  const area=document.getElementById("cadArea").value;
+  const senha=document.getElementById("cadSenha").value;
+  const senha2=document.getElementById("cadSenha2").value;
+  hideMsg("msgPerfilErr","msgPerfilOk");
+  if(!nome){showErr("msgPerfilErr","❌ Informe seu nome completo.");return;}
+  if(!area){showErr("msgPerfilErr","❌ Selecione sua área técnica.");return;}
+  if(senha.length<8){showErr("msgPerfilErr","❌ Senha deve ter pelo menos 8 caracteres.");return;}
+  if(senha!==senha2){showErr("msgPerfilErr","❌ As senhas não coincidem.");return;}
+  setLoading("btnCadastrar",true,"Criando conta");
+
+  // 1. Define a senha
+  const{data:upData,error:upErr}=await sb.auth.updateUser({password:senha});
+  if(upErr){setLoading("btnCadastrar",false,"Finalizar cadastro →");showErr("msgPerfilErr","❌ "+upErr.message);return;}
+
+  // 2. Salva perfil na tabela docentes
+  const{error:dbErr}=await sb.from("docentes").insert({
+    user_id:upData.user.id,
+    nome,
+    area
+  });
+  if(dbErr)console.warn("Perfil:",dbErr.message);
+
+  setLoading("btnCadastrar",false,"Finalizar cadastro →");
+  showOk("msgPerfilOk","✅ Conta criada! Acessando a plataforma...");
+  setTimeout(async()=>{
+    fecharAuth();
+    await carregarEMostrarHub(upData.user,nome);
+  },1000);
 }
 
 // ── HUB ──────────────────────────────────────────────────────
-function mostrarHub(user){
-  document.getElementById("authWrap").style.display="none";
+async function carregarEMostrarHub(user,nomeParam){
+  let nome=nomeParam;
+  if(!nome){
+    const{data}=await sb.from("docentes").select("nome").eq("user_id",user.id).single();
+    nome=data?.nome||user.email.split("@")[0];
+  }
+  sessionStorage.setItem("mqctToken",(await sb.auth.getSession()).data?.session?.access_token||"");
+  mostrarHub(nome);
+}
+
+function mostrarHub(nome){
   document.getElementById("mainContent").style.display="block";
   document.getElementById("navLogin").style.display="none";
   document.getElementById("navUser").style.display="block";
-  const nome = user.email.split("@")[0];
-  document.getElementById("userEmailNav").textContent = nome.substring(0,14);
-  document.getElementById("userInitial").textContent = nome[0].toUpperCase();
-  // Salva token para as áreas
-  sb.auth.getSession().then(({data})=>{
-    if(data?.session?.access_token)
-      sessionStorage.setItem("mqctToken", data.session.access_token);
-  });
+  document.getElementById("userNomeNav").textContent=nome.split(" ")[0];
+  document.getElementById("userInitial").textContent=nome[0].toUpperCase();
   renderAreas(AREAS);
 }
 
 function renderAreas(lista){
-  document.getElementById("areasGrid").innerHTML = lista.map(a=>`
+  document.getElementById("areasGrid").innerHTML=lista.map(a=>`
     <a class="area-card" href="${a.file}">
       <div class="card-stripe" style="background:${a.cor}"></div>
       <div class="card-body">
         <div class="card-top">
-          <div class="card-icon-wrap" style="background:${a.bg}"><span>${a.emoji}</span></div>
+          <div class="card-icon" style="background:${a.bg}">${a.emoji}</div>
           <div><div class="card-title">${a.title}</div><div class="card-count">${a.cursos} curso${a.cursos>1?"s":""} técnico${a.cursos>1?"s":""}</div></div>
         </div>
         <div class="card-desc">${a.desc}</div>
@@ -480,7 +544,7 @@ function renderAreas(lista){
 }
 
 function filtrarAreas(){
-  const q = document.getElementById("searchInput").value.toLowerCase();
+  const q=document.getElementById("searchInput").value.toLowerCase();
   renderAreas(AREAS.filter(a=>a.title.toLowerCase().includes(q)||a.desc.toLowerCase().includes(q)));
 }
 
@@ -495,23 +559,21 @@ async function logout(){
 
 // ── TEMA ─────────────────────────────────────────────────────
 function toggleTheme(){
-  const t = document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
+  const t=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
   document.documentElement.setAttribute("data-theme",t);
-  document.getElementById("themeBtn").textContent = t==="dark"?"☀️":"🌙";
+  document.getElementById("themeBtn").textContent=t==="dark"?"☀️":"🌙";
   localStorage.setItem("mqctTheme",t);
 }
 (function(){
-  const t = localStorage.getItem("mqctTheme")||"light";
+  const t=localStorage.getItem("mqctTheme")||"light";
   document.documentElement.setAttribute("data-theme",t);
-  document.getElementById("themeBtn").textContent = t==="dark"?"☀️":"🌙";
+  document.getElementById("themeBtn").textContent=t==="dark"?"☀️":"🌙";
 })();
 
 // ── AUTO LOGIN ────────────────────────────────────────────────
-window.addEventListener("load", async ()=>{
-  const { data } = await sb.auth.getSession();
-  if(data?.session?.user){
-    mostrarHub(data.session.user);
-  }
+window.addEventListener("load",async()=>{
+  const{data}=await sb.auth.getSession();
+  if(data?.session?.user) await carregarEMostrarHub(data.session.user);
 });
 </script>
 </body>
