@@ -5,408 +5,151 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Alimentos e Bebidas — Hub MQCT · SENAI Bahia</title>
 <style>
-  /* ── TOKENS ─────────────────────────────────────────────── */
   :root {
-    --cor:        #F4A020;
-    --cor-dark:   #B87210;
-    --cor-light:  #FEF3DC;
-    --cor-muted:  #FDE8B4;
-    --bg:         #FAFAF8;
-    --bg-card:    #FFFFFF;
-    --text:       #1A1208;
-    --text-2:     #5C4A1A;
-    --text-3:     #8A7040;
-    --border:     #E8DCC8;
-    --shadow:     0 2px 12px rgba(180,120,16,.10);
-    --radius:     12px;
-    --radius-sm:  8px;
-    --font-head:  'Georgia', 'Times New Roman', serif;
-    --font-body:  'Segoe UI', system-ui, sans-serif;
-    --transition: .2s ease;
+    --cor:#F4A020; --cor-dark:#B87210; --cor-light:#FEF3DC; --cor-muted:#FDE8B4;
+    --bg:#FAFAF8; --bg-card:#FFFFFF; --text:#1A1208; --text-2:#5C4A1A;
+    --text-3:#8A7040; --border:#E8DCC8; --shadow:0 2px 12px rgba(180,120,16,.10);
+    --radius:12px; --radius-sm:8px;
+    --font-head:'Georgia','Times New Roman',serif;
+    --font-body:'Segoe UI',system-ui,sans-serif;
+    --tr:.2s ease;
   }
   [data-theme="dark"] {
-    --bg:       #131008;
-    --bg-card:  #1E1A0F;
-    --text:     #F5EDD5;
-    --text-2:   #C8A84A;
-    --text-3:   #8A7840;
-    --border:   #3A2E18;
-    --cor-light:#2A1E08;
-    --cor-muted:#332210;
-    --shadow:   0 2px 12px rgba(0,0,0,.4);
+    --bg:#131008; --bg-card:#1E1A0F; --text:#F5EDD5; --text-2:#C8A84A;
+    --text-3:#8A7840; --border:#3A2E18; --cor-light:#2A1E08; --cor-muted:#332210;
+    --shadow:0 2px 12px rgba(0,0,0,.4);
   }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;transition:background var(--tr),color var(--tr)}
+  button{cursor:pointer;font-family:inherit}
 
-  /* ── RESET ──────────────────────────────────────────────── */
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: var(--font-body);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    transition: background var(--transition), color var(--transition);
-  }
-  a { color: var(--cor); text-decoration: none; }
-  button { cursor: pointer; font-family: inherit; }
+  /* TOPBAR */
+  .topbar{position:sticky;top:0;z-index:100;background:var(--bg-card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;box-shadow:var(--shadow)}
+  .topbar-left{display:flex;align-items:center;gap:12px}
+  .back-btn{display:flex;align-items:center;gap:6px;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 12px;color:var(--text-2);font-size:13px;transition:all var(--tr)}
+  .back-btn:hover{background:var(--cor-light);border-color:var(--cor);color:var(--cor)}
+  .topbar-title{font-size:14px;font-weight:600;color:var(--text-2)}
+  .theme-btn{background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;font-size:16px;color:var(--text-2);transition:all var(--tr)}
+  .theme-btn:hover{background:var(--cor-light);border-color:var(--cor)}
 
-  /* ── TOPBAR ─────────────────────────────────────────────── */
-  .topbar {
-    position: sticky; top: 0; z-index: 100;
-    background: var(--bg-card);
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 24px; height: 56px;
-    box-shadow: var(--shadow);
-  }
-  .topbar-left { display: flex; align-items: center; gap: 12px; }
-  .back-btn {
-    display: flex; align-items: center; gap: 6px;
-    background: none; border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 6px 12px;
-    color: var(--text-2); font-size: 13px;
-    transition: all var(--transition);
-  }
-  .back-btn:hover { background: var(--cor-light); border-color: var(--cor); color: var(--cor); }
-  .topbar-title { font-size: 14px; font-weight: 600; color: var(--text-2); }
-  .theme-btn {
-    background: none; border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 6px 10px;
-    font-size: 16px; color: var(--text-2);
-    transition: all var(--transition);
-  }
-  .theme-btn:hover { background: var(--cor-light); border-color: var(--cor); }
+  /* HERO */
+  .hero{background:linear-gradient(135deg,var(--cor) 0%,var(--cor-dark) 60%,#7A4A08 100%);color:#fff;padding:48px 32px 40px;position:relative;overflow:hidden}
+  .hero::before{content:'🍞';position:absolute;right:40px;top:20px;font-size:120px;opacity:.12;line-height:1;pointer-events:none;user-select:none}
+  .hero-tag{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600;letter-spacing:.05em;margin-bottom:16px;text-transform:uppercase}
+  .hero h1{font-family:var(--font-head);font-size:clamp(28px,5vw,48px);font-weight:700;line-height:1.1;margin-bottom:10px}
+  .hero-sub{font-size:15px;opacity:.85;margin-bottom:24px;max-width:560px}
+  .hero-badges{display:flex;flex-wrap:wrap;gap:8px}
+  .badge{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600}
+  .badge.ch{background:rgba(0,0,0,.25)}
 
-  /* ── HERO ───────────────────────────────────────────────── */
-  .hero {
-    background: linear-gradient(135deg, var(--cor) 0%, var(--cor-dark) 60%, #7A4A08 100%);
-    color: #fff;
-    padding: 48px 32px 40px;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '🍞';
-    position: absolute; right: 40px; top: 20px;
-    font-size: 120px; opacity: .12; line-height: 1;
-    pointer-events: none; user-select: none;
-  }
-  .hero-tag {
-    display: inline-block;
-    background: rgba(255,255,255,.18);
-    border: 1px solid rgba(255,255,255,.35);
-    border-radius: 20px; padding: 4px 14px;
-    font-size: 12px; font-weight: 600; letter-spacing: .05em;
-    margin-bottom: 16px; text-transform: uppercase;
-  }
-  .hero h1 {
-    font-family: var(--font-head);
-    font-size: clamp(28px, 5vw, 48px);
-    font-weight: 700; line-height: 1.1;
-    margin-bottom: 10px;
-  }
-  .hero-sub { font-size: 15px; opacity: .85; margin-bottom: 24px; max-width: 560px; }
-  .hero-badges { display: flex; flex-wrap: wrap; gap: 8px; }
-  .badge {
-    background: rgba(255,255,255,.2);
-    border: 1px solid rgba(255,255,255,.4);
-    border-radius: 20px; padding: 5px 14px;
-    font-size: 12px; font-weight: 600;
-  }
-  .badge.ch { background: rgba(0,0,0,.25); }
+  /* LAYOUT */
+  .layout{display:grid;grid-template-columns:280px 1fr;gap:0;min-height:calc(100vh - 56px - 148px)}
 
-  /* ── LAYOUT ─────────────────────────────────────────────── */
-  .layout {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 0;
-    min-height: calc(100vh - 56px - 148px);
-  }
+  /* SIDEBAR */
+  .sidebar{background:var(--bg-card);border-right:1px solid var(--border);padding:20px 0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+  .sidebar-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);padding:0 18px 10px}
+  .uc-group-header{display:flex;align-items:center;justify-content:space-between;padding:9px 18px;cursor:pointer;color:var(--text-2);font-size:12px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;border-left:3px solid transparent;transition:all var(--tr)}
+  .uc-group-header:hover{background:var(--cor-light);border-left-color:var(--cor);color:var(--cor-dark)}
+  .uc-item{padding:7px 18px 7px 26px;font-size:12px;color:var(--text-2);cursor:pointer;border-left:3px solid transparent;transition:all var(--tr);display:flex;justify-content:space-between;align-items:center}
+  .uc-item:hover{background:var(--cor-light);color:var(--cor-dark);border-left-color:var(--cor)}
+  .uc-item .ch-tag{font-size:10px;background:var(--cor-muted);color:var(--cor-dark);border-radius:10px;padding:1px 6px;white-space:nowrap;font-weight:600}
+  .sidebar-divider{height:1px;background:var(--border);margin:12px 18px}
 
-  /* ── SIDEBAR ────────────────────────────────────────────── */
-  .sidebar {
-    background: var(--bg-card);
-    border-right: 1px solid var(--border);
-    padding: 20px 0;
-    position: sticky; top: 56px;
-    height: calc(100vh - 56px);
-    overflow-y: auto;
-  }
-  .sidebar-title {
-    font-size: 10px; font-weight: 700; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--text-3);
-    padding: 0 18px 10px;
-  }
-  .uc-group { margin-bottom: 4px; }
-  .uc-group-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 9px 18px; cursor: pointer;
-    color: var(--text-2); font-size: 12px; font-weight: 700;
-    letter-spacing: .02em; text-transform: uppercase;
-    border-left: 3px solid transparent;
-    transition: all var(--transition);
-  }
-  .uc-group-header:hover, .uc-group-header.active {
-    background: var(--cor-light);
-    border-left-color: var(--cor);
-    color: var(--cor-dark);
-  }
-  .uc-item {
-    padding: 7px 18px 7px 26px;
-    font-size: 12px; color: var(--text-2);
-    cursor: pointer; border-left: 3px solid transparent;
-    transition: all var(--transition);
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .uc-item:hover { background: var(--cor-light); color: var(--cor-dark); border-left-color: var(--cor); }
-  .uc-item .ch-tag {
-    font-size: 10px; background: var(--cor-muted);
-    color: var(--cor-dark); border-radius: 10px;
-    padding: 1px 6px; white-space: nowrap; font-weight: 600;
-  }
-  .sidebar-divider {
-    height: 1px; background: var(--border);
-    margin: 12px 18px;
-  }
+  /* MAIN */
+  .main{padding:28px 32px}
+  .uc-header{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px;border-left:4px solid var(--cor)}
+  .uc-header h2{font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px}
+  .uc-header p{font-size:13px;color:var(--text-2);line-height:1.5}
+  .uc-meta{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .uc-meta span{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600;background:var(--cor-muted);color:var(--cor-dark)}
+  .uc-meta span.ch-t{background:#dbeafe;color:#1e40af}
+  .uc-meta span.ch-p{background:#dcfce7;color:#166534}
+  .uc-meta span.ch-total{background:var(--cor);color:#fff}
 
-  /* ── MAIN CONTENT ───────────────────────────────────────── */
-  .main { padding: 28px 32px; }
+  /* COMPETÊNCIAS */
+  .comp-section{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px}
+  .comp-section h3{font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px}
+  .comp-tags{display:flex;flex-wrap:wrap;gap:8px}
+  .comp-tag{font-size:11px;padding:4px 12px;border-radius:12px;font-weight:600;background:var(--cor-muted);color:var(--cor-dark);border:1px solid var(--cor)}
+  .comp-tag.socio{background:#e8f4fd;color:#1565c0;border-color:#90caf9}
+  .comp-tag.ia{background:#f3e8ff;color:#6a0dad;border-color:#ce93d8}
 
-  /* ── UC HEADER ──────────────────────────────────────────── */
-  .uc-header {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px 24px; margin-bottom: 24px;
-    border-left: 4px solid var(--cor);
-  }
-  .uc-header h2 {
-    font-family: var(--font-head);
-    font-size: 20px; font-weight: 700; color: var(--text);
-    margin-bottom: 6px;
-  }
-  .uc-header p { font-size: 13px; color: var(--text-2); line-height: 1.5; }
-  .uc-meta { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
-  .uc-meta span {
-    font-size: 11px; padding: 3px 10px;
-    border-radius: 12px; font-weight: 600;
-    background: var(--cor-muted); color: var(--cor-dark);
-  }
+  /* MATERIALS */
+  .section-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  .materials-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:32px}
+  .material-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;transition:all var(--tr);display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+  .material-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--cor);transform:scaleX(0);transform-origin:left;transition:transform var(--tr)}
+  .material-card:hover{border-color:var(--cor);box-shadow:var(--shadow);transform:translateY(-2px)}
+  .material-card:hover::before{transform:scaleX(1)}
+  .mat-icon{width:40px;height:40px;border-radius:10px;background:var(--cor-light);display:flex;align-items:center;justify-content:center;font-size:20px}
+  .mat-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.3}
+  .mat-desc{font-size:11px;color:var(--text-3);line-height:1.4}
+  .mat-btn{margin-top:auto;padding:8px 14px;background:var(--cor);color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;justify-content:center;transition:background var(--tr)}
+  .mat-btn:hover{background:var(--cor-dark)}
 
-  /* ── GRID DE MATERIAIS ──────────────────────────────────── */
-  .section-title {
-    font-size: 11px; font-weight: 700; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--text-3);
-    margin-bottom: 14px; padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-  }
-  .materials-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 14px;
-    margin-bottom: 32px;
-  }
-  .material-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 18px;
-    cursor: pointer;
-    transition: all var(--transition);
-    display: flex; flex-direction: column; gap: 10px;
-    position: relative; overflow: hidden;
-  }
-  .material-card::before {
-    content: ''; position: absolute;
-    top: 0; left: 0; right: 0; height: 3px;
-    background: var(--cor); transform: scaleX(0);
-    transform-origin: left; transition: transform var(--transition);
-  }
-  .material-card:hover { border-color: var(--cor); box-shadow: var(--shadow); transform: translateY(-2px); }
-  .material-card:hover::before { transform: scaleX(1); }
-  .mat-icon {
-    width: 40px; height: 40px; border-radius: 10px;
-    background: var(--cor-light); display: flex;
-    align-items: center; justify-content: center; font-size: 20px;
-  }
-  .mat-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; }
-  .mat-desc { font-size: 11px; color: var(--text-3); line-height: 1.4; }
-  .mat-btn {
-    margin-top: auto; padding: 8px 14px;
-    background: var(--cor); color: #fff;
-    border: none; border-radius: var(--radius-sm);
-    font-size: 12px; font-weight: 700;
-    display: flex; align-items: center; gap: 6px;
-    justify-content: center; transition: background var(--transition);
-  }
-  .mat-btn:hover { background: var(--cor-dark); }
+  /* MODAL */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:center;justify-content:center;padding:20px}
+  .modal-overlay.open{display:flex}
+  .modal{background:var(--bg-card);border-radius:var(--radius);width:100%;max-width:760px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:slideUp .25s ease}
+  @keyframes slideUp{from{transform:translateY(30px);opacity:0}}
+  .modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg-card);z-index:1}
+  .modal-header h3{font-size:17px;font-weight:700;color:var(--text)}
+  .modal-close{background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px;font-size:18px;color:var(--text-3);transition:all var(--tr)}
+  .modal-close:hover{background:#fee2e2;border-color:#ef4444;color:#ef4444}
+  .modal-body{padding:20px 24px}
 
-  /* ── MODAL ──────────────────────────────────────────────── */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0,0,0,.55); z-index: 200;
-    align-items: center; justify-content: center; padding: 20px;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--bg-card); border-radius: var(--radius);
-    width: 100%; max-width: 700px; max-height: 90vh;
-    overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.3);
-    animation: slideUp .25s ease;
-  }
-  @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } }
-  .modal-header {
-    padding: 20px 24px 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    position: sticky; top: 0; background: var(--bg-card); z-index: 1;
-  }
-  .modal-header h3 { font-size: 17px; font-weight: 700; color: var(--text); }
-  .modal-close {
-    background: none; border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 4px 10px;
-    font-size: 18px; color: var(--text-3);
-    transition: all var(--transition);
-  }
-  .modal-close:hover { background: #fee2e2; border-color: #ef4444; color: #ef4444; }
-  .modal-body { padding: 20px 24px; }
+  /* FORM */
+  .form-group{margin-bottom:16px}
+  .form-group label{display:block;font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:6px}
+  .form-group select,.form-group input,.form-group textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;transition:border-color var(--tr);outline:none}
+  .form-group select:focus,.form-group input:focus,.form-group textarea:focus{border-color:var(--cor);box-shadow:0 0 0 3px rgba(244,160,32,.15)}
+  .form-group textarea{resize:vertical;min-height:80px}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .ch-info-box{background:var(--cor-light);border:1px solid var(--cor);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--cor-dark);margin-bottom:16px;display:none}
+  .ch-info-box.visible{display:block}
+  .ch-info-box strong{display:block;margin-bottom:4px;font-size:13px}
 
-  /* ── FORM ───────────────────────────────────────────────── */
-  .form-group { margin-bottom: 16px; }
-  .form-group label {
-    display: block; font-size: 12px; font-weight: 700;
-    color: var(--text-2); margin-bottom: 6px;
-  }
-  .form-group select,
-  .form-group input,
-  .form-group textarea {
-    width: 100%; padding: 10px 12px;
-    border: 1px solid var(--border); border-radius: var(--radius-sm);
-    background: var(--bg); color: var(--text);
-    font-size: 13px; font-family: inherit;
-    transition: border-color var(--transition);
-    outline: none;
-  }
-  .form-group select:focus,
-  .form-group input:focus,
-  .form-group textarea:focus { border-color: var(--cor); box-shadow: 0 0 0 3px rgba(244,160,32,.15); }
-  .form-group textarea { resize: vertical; min-height: 80px; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  /* OUTPUT */
+  .output-area{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;font-size:13px;line-height:1.7;color:var(--text);min-height:120px;white-space:pre-wrap;display:none}
+  .output-area.visible{display:block}
 
-  /* ── OUTPUT ─────────────────────────────────────────────── */
-  .output-area {
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 16px;
-    font-size: 13px; line-height: 1.7; color: var(--text);
-    min-height: 120px; white-space: pre-wrap;
-    display: none;
-  }
-  .output-area.visible { display: block; }
-  .output-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 12px; }
-  .output-table th, .output-table td {
-    border: 1px solid var(--border); padding: 8px 10px; text-align: left;
-  }
-  .output-table th { background: var(--cor-muted); color: var(--cor-dark); font-weight: 700; }
-  .output-table tr:nth-child(even) td { background: var(--bg); }
+  /* BOTÕES */
+  .btn-primary{width:100%;padding:12px;background:var(--cor);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;transition:background var(--tr);margin-bottom:10px}
+  .btn-primary:hover{background:var(--cor-dark)}
+  .btn-primary:disabled{opacity:.6;cursor:not-allowed}
+  .btn-secondary{flex:1;padding:10px;background:none;color:var(--cor-dark);border:1px solid var(--cor);border-radius:var(--radius-sm);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:all var(--tr)}
+  .btn-secondary:hover{background:var(--cor-light)}
+  .btn-row{display:flex;gap:10px;margin-top:12px}
 
-  /* ── BOTÕES AÇÃO ────────────────────────────────────────── */
-  .btn-primary {
-    width: 100%; padding: 12px;
-    background: var(--cor); color: #fff;
-    border: none; border-radius: var(--radius-sm);
-    font-size: 14px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    transition: background var(--transition);
-    margin-bottom: 10px;
-  }
-  .btn-primary:hover { background: var(--cor-dark); }
-  .btn-primary:disabled { opacity: .6; cursor: not-allowed; }
-  .btn-secondary {
-    width: 100%; padding: 10px;
-    background: none; color: var(--cor-dark);
-    border: 1px solid var(--cor); border-radius: var(--radius-sm);
-    font-size: 13px; font-weight: 600;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    transition: all var(--transition);
-  }
-  .btn-secondary:hover { background: var(--cor-light); }
-  .btn-row { display: flex; gap: 10px; margin-top: 12px; }
-  .btn-row button { flex: 1; }
+  /* LOADING */
+  .loading{display:none;align-items:center;gap:10px;padding:14px;font-size:13px;color:var(--text-2)}
+  .loading.visible{display:flex}
+  .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--cor);border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
 
-  /* ── LOADING ────────────────────────────────────────────── */
-  .loading {
-    display: none; align-items: center; gap: 10px;
-    padding: 14px; font-size: 13px; color: var(--text-2);
-  }
-  .loading.visible { display: flex; }
-  .spinner {
-    width: 18px; height: 18px; border: 2px solid var(--border);
-    border-top-color: var(--cor); border-radius: 50%;
-    animation: spin .7s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  /* TOAST */
+  .toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--bg-card);border:1px solid var(--border);border-left:4px solid var(--cor);border-radius:var(--radius-sm);padding:12px 18px;font-size:13px;color:var(--text);box-shadow:var(--shadow);animation:toastIn .3s ease;display:none}
+  .toast.visible{display:block}
+  .toast.error{border-left-color:#ef4444}
+  @keyframes toastIn{from{transform:translateX(30px);opacity:0}}
 
-  /* ── TOAST ──────────────────────────────────────────────── */
-  .toast {
-    position: fixed; bottom: 24px; right: 24px; z-index: 999;
-    background: var(--bg-card); border: 1px solid var(--border);
-    border-left: 4px solid var(--cor); border-radius: var(--radius-sm);
-    padding: 12px 18px; font-size: 13px; color: var(--text);
-    box-shadow: var(--shadow);
-    animation: toastIn .3s ease;
-    display: none;
-  }
-  .toast.visible { display: block; }
-  .toast.error { border-left-color: #ef4444; }
-  @keyframes toastIn { from { transform: translateX(30px); opacity: 0; } }
-
-  /* ── COMPETÊNCIAS SECTION ───────────────────────────────── */
-  .comp-section {
-    background: var(--bg-card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 20px 24px;
-    margin-bottom: 24px;
-  }
-  .comp-section h3 {
-    font-size: 14px; font-weight: 700; color: var(--text);
-    margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
-  }
-  .comp-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-  .comp-tag {
-    font-size: 11px; padding: 4px 12px;
-    border-radius: 12px; font-weight: 600;
-    background: var(--cor-muted); color: var(--cor-dark);
-    border: 1px solid var(--cor);
-  }
-  .comp-tag.socio { background: #e8f4fd; color: #1565c0; border-color: #90caf9; }
-  .comp-tag.ia { background: #f3e8ff; color: #6a0dad; border-color: #ce93d8; }
-
-  /* ── RESPONSIVE ─────────────────────────────────────────── */
-  @media (max-width: 768px) {
-    .layout { grid-template-columns: 1fr; }
-    .sidebar { position: relative; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
-    .main { padding: 20px 16px; }
-    .form-row { grid-template-columns: 1fr; }
-    .materials-grid { grid-template-columns: 1fr 1fr; }
-  }
-  @media (max-width: 480px) {
-    .materials-grid { grid-template-columns: 1fr; }
-    .hero { padding: 32px 20px 28px; }
-  }
+  /* RESPONSIVE */
+  @media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{position:relative;height:auto;border-right:none;border-bottom:1px solid var(--border)}.main{padding:20px 16px}.form-row,.form-row-3{grid-template-columns:1fr}.materials-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:480px){.materials-grid{grid-template-columns:1fr}.hero{padding:32px 20px 28px}}
 </style>
 </head>
 <body data-theme="light">
 
-<!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-left">
-    <button class="back-btn" onclick="voltarHub()">
-      ← Hub Principal
-    </button>
+    <button class="back-btn" onclick="voltarHub()">← Hub Principal</button>
     <span class="topbar-title">🍞 Alimentos e Bebidas</span>
   </div>
   <button class="theme-btn" onclick="toggleTheme()" title="Alternar tema">🌙</button>
 </div>
 
-<!-- HERO -->
 <div class="hero">
   <div class="hero-tag">🍞 MQCT · SENAI Bahia</div>
   <h1>Alimentos e Bebidas</h1>
@@ -419,124 +162,55 @@
   </div>
 </div>
 
-<!-- LAYOUT -->
 <div class="layout">
-
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="sidebar-title">Módulos e UCs</div>
 
-    <!-- FUNÇÃO 1 -->
-    <div class="uc-group">
-      <div class="uc-group-header" onclick="setUC('F1','Industrializar Alimentos','Industrializar alimentos conforme procedimentos, normas e legislações vigentes de qualidade, segurança dos alimentos, saúde e segurança do trabalho e sustentabilidade.','SF 1.1 a 1.6 | BPF | APPCC | Embalagem | Rastreabilidade','Módulo I')">
-        📦 Módulo I — Industrializar
-      </div>
-      <div class="uc-item" onclick="setUC('UC1.1','Processar Carnes e Derivados','Processar carnes e derivados monitorando rastreabilidade, realizando controle de qualidade, aplicando BPF e selecionando embalagens conforme especificação do produto.','Rastreabilidade · BPF · Fluxogramas produtivos · Controle de qualidade · Embalagens · Descarbonização','Módulo I')">
-        <span>UC 1.1 — Processar Carnes e Derivados</span>
-        <span class="ch-tag">SF 1.1</span>
-      </div>
-      <div class="uc-item" onclick="setUC('UC1.2','Processar Leite e Derivados','Processar leite e derivados monitorando rastreabilidade, realizando controle de qualidade, aplicando BPF e selecionando embalagens conforme especificação do produto.','Rastreabilidade · BPF · Laticínios · Controle de processo · Embalagens','Módulo I')">
-        <span>UC 1.2 — Processar Leite e Derivados</span>
-        <span class="ch-tag">SF 1.2</span>
-      </div>
-      <div class="uc-item" onclick="setUC('UC1.3','Processar Frutas, Hortaliças e Derivados','Processar frutas e hortaliças monitorando rastreabilidade, avaliando qualidade de matérias-primas, realizando controle de processo e destinando resíduos conforme legislação.','Rastreabilidade · BPF · Conservas · Processamento vegetal · Embalagens · Descarbonização','Módulo I')">
-        <span>UC 1.3 — Processar Frutas e Hortaliças</span>
-        <span class="ch-tag">SF 1.3</span>
-      </div>
-      <div class="uc-item" onclick="setUC('UC1.4','Processar Pães, Massas e Biscoitos','Processar pães, massas alimentícias e biscoitos calculando formulações, elaborando fluxogramas, realizando controle de processo e aplicando BPF.','Formulações · Fluxogramas · BPF · Panificação · Massas · Embalagens · Controle de processo','Módulo I')">
-        <span>UC 1.4 — Pães, Massas e Biscoitos</span>
-        <span class="ch-tag">SF 1.4</span>
-      </div>
-      <div class="uc-item" onclick="setUC('UC1.5','Processar Bebidas','Processar bebidas fermentadas e não alcoólicas elaborando fluxogramas, realizando processamento conforme especificação do produto e legislação vigente, avaliando contaminações e selecionando embalagens.','Bebidas fermentadas · Bebidas não alcoólicas · BPF · Fluxogramas · Controle de qualidade · Embalagens','Módulo I')">
-        <span>UC 1.5 — Processar Bebidas</span>
-        <span class="ch-tag">SF 1.5</span>
-      </div>
-      <div class="uc-item" onclick="setUC('UC1.6','Processar Balas, Chocolates e Confeitos','Processar balas, chocolates e confeitos calculando formulações, elaborando fluxogramas, realizando controle de processo, avaliando contaminações e selecionando embalagens.','Chocolates · Balas · Confeitos · Formulações · BPF · Embalagens · Controle de processo','Módulo I')">
-        <span>UC 1.6 — Balas, Chocolates e Confeitos</span>
-        <span class="ch-tag">SF 1.6</span>
-      </div>
-    </div>
+    <div class="uc-group-header" onclick="setUC('F1','Módulo I — Industrializar Alimentos','Industrializar alimentos conforme procedimentos, normas e legislações vigentes de qualidade, segurança dos alimentos, saúde e segurança do trabalho e sustentabilidade.',0,0,'Módulo I')">📦 Módulo I — Industrializar</div>
+    <div class="uc-item" onclick="setUC('UC1.1','Processar Carnes e Derivados','Processar carnes e derivados monitorando rastreabilidade, realizando controle de qualidade, aplicando BPF e selecionando embalagens conforme especificação do produto.',16,24,'Módulo I')"><span>UC 1.1 — Processar Carnes e Derivados</span><span class="ch-tag">40h</span></div>
+    <div class="uc-item" onclick="setUC('UC1.2','Processar Leite e Derivados','Processar leite e derivados monitorando rastreabilidade, realizando controle de qualidade, aplicando BPF e selecionando embalagens conforme especificação do produto.',16,24,'Módulo I')"><span>UC 1.2 — Processar Leite e Derivados</span><span class="ch-tag">40h</span></div>
+    <div class="uc-item" onclick="setUC('UC1.3','Processar Frutas, Hortaliças e Derivados','Processar frutas e hortaliças monitorando rastreabilidade, avaliando qualidade de matérias-primas, realizando controle de processo e destinando resíduos conforme legislação.',16,24,'Módulo I')"><span>UC 1.3 — Frutas e Hortaliças</span><span class="ch-tag">40h</span></div>
+    <div class="uc-item" onclick="setUC('UC1.4','Processar Pães, Massas e Biscoitos','Processar pães, massas alimentícias e biscoitos calculando formulações, elaborando fluxogramas, realizando controle de processo e aplicando BPF.',16,24,'Módulo I')"><span>UC 1.4 — Pães, Massas e Biscoitos</span><span class="ch-tag">40h</span></div>
+    <div class="uc-item" onclick="setUC('UC1.5','Processar Bebidas','Processar bebidas fermentadas e não alcoólicas elaborando fluxogramas, realizando processamento conforme especificação do produto e legislação vigente.',16,24,'Módulo I')"><span>UC 1.5 — Processar Bebidas</span><span class="ch-tag">40h</span></div>
+    <div class="uc-item" onclick="setUC('UC1.6','Processar Balas, Chocolates e Confeitos','Processar balas, chocolates e confeitos calculando formulações, elaborando fluxogramas, realizando controle de processo e selecionando embalagens.',16,24,'Módulo I')"><span>UC 1.6 — Balas, Chocolates e Confeitos</span><span class="ch-tag">40h</span></div>
 
     <div class="sidebar-divider"></div>
-
-    <!-- FUNÇÃO 2 -->
-    <div class="uc-group">
-      <div class="uc-group-header" onclick="setUC('F2','Realizar Análises em Alimentos','Realizar análises físico-químicas, sensoriais e microbiológicas de matérias-primas, insumos e produtos, utilizando metodologias oficiais e validadas.','SF 2.1 a 2.3 | Análises laboratoriais | BPL | Laudos técnicos','Módulo II')">
-        🔬 Módulo II — Analisar
-      </div>
-      <div class="uc-item" onclick="setUC('UC2.1','Realizar Análises Físico-Químicas','Planejar e executar análises físico-químicas de matérias-primas, insumos e produtos, calculando e interpretando resultados e elaborando laudos técnicos.','Análises físico-químicas · Reagentes · Metodologias oficiais · Laudos · Vida de prateleira · BPL','Módulo II')">
-        <span>UC 2.1 — Análises Físico-Químicas</span>
-        <span class="ch-tag">SF 2.1</span>
-      </div>
-      <div class="uc-item" onclick="setUC('UC2.2','Realizar Análises Sensoriais','Planejar e executar análises sensoriais, selecionando provadores, preparando amostras, calculando e interpretando resultados e elaborando laudos.','Análise sensorial · Seleção de provadores · Metodologias oficiais · Laudos · Vida de prateleira','Módulo II')">
-        <span>UC 2.2 — Análises Sensoriais</span>
-        <span class="ch-tag">SF 2.2</span>
-      </div>
-      <div class="uc-item" onclick="setUC('UC2.3','Realizar Análises Microbiológicas e Microscópicas','Planejar e executar análises microbiológicas, microscópicas e de contaminantes, preparando meios de cultura, calculando resultados e descartando resíduos conforme BPL.','Microbiologia de alimentos · Meios de cultura · BPL · Laudos · Análise de contaminantes · Descarte de resíduos','Módulo II')">
-        <span>UC 2.3 — Análises Microbiológicas</span>
-        <span class="ch-tag">SF 2.3</span>
-      </div>
-    </div>
+    <div class="uc-group-header" onclick="setUC('F2','Módulo II — Realizar Análises em Alimentos','Realizar análises físico-químicas, sensoriais e microbiológicas de matérias-primas, insumos e produtos, utilizando metodologias oficiais e validadas.',0,0,'Módulo II')">🔬 Módulo II — Analisar</div>
+    <div class="uc-item" onclick="setUC('UC2.1','Realizar Análises Físico-Químicas','Planejar e executar análises físico-químicas de matérias-primas, insumos e produtos, calculando e interpretando resultados e elaborando laudos técnicos.',16,24,'Módulo II')"><span>UC 2.1 — Análises Físico-Químicas</span><span class="ch-tag">40h</span></div>
+    <div class="uc-item" onclick="setUC('UC2.2','Realizar Análises Sensoriais','Planejar e executar análises sensoriais, selecionando provadores, preparando amostras, calculando e interpretando resultados e elaborando laudos.',8,16,'Módulo II')"><span>UC 2.2 — Análises Sensoriais</span><span class="ch-tag">24h</span></div>
+    <div class="uc-item" onclick="setUC('UC2.3','Realizar Análises Microbiológicas e Microscópicas','Planejar e executar análises microbiológicas e microscópicas, preparando meios de cultura, calculando resultados e descartando resíduos conforme BPL.',16,24,'Módulo II')"><span>UC 2.3 — Análises Microbiológicas</span><span class="ch-tag">40h</span></div>
 
     <div class="sidebar-divider"></div>
-
-    <!-- FUNÇÃO 3 -->
-    <div class="uc-group">
-      <div class="uc-group-header" onclick="setUC('F3','Coordenar a Produção de Alimentos','Coordenar a produção de alimentos planejando, controlando processos e qualidade, garantindo a segurança dos alimentos e promovendo melhorias contínuas.','SF 3.1 a 3.5 | BPF | APPCC | POP | PPHO | ESG | IoT | IA','Módulo III')">
-        🏭 Módulo III — Coordenar
-      </div>
-      <div class="uc-item" onclick="setUC('UC3.1','Planejar a Produção de Alimentos','Elaborar plano de produção definindo matérias-primas, recursos humanos, máquinas, utensílios e custos do processo produtivo de alimentos.','Planejamento de produção · Matérias-primas · Recursos humanos · Custos · Máquinas e utensílios','Módulo III')">
-        <span>UC 3.1 — Planejar a Produção</span>
-        <span class="ch-tag">SF 3.1</span>
-      </div>
-      <div class="uc-item" onclick="setUC('UC3.2','Controlar a Produção de Alimentos','Monitorar indicadores de desempenho, controlar processos por meio de IoT e IA, gerenciar estoques, elaborar relatórios e monitorar a produção considerando os pilares da ESG.','Indicadores de desempenho · IoT · IA · Controle de estoques · ESG · Dispositivos digitais · Variáveis de processo','Módulo III')">
-        <span>UC 3.2 — Controlar a Produção</span>
-        <span class="ch-tag">SF 3.2</span>
-      </div>
-      <div class="uc-item" onclick="setUC('UC3.3','Controlar a Qualidade dos Alimentos','Coletar dados de qualidade, identificar sustentabilidade nos processos, pesquisar ferramentas de controle de qualidade e interpretar normas e legislações de identidade dos alimentos.','Controle de qualidade · Sustentabilidade · Normas e legislações · Ferramentas de qualidade','Módulo III')">
-        <span>UC 3.3 — Controlar a Qualidade</span>
-        <span class="ch-tag">SF 3.3</span>
-      </div>
-      <div class="uc-item" onclick="setUC('UC3.4','Controlar a Segurança dos Alimentos','Avaliar BPF, POP e PPHO, elaborar documentação de segurança, desenvolver plano APPCC e treinar equipes utilizando Inteligência Artificial.','BPF · POP · PPHO · APPCC · Segurança dos alimentos · Inteligência Artificial · Treinamento de equipes','Módulo III')">
-        <span>UC 3.4 — Controlar a Segurança</span>
-        <span class="ch-tag">SF 3.4</span>
-      </div>
-      <div class="uc-item" onclick="setUC('UC3.5','Promover Melhorias em Processos e Produtos','Implementar melhorias por gestão de projetos, mapear processos, diagnosticar oportunidades, elaborar planos de ação e padronizar processos com base nas melhorias implementadas.','Gestão de projetos · Mapeamento de processos · Plano de ação · Melhoria contínua · Ferramentas digitais · Padronização','Módulo III')">
-        <span>UC 3.5 — Promover Melhorias</span>
-        <span class="ch-tag">SF 3.5</span>
-      </div>
-    </div>
+    <div class="uc-group-header" onclick="setUC('F3','Módulo III — Coordenar a Produção de Alimentos','Coordenar a produção de alimentos planejando, controlando processos e qualidade, garantindo a segurança dos alimentos e promovendo melhorias contínuas.',0,0,'Módulo III')">🏭 Módulo III — Coordenar</div>
+    <div class="uc-item" onclick="setUC('UC3.1','Planejar a Produção de Alimentos','Elaborar plano de produção definindo matérias-primas, recursos humanos, máquinas, utensílios e custos do processo produtivo de alimentos.',16,16,'Módulo III')"><span>UC 3.1 — Planejar a Produção</span><span class="ch-tag">32h</span></div>
+    <div class="uc-item" onclick="setUC('UC3.2','Controlar a Produção de Alimentos','Monitorar indicadores de desempenho, controlar processos por meio de IoT e IA, gerenciar estoques e elaborar relatórios considerando os pilares da ESG.',16,16,'Módulo III')"><span>UC 3.2 — Controlar a Produção</span><span class="ch-tag">32h</span></div>
+    <div class="uc-item" onclick="setUC('UC3.3','Controlar a Qualidade dos Alimentos','Coletar dados de qualidade, identificar sustentabilidade nos processos, pesquisar ferramentas de controle de qualidade e interpretar normas e legislações de identidade dos alimentos.',16,16,'Módulo III')"><span>UC 3.3 — Controlar a Qualidade</span><span class="ch-tag">32h</span></div>
+    <div class="uc-item" onclick="setUC('UC3.4','Controlar a Segurança dos Alimentos','Avaliar BPF, POP e PPHO, elaborar documentação de segurança, desenvolver plano APPCC e treinar equipes utilizando Inteligência Artificial.',16,16,'Módulo III')"><span>UC 3.4 — Controlar a Segurança</span><span class="ch-tag">32h</span></div>
+    <div class="uc-item" onclick="setUC('UC3.5','Promover Melhorias em Processos e Produtos','Implementar melhorias por gestão de projetos, mapear processos, diagnosticar oportunidades, elaborar planos de ação e padronizar processos.',16,16,'Módulo III')"><span>UC 3.5 — Promover Melhorias</span><span class="ch-tag">32h</span></div>
 
     <div class="sidebar-divider"></div>
     <div class="sidebar-title">Competências Transversais</div>
-    <div class="uc-item" onclick="setUC('SOCIO','Competências Socioemocionais','Desenvolver capacidades socioemocionais essenciais para a atuação profissional: aprendizagem ativa, empreendedorismo, inteligência emocional, liderança, pensamento crítico e resolução de problemas.','Aprendizagem Ativa · Empreendedorismo · Inteligência Emocional · Liderança · Pensamento Crítico · Resolução de Problemas','Transversal')">
-      <span>Competências Socioemocionais</span>
-    </div>
-    <div class="uc-item" onclick="setUC('IA','Competências de IA','Desenvolver capacidades para uso ético e produtivo de Inteligência Artificial: alfabetização em IA, uso de GenAI e análise de dados com IA para otimização de processos.','Alfabetização em IA · Uso ético de GenAI · Prompts · Análise de dados · Agentes de IA · Otimização de processos','Transversal')">
-      <span>Competências de IA</span>
-    </div>
+    <div class="uc-item" onclick="setUC('SOCIO','Competências Socioemocionais','Desenvolver capacidades socioemocionais integradas ao contexto profissional de Alimentos e Bebidas: Aprendizagem Ativa, Empreendedorismo, Inteligência Emocional (autoconsciência, autogestão, consciência social), Liderança, Pensamento Crítico e Resolução de Problemas.',8,8,'Transversal')"><span>Socioemocionais</span><span class="ch-tag">16h</span></div>
+    <div class="uc-item" onclick="setUC('IA','Competências de Inteligência Artificial','Desenvolver capacidades para uso ético e produtivo de IA na indústria alimentícia: Alfabetização em IA (conceitos, funcionamento, limitações e aspectos éticos), uso de GenAI com prompts eficazes, e Análise de Dados com IA para otimização de processos, controle de qualidade e rastreabilidade.',8,8,'Transversal')"><span>Inteligência Artificial</span><span class="ch-tag">16h</span></div>
   </aside>
 
-  <!-- MAIN -->
   <main class="main">
-
-    <!-- UC INFO ATIVA -->
     <div class="uc-header" id="uc-header">
       <h2 id="uc-nome">Selecione uma UC na barra lateral</h2>
       <p id="uc-desc">Escolha um módulo ou unidade curricular ao lado para gerar materiais didáticos específicos, alinhados ao Itinerário Nacional SENAI — Técnico em Alimentos (1200h).</p>
       <div class="uc-meta" id="uc-meta"></div>
     </div>
 
-    <!-- COMPETÊNCIAS RÁPIDAS -->
     <div class="comp-section">
       <h3>📋 Perfil de Competências — Técnico em Alimentos</h3>
       <div class="comp-tags">
         <span class="comp-tag">Industrializar Alimentos</span>
         <span class="comp-tag">Realizar Análises</span>
         <span class="comp-tag">Coordenar Produção</span>
-        <span class="comp-tag">BPF / APPCC / POP</span>
+        <span class="comp-tag">BPF / APPCC / POP / PPHO</span>
         <span class="comp-tag">Controle de Qualidade</span>
         <span class="comp-tag">Segurança dos Alimentos</span>
+        <span class="comp-tag">ESG · IoT</span>
         <span class="comp-tag socio">Aprendizagem Ativa</span>
         <span class="comp-tag socio">Empreendedorismo</span>
         <span class="comp-tag socio">Inteligência Emocional</span>
@@ -549,125 +223,123 @@
       </div>
     </div>
 
-    <!-- TÍTULO DA GRADE -->
     <div class="section-title">Gerar Material Didático</div>
-
-    <!-- GRADE DE 9 MATERIAIS -->
     <div class="materials-grid">
-
-      <!-- 1 PLANO DE AULA -->
       <div class="material-card" onclick="openModal('plano')">
         <div class="mat-icon">📋</div>
         <div class="mat-name">Plano de Aula</div>
-        <div class="mat-desc">Plano completo com objetivos, capacidades, metodologia SENAI e cronograma de CH.</div>
+        <div class="mat-desc">Plano completo no padrão SENAI com tabela de aulas calculada pela CH da UC.</div>
         <button class="mat-btn">✨ Gerar → .doc</button>
       </div>
-
-      <!-- 2 SITUAÇÃO DE APRENDIZAGEM -->
       <div class="material-card" onclick="openModal('sa')">
         <div class="mat-icon">🎯</div>
         <div class="mat-name">Situação de Aprendizagem</div>
         <div class="mat-desc">SA contextualizada com desafio real da indústria alimentícia.</div>
         <button class="mat-btn">✨ Gerar → .doc</button>
       </div>
-
-      <!-- 3 ROTEIRO DE PRÁTICAS -->
       <div class="material-card" onclick="openModal('pratica')">
         <div class="mat-icon">🧪</div>
         <div class="mat-name">Roteiro de Práticas</div>
         <div class="mat-desc">Procedimento laboratorial ou de produção com EPI, materiais e etapas.</div>
         <button class="mat-btn">✨ Gerar → .doc</button>
       </div>
-
-      <!-- 4 OBJETO DE APRENDIZAGEM -->
       <div class="material-card" onclick="openModal('oa')">
         <div class="mat-icon">📚</div>
         <div class="mat-name">Objeto de Aprendizagem</div>
-        <div class="mat-desc">Material teórico estruturado com conceitos, exemplos e referências técnicas.</div>
+        <div class="mat-desc">Material teórico com conceitos, exemplos e referências técnicas.</div>
         <button class="mat-btn">✨ Gerar → .doc</button>
       </div>
-
-      <!-- 5 MAPA MENTAL -->
       <div class="material-card" onclick="openModal('mapa')">
         <div class="mat-icon">🗺️</div>
         <div class="mat-name">Mapa Mental</div>
         <div class="mat-desc">Visualização dos conceitos e conexões da UC em SVG interativo.</div>
         <button class="mat-btn">✨ Gerar → SVG</button>
       </div>
-
-      <!-- 6 CAÇA-PALAVRAS -->
       <div class="material-card" onclick="openModal('caca')">
         <div class="mat-icon">🔤</div>
         <div class="mat-name">Caça-Palavras</div>
         <div class="mat-desc">Atividade lúdica com termos técnicos da área de Alimentos e Bebidas.</div>
         <button class="mat-btn">✨ Gerar → PNG</button>
       </div>
-
-      <!-- 7 AVALIAÇÃO -->
       <div class="material-card" onclick="openModal('avaliacao')">
         <div class="mat-icon">📝</div>
         <div class="mat-name">Avaliação / Prova</div>
         <div class="mat-desc">Instrumento avaliativo com questões objetivas e discursivas por UC.</div>
         <button class="mat-btn">✨ Gerar → .doc</button>
       </div>
-
-      <!-- 8 SLIDES -->
       <div class="material-card" onclick="openModal('slides')">
         <div class="mat-icon">🖥️</div>
         <div class="mat-name">Slides</div>
-        <div class="mat-desc">Apresentação HTML com estrutura didática, imagens e tópicos-chave.</div>
+        <div class="mat-desc">Apresentação HTML com estrutura didática e tópicos-chave.</div>
         <button class="mat-btn">✨ Gerar → HTML</button>
       </div>
-
-      <!-- 9 MATERIAL PERSONALIZADO -->
       <div class="material-card" onclick="openModal('custom')">
         <div class="mat-icon">⚙️</div>
         <div class="mat-name">Material Personalizado</div>
         <div class="mat-desc">Descreva o que precisa e a IA gera um material sob medida.</div>
         <button class="mat-btn">✨ Gerar → .doc</button>
       </div>
-
-    </div><!-- /materials-grid -->
-
+    </div>
   </main>
-</div><!-- /layout -->
+</div>
 
-<!-- ══════════════════════════════════════════════════════════ -->
-<!-- MODAIS                                                    -->
-<!-- ══════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════ MODAIS ═══════════════════════════════ -->
 
 <!-- MODAL PLANO DE AULA -->
 <div class="modal-overlay" id="modal-plano">
   <div class="modal">
     <div class="modal-header">
-      <h3>📋 Plano de Aula</h3>
+      <h3>📋 Plano de Aula — Padrão SENAI</h3>
       <button class="modal-close" onclick="closeModal('plano')">✕</button>
     </div>
     <div class="modal-body">
       <div class="form-row">
         <div class="form-group">
           <label>Docente</label>
-          <input type="text" id="pa-docente" placeholder="Nome completo" />
+          <input type="text" id="pa-docente" placeholder="Nome completo do docente" />
         </div>
         <div class="form-group">
-          <label>Carga Horária (horas)</label>
-          <input type="number" id="pa-ch" value="2" min="1" max="40" />
+          <label>Data</label>
+          <input type="date" id="pa-data" />
         </div>
       </div>
       <div class="form-group">
-        <label>Unidade Curricular / Tema</label>
-        <input type="text" id="pa-uc" placeholder="Ex: UC 1.1 — Processar Carnes e Derivados" />
+        <label>Unidade Curricular</label>
+        <input type="text" id="pa-uc" placeholder="Ex: UC 1.4 — Processar Pães, Massas e Biscoitos" />
       </div>
       <div class="form-group">
         <label>Turma / Período</label>
         <input type="text" id="pa-turma" placeholder="Ex: Técnico em Alimentos — 2025.1" />
+      </div>
+      <div class="ch-info-box" id="pa-ch-info"></div>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label>CH Teórica da UC (h)</label>
+          <input type="number" id="pa-cht" value="16" min="0" max="200" oninput="calcAulas()" />
+        </div>
+        <div class="form-group">
+          <label>CH Prática da UC (h)</label>
+          <input type="number" id="pa-chp" value="24" min="0" max="200" oninput="calcAulas()" />
+        </div>
+        <div class="form-group">
+          <label>CH por Aula (h)</label>
+          <select id="pa-chpordia" onchange="calcAulas()">
+            <option value="4">4h (presencial padrão)</option>
+            <option value="3">3h (presencial reduzido)</option>
+            <option value="2">2h (remoto)</option>
+          </select>
+        </div>
+      </div>
+      <div class="ch-info-box visible" id="pa-aulas-info">
+        <strong id="pa-aulas-txt">Calculando...</strong>
+        <span id="pa-aulas-sub"></span>
       </div>
       <div class="form-group">
         <label>Observações adicionais (opcional)</label>
         <textarea id="pa-obs" placeholder="Recursos disponíveis, necessidades especiais, ênfases..."></textarea>
       </div>
       <button class="btn-primary" id="pa-btn" onclick="gerarPlano()">✨ Gerar Plano de Aula</button>
-      <div class="loading" id="pa-loading"><div class="spinner"></div> Gerando com IA...</div>
+      <div class="loading" id="pa-loading"><div class="spinner"></div> Gerando com IA Gemini...</div>
       <div class="output-area" id="pa-output"></div>
       <div class="btn-row" id="pa-actions" style="display:none">
         <button class="btn-secondary" onclick="downloadDoc('pa-output','Plano_de_Aula')">⬇ Baixar .doc</button>
@@ -690,7 +362,7 @@
         <input type="text" id="sa-uc" placeholder="Ex: UC 2.1 — Análises Físico-Químicas" />
       </div>
       <div class="form-group">
-        <label>Contexto / Empresa / Cenário</label>
+        <label>Contexto / Cenário (opcional)</label>
         <textarea id="sa-ctx" placeholder="Ex: Indústria de laticínios recebe lote suspeito de leite..."></textarea>
       </div>
       <button class="btn-primary" id="sa-btn" onclick="gerarSA()">✨ Gerar Situação de Aprendizagem</button>
@@ -785,7 +457,7 @@
       </div>
       <button class="btn-primary" id="mm-btn" onclick="gerarMapa()">✨ Gerar Mapa Mental</button>
       <div class="loading" id="mm-loading"><div class="spinner"></div> Gerando com IA...</div>
-      <div id="mm-svg-container" style="display:none; margin-top:16px;"></div>
+      <div id="mm-svg-container" style="display:none;margin-top:16px;overflow:auto"></div>
       <div class="btn-row" id="mm-actions" style="display:none">
         <button class="btn-secondary" onclick="downloadSVG()">⬇ Baixar SVG</button>
       </div>
@@ -815,7 +487,7 @@
       </div>
       <button class="btn-primary" id="cw-btn" onclick="gerarCaca()">✨ Gerar Caça-Palavras</button>
       <div class="loading" id="cw-loading"><div class="spinner"></div> Gerando com IA...</div>
-      <div id="cw-container" style="display:none; margin-top:16px;"></div>
+      <canvas id="cw-canvas" style="display:none;max-width:100%;margin-top:16px;border:1px solid var(--border);border-radius:8px"></canvas>
       <div class="btn-row" id="cw-actions" style="display:none">
         <button class="btn-secondary" onclick="downloadCacaPNG()">⬇ Baixar PNG</button>
       </div>
@@ -904,7 +576,7 @@
     <div class="modal-body">
       <div class="form-group">
         <label>Descreva o material que você precisa</label>
-        <textarea id="cu-desc" rows="5" placeholder="Ex: Ficha de acompanhamento de estágio para alunos do Técnico em Alimentos que atuam em indústrias de laticínios. Deve conter: dados do aluno, empresa, atividades semanais e avaliação do supervisor..."></textarea>
+        <textarea id="cu-desc" rows="5" placeholder="Ex: Ficha de acompanhamento de estágio para alunos do Técnico em Alimentos..."></textarea>
       </div>
       <button class="btn-primary" id="cu-btn" onclick="gerarCustom()">✨ Gerar Material</button>
       <div class="loading" id="cu-loading"><div class="spinner"></div> Gerando com IA...</div>
@@ -917,472 +589,620 @@
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- ══════════════════════════════════════════════════════════ -->
-<!-- SCRIPTS                                                   -->
-<!-- ══════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════ SCRIPTS ═══════════════════════════════ -->
 <script>
-// ── CONFIG ────────────────────────────────────────────────────
-const PROXY_URL   = 'https://hub-mqct-proxy.vercel.app/api/gemini';
+const PROXY_URL    = 'https://hub-mqct-proxy.vercel.app/api/gemini';
 const SUPABASE_URL = 'https://afvdrtmmxgvuyipsnatq.supabase.co';
-const SUPA_KEY    = 'sb_publishable_-Gi-ZXwN14vLzz2iHcvWfg_NdCy7lvG';
+const AREA_NOME    = 'Alimentos e Bebidas';
+const CURSO        = 'Técnico em Alimentos — 1200h';
 
-// ── ÁREA ──────────────────────────────────────────────────────
-const AREA_NOME  = 'Alimentos e Bebidas';
-const AREA_COR   = '#F4A020';
-const CURSO      = 'Técnico em Alimentos — 1200h';
+let ucAtual = {id:'',nome:'',desc:'',cht:0,chp:0,modulo:''};
 
-// UC selecionada
-let ucAtual = { id:'', nome:'', desc:'', cha:'', modulo:'' };
-
-// ── TEMA ──────────────────────────────────────────────────────
-function toggleTheme() {
-  const body = document.body;
-  const dark  = body.dataset.theme === 'dark';
-  body.dataset.theme = dark ? 'light' : 'dark';
-  document.querySelector('.theme-btn').textContent = dark ? '🌙' : '☀️';
+// ── TEMA ─────────────────────────────────────────────────────
+function toggleTheme(){
+  const dark = document.body.dataset.theme==='dark';
+  document.body.dataset.theme = dark?'light':'dark';
+  document.querySelector('.theme-btn').textContent = dark?'🌙':'☀️';
 }
 
-// ── VOLTAR AO HUB ────────────────────────────────────────────
-function voltarHub() {
-  window.location.href = '../index.html';
+function voltarHub(){ window.location.href='../index.html'; }
+
+// ── CALCULAR AULAS ────────────────────────────────────────────
+function calcAulas(){
+  const cht    = parseInt(document.getElementById('pa-cht').value)||0;
+  const chp    = parseInt(document.getElementById('pa-chp').value)||0;
+  const chDia  = parseInt(document.getElementById('pa-chpordia').value)||4;
+  const total  = cht + chp;
+  const isTransversal = (total === 0);
+  // Transversais: exibe 1 aula no placeholder; docente ajusta a CH acima
+  const totalEfetivo = isTransversal ? chDia : total;
+  const nAulas = Math.max(1, Math.ceil(totalEfetivo / chDia));
+  const box = document.getElementById('pa-aulas-info');
+  if(!isTransversal){
+    document.getElementById('pa-aulas-txt').textContent =
+      `📊 Total da UC: ${cht}h teórica + ${chp}h prática = ${total}h`;
+    document.getElementById('pa-aulas-sub').textContent =
+      `→ Serão geradas ${nAulas} aula${nAulas>1?"s":""} de ${chDia}h cada`;
+  } else {
+    document.getElementById('pa-aulas-txt').textContent =
+      `📊 Competência Transversal — CH definida pela instituição`;
+    document.getElementById('pa-aulas-sub').textContent =
+      `→ Ajuste a CH acima para calcular o número de aulas automaticamente`;
+  }
+  box.classList.add('visible');
+  return {cht, chp, total: totalEfetivo, chDia, nAulas, isTransversal};
 }
 
-// ── SELECIONAR UC ────────────────────────────────────────────
-function setUC(id, nome, desc, cha, modulo) {
-  ucAtual = { id, nome, desc, cha, modulo };
+// ── SELECIONAR UC ─────────────────────────────────────────────
+function setUC(id, nome, desc, cht, chp, modulo){
+  ucAtual = {id, nome, desc, cht, chp, modulo};
   document.getElementById('uc-nome').textContent = nome;
   document.getElementById('uc-desc').textContent = desc;
-  const meta = document.getElementById('uc-meta');
-  meta.innerHTML = `
-    <span>${modulo}</span>
-    <span>${cha.split(' · ')[0]}</span>
-    <span>${CURSO}</span>
-  `;
-  // Preenche campos dos modais com a UC selecionada
-  const ucStr = `${id} — ${nome}`;
-  ['pa-uc','sa-uc','pr-uc','oa-uc','mm-uc','cw-uc','av-uc','sl-uc'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el && !el.value) el.value = ucStr;
+  const total = cht + chp;
+  const meta  = document.getElementById('uc-meta');
+  if(total > 0){
+    meta.innerHTML = `
+      <span>${modulo}</span>
+      <span class="ch-t">📖 Teórica: ${cht}h</span>
+      <span class="ch-p">🧪 Prática: ${chp}h</span>
+      <span class="ch-total">⏱ Total: ${total}h</span>`;
+  } else {
+    meta.innerHTML = `<span>${modulo}</span>`;
+  }
+  // preenche campos dos modais
+  const ucStr = id.startsWith('F')||id==='SOCIO'||id==='IA' ? nome : `${id} — ${nome}`;
+  ['pa-uc','sa-uc','pr-uc','oa-uc','mm-uc','cw-uc','av-uc','sl-uc'].forEach(fid => {
+    const el = document.getElementById(fid);
+    if(el && !el.value) el.value = ucStr;
   });
-  // Scroll suave ao topo do main
-  document.querySelector('.main').scrollIntoView({ behavior:'smooth', block:'start' });
+  // preenche CH nos campos do plano
+  if(total > 0){
+    const chtEl = document.getElementById('pa-cht');
+    const chpEl = document.getElementById('pa-chp');
+    if(chtEl) chtEl.value = cht;
+    if(chpEl) chpEl.value = chp;
+    calcAulas();
+  }
+  document.querySelector('.main').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-// ── MODAL ────────────────────────────────────────────────────
-function openModal(id) {
+// ── MODAIS ────────────────────────────────────────────────────
+function openModal(id){
   document.getElementById('modal-'+id).classList.add('open');
-  document.body.style.overflow = 'hidden';
+  document.body.style.overflow='hidden';
+  if(id==='plano') calcAulas();
 }
-function closeModal(id) {
+function closeModal(id){
   document.getElementById('modal-'+id).classList.remove('open');
-  document.body.style.overflow = '';
+  document.body.style.overflow='';
 }
-document.querySelectorAll('.modal-overlay').forEach(m => {
-  m.addEventListener('click', e => {
-    if (e.target === m) closeModal(m.id.replace('modal-',''));
-  });
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{ if(e.target===m) closeModal(m.id.replace('modal-','')); });
 });
 
-// ── TOKEN SUPABASE ───────────────────────────────────────────
-function getToken() {
-  try {
-    const raw = localStorage.getItem(`sb-${SUPABASE_URL.split('.')[0].replace('https://','')}-auth-token`);
-    if (raw) return JSON.parse(raw)?.access_token;
-  } catch {}
-  // fallback: procura qualquer chave supabase
-  for (let k of Object.keys(localStorage)) {
-    if (k.includes('auth-token')) {
-      try { return JSON.parse(localStorage.getItem(k))?.access_token; } catch {}
+// ── TOKEN SUPABASE ────────────────────────────────────────────
+function getToken(){
+  try{
+    for(let k of Object.keys(localStorage)){
+      if(k.includes('auth-token')){
+        const p = JSON.parse(localStorage.getItem(k));
+        if(p?.access_token) return p.access_token;
+      }
     }
-  }
+  }catch{}
   return null;
 }
 
-// ── CHAMADA GEMINI ───────────────────────────────────────────
-async function callGemini(prompt) {
-  const token = getToken();
-  const headers = { 'Content-Type': 'application/json' };
-  if (token) headers['Authorization'] = `Bearer ${token}`;
-
-  const res = await fetch(PROXY_URL, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({ prompt })
-  });
-
-  if (res.status === 401) {
-    showToast('Sessão expirada. Redirecionando...', 'error');
-    setTimeout(() => window.location.href = '../index.html', 2000);
+// ── GEMINI ────────────────────────────────────────────────────
+async function callGemini(prompt){
+  const token   = getToken();
+  const headers = {'Content-Type':'application/json'};
+  if(token) headers['Authorization'] = `Bearer ${token}`;
+  const res = await fetch(PROXY_URL,{method:'POST',headers,body:JSON.stringify({prompt})});
+  if(res.status===401){
+    showToast('Sessão expirada. Redirecionando...','error');
+    setTimeout(()=>window.location.href='../index.html',2000);
     throw new Error('Unauthorized');
   }
-  if (!res.ok) throw new Error(`Erro ${res.status}`);
+  if(!res.ok) throw new Error(`Erro ${res.status}`);
   const data = await res.json();
   return data.text || data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
 
-// ── TOAST ────────────────────────────────────────────────────
-function showToast(msg, type='') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast visible' + (type ? ' '+type : '');
-  setTimeout(() => t.classList.remove('visible'), 3500);
+// ── TOAST ─────────────────────────────────────────────────────
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast visible'+(type?' '+type:'');
+  setTimeout(()=>t.classList.remove('visible'),3500);
 }
 
-// ── UI HELPERS ───────────────────────────────────────────────
-function setLoading(prefix, on) {
-  document.getElementById(prefix+'-loading').classList.toggle('visible', on);
-  const btn = document.getElementById(prefix+'-btn');
-  if (btn) btn.disabled = on;
+// ── UI HELPERS ────────────────────────────────────────────────
+function setLoading(p,on){
+  document.getElementById(p+'-loading').classList.toggle('visible',on);
+  const btn=document.getElementById(p+'-btn');
+  if(btn) btn.disabled=on;
 }
-function showOutput(prefix, text) {
-  const el = document.getElementById(prefix+'-output');
-  if (el) { el.textContent = text; el.classList.add('visible'); }
-  const ac = document.getElementById(prefix+'-actions');
-  if (ac) ac.style.display = 'flex';
+function showOutput(p,text){
+  const el=document.getElementById(p+'-output');
+  if(el){el.textContent=text;el.classList.add('visible');}
+  const ac=document.getElementById(p+'-actions');
+  if(ac) ac.style.display='flex';
 }
 
-// ── DOWNLOAD DOC ─────────────────────────────────────────────
-function downloadDoc(outputId, nomeArq) {
+// ── DOWNLOAD DOC ──────────────────────────────────────────────
+function downloadDoc(outputId, nomeArq){
   const text = document.getElementById(outputId).textContent;
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <style>body{font-family:Arial,sans-serif;margin:2cm;font-size:12pt;line-height:1.6}
-  h1{font-size:16pt;color:#B87210}h2{font-size:13pt;color:#5C4A1A}
-  table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:6px 10px}
-  th{background:#FDE8B4}</style></head><body>${text.replace(/\n/g,'<br>')}</body></html>`;
-  const blob = new Blob(['\ufeff'+html], {type:'application/msword'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  // Converte markdown básico em HTML
+  let html = text
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/^# (.+)$/gm,'<h1>$1</h1>')
+    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
+    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^• (.+)$/gm,'<li>$1</li>')
+    .replace(/^\| (.+) \|$/gm, row => {
+      const cells = row.split('|').filter(c=>c.trim()&&!c.match(/^[-\s]+$/));
+      return '<tr>'+cells.map(c=>`<td>${c.trim()}</td>`).join('')+'</tr>';
+    })
+    .replace(/\n/g,'<br>');
+  const docHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>
+  @page{size:A4 landscape;margin:2cm}
+  body{font-family:Arial,sans-serif;font-size:11pt;line-height:1.6;color:#1A1208}
+  h1{font-size:15pt;color:#B87210;border-bottom:2px solid #F4A020;padding-bottom:6px;margin:16px 0 8px}
+  h2{font-size:13pt;color:#5C4A1A;margin:14px 0 6px}
+  h3{font-size:11pt;color:#8A7040;margin:10px 0 4px}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:10pt}
+  td,th{border:1px solid #E8DCC8;padding:6px 10px;vertical-align:top}
+  th{background:#FDE8B4;color:#B87210;font-weight:bold}
+  tr:nth-child(even) td{background:#FFFBF2}
+  li{margin:4px 0}
+  .header-box{background:#F4A020;color:#fff;padding:10px 16px;border-radius:6px;margin-bottom:16px}
+</style></head><body>
+<div class="header-box"><strong>SENAI BAHIA · MQCT · ${AREA_NOME}</strong> — ${CURSO}</div>
+${html}
+</body></html>`;
+  const blob = new Blob(['\ufeff'+docHtml],{type:'application/msword'});
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
   a.download = `${nomeArq}_${new Date().toISOString().slice(0,10)}.doc`;
   a.click();
   showToast('Download iniciado!');
 }
 
-function copiarTexto(outputId) {
-  navigator.clipboard.writeText(document.getElementById(outputId).textContent)
-    .then(() => showToast('Texto copiado!'))
-    .catch(() => showToast('Erro ao copiar', 'error'));
+function copiarTexto(id){
+  navigator.clipboard.writeText(document.getElementById(id).textContent)
+    .then(()=>showToast('Copiado!'))
+    .catch(()=>showToast('Erro ao copiar','error'));
 }
 
-// ── PROMPTS BASE ─────────────────────────────────────────────
-const MSEP_BASE = `Você é um especialista em educação profissional técnica alinhado à Metodologia SENAI de Educação Profissional (MSEP) e ao Itinerário Nacional SENAI.
-Área: ${AREA_NOME} | Curso: ${CURSO}
-Itinerário Nacional — Versão 2025.1
-Perfil Profissional: Industrializar alimentos, realizar análises e coordenar a produção de alimentos, conforme procedimentos, normas e legislações vigentes de qualidade e segurança dos alimentos, de saúde e segurança do trabalho e de sustentabilidade.
-Competências Gerais: BPF, APPCC, POP, PPHO, controle de qualidade, análises físico-químicas, sensoriais e microbiológicas, coordenação de produção, melhoria contínua, ESG, IoT, Inteligência Artificial aplicada à produção alimentícia.
+// ── PROMPT BASE MSEP ──────────────────────────────────────────
+const MSEP_BASE = `Você é especialista em educação profissional técnica, alinhado à Metodologia SENAI de Educação Profissional (MSEP) e ao Itinerário Nacional SENAI — Área: Alimentos e Bebidas.
+Curso: ${CURSO} | CBO: 3252-05
+Perfil Profissional: Industrializar alimentos, realizar análises físico-químicas/sensoriais/microbiológicas e coordenar a produção de alimentos, conforme normas de qualidade, segurança dos alimentos, SST e sustentabilidade.
+Funções: F1-Industrializar (UCs 1.1 a 1.6, 40h cada) | F2-Analisar (UCs 2.1-40h, 2.2-24h, 2.3-40h) | F3-Coordenar (UCs 3.1 a 3.5, 32h cada)
 Competências Socioemocionais: Aprendizagem Ativa, Empreendedorismo, Inteligência Emocional, Liderança, Pensamento Crítico, Resolução de Problemas.
 Competências de IA: Alfabetização em IA, uso ético de GenAI, análise de dados com IA.
-Regras de formatação MSEP:
-- Capacidades no gerúndio (ex: C1 — Identificando as características de recebimento de matérias-primas...)
-- Habilidades associadas às capacidades
-- Conhecimentos técnicos específicos
-- Referências técnicas reais (RDC ANVISA, NBR, Codex Alimentarius, MAPA)
-- Sempre contextualizado com a realidade da indústria alimentícia brasileira`;
+REGRAS MSEP: Capacidades no gerúndio (C1 — Identificando...) | Habilidades associadas às capacidades | Conhecimentos técnicos específicos | Referências técnicas reais (RDC ANVISA, NBR, Codex Alimentarius, MAPA) | Contexto da indústria alimentícia brasileira.`;
 
-// ── GERADORES ────────────────────────────────────────────────
-
-async function gerarPlano() {
-  const uc      = document.getElementById('pa-uc').value || ucAtual.nome || 'UC não informada';
-  const docente = document.getElementById('pa-docente').value || 'Docente SENAI';
-  const ch      = document.getElementById('pa-ch').value || '2';
-  const turma   = document.getElementById('pa-turma').value || 'Técnico em Alimentos';
-  const obs     = document.getElementById('pa-obs').value || '';
-  setLoading('pa', true);
-  try {
-    const prompt = `${MSEP_BASE}
-
-Gere um PLANO DE AULA completo no padrão MSEP SENAI para:
-- UC/Tema: ${uc}
-- Docente: ${docente}
-- Carga Horária da aula: ${ch}h
-- Turma: ${turma}
-- Observações: ${obs}
-
-Estruture com:
-1. Identificação (Área, Curso, UC, Docente, CH, Data)
-2. Competência(s) da aula (gerúndio, baseadas no Itinerário Nacional)
-3. Capacidades (C1, C2, C3... no gerúndio)
-4. Habilidades (H associadas a cada C)
-5. Conhecimentos (K — técnicos específicos)
-6. Atitudes (A — socioemocionais e de IA quando pertinente)
-7. Metodologia (SENAI: situação problema, pesquisa, aplicação, avaliação)
-8. Recursos didáticos
-9. Desenvolvimento (cronograma por momento: abertura, desenvolvimento, fechamento com CH em minutos)
-10. Avaliação (instrumentos e critérios)
-11. Referências técnicas (normas, RDC, NBR, Codex)`;
-    const text = await callGemini(prompt);
-    showOutput('pa', text);
-  } catch(e) { if (e.message !== 'Unauthorized') showToast('Erro ao gerar. Tente novamente.', 'error'); }
-  setLoading('pa', false);
+// ── CONTEXTO TRANSVERSAL (helper compartilhado) ─────────────────
+function getCtxTransversal(ucId){
+  if(ucId === 'SOCIO'){
+    return `\nALERT: Esta é uma COMPETÊNCIA SOCIOEMOCIONAL transversal ao curso de Técnico em Alimentos.
+Contextualize TODOS os conteúdos, exemplos e atividades com situações reais da indústria alimentícia
+(trabalho em equipe na linha de produção, liderança em turnos, resolução de conflitos em laboratório, etc.).
+Competências a desenvolver: Aprendizagem Ativa, Empreendedorismo, Inteligência Emocional (autoconsciência, autogestão, consciência social), Liderança, Pensamento Crítico, Resolução de Problemas.`;
+  }
+  if(ucId === 'IA'){
+    return `\nALERT: Esta é uma COMPETÊNCIA DE INTELIGÊNCIA ARTIFICIAL transversal ao curso de Técnico em Alimentos.
+Contextualize TODOS os conteúdos com aplicações reais de IA na indústria alimentícia
+(visão computacional para inspeção de qualidade, análise preditiva de shelf-life, chatbots para BPF,
+rastreabilidade por IoT, agentes de IA para controle de processo, GenAI para laudos técnicos).
+Competências a desenvolver: Alfabetização em IA (conceitos, ética, limitações), uso de GenAI com prompts eficazes, Análise de Dados com IA.`;
+  }
+  return '';
 }
 
-async function gerarSA() {
-  const uc  = document.getElementById('sa-uc').value || ucAtual.nome;
-  const ctx = document.getElementById('sa-ctx').value;
-  setLoading('sa', true);
-  try {
+// ── GERAR PLANO ───────────────────────────────────────────────
+async function gerarPlano(){
+  const {cht, chp, total, chDia, nAulas, isTransversal} = calcAulas();
+  const uc      = document.getElementById('pa-uc').value || ucAtual.nome || 'UC não informada';
+  const docente = document.getElementById('pa-docente').value || '______________________';
+  const data    = document.getElementById('pa-data').value || '___/___/______';
+  const turma   = document.getElementById('pa-turma').value || 'Técnico em Alimentos';
+  const obs     = document.getElementById('pa-obs').value;
+
+  // Contexto extra para competências transversais
+  const contextoTransversal = isTransversal ? `
+ATENÇÃO: Esta é uma COMPETÊNCIA TRANSVERSAL integrada ao curso. Não tem UC exclusiva — é desenvolvida ao longo de todas as UCs.
+Gere capacidades, habilidades e conteúdos contextualizados para a área de Alimentos e Bebidas.
+A tabela de aulas deve ter ${nAulas} aula(s) de ${chDia}h, com exemplos práticos da indústria alimentícia.` : '';
+
+  setLoading('pa',true);
+  try{
     const prompt = `${MSEP_BASE}
 
-Gere uma SITUAÇÃO DE APRENDIZAGEM completa no padrão MSEP SENAI para:
-- UC: ${uc}
-- Contexto/Cenário: ${ctx || 'Indústria alimentícia brasileira'}
+Gere um PLANO DE AULA COMPLETO no EXATO formato abaixo, para:
+- UC/Competência: ${uc}
+- Docente: ${docente}
+- Data: ${data}
+- Turma: ${turma}
+- CH Teórica: ${cht}h | CH Prática: ${chp}h | Total: ${total}h
+- CH por aula: ${chDia}h | Número total de aulas: ${nAulas} aula${nAulas>1?'s':''}
+- Observações: ${obs||'Nenhuma'}${contextoTransversal}
 
-Estruture com:
+FORMATO OBRIGATÓRIO (siga EXATAMENTE esta estrutura):
+
+PLANO DE AULA — SENAI BAHIA · MQCT
+
+| CURSO: Alimentos e Bebidas | DOCENTE: ${docente} | DATA: ${data} |
+| UC: ${uc} | CH T: ${cht}h │ P: ${chp}h │ Total: ${total}h |
+
+OBJETIVO
+[Parágrafo objetivo geral da UC, contextualizando com a indústria alimentícia]
+
+CAPACIDADES
+• C1 — [no gerúndio, ex: Identificando e selecionando matérias-primas...]
+• C2 — [no gerúndio]
+• C3 — [no gerúndio]
+[continuar conforme necessário, coerente com o total de ${total}h]
+
+HABILIDADES
+• H1 — [associada às capacidades]
+• H2 — [associada às capacidades]
+• H3 — [associada às capacidades]
+
+TABELA DE AULAS (${nAulas} aulas de ${chDia}h cada = ${total}h total)
+
+| Nº | Capacidade | Hab. | Conteúdo | Estratégias | Recursos |
+|---|---|---|---|---|---|
+| Aula 1 | C? | H? | [tema e subtemas detalhados] | Abertura (${Math.round(chDia*60*0.15)}min): [...] Desenvolvimento: [...] Fechamento (${Math.round(chDia*60*0.15)}min): [...] | [lista de recursos] |
+[GERAR TODAS AS ${nAulas} AULAS, distribuindo conteúdo progressivamente, com abertura/desenvolvimento/fechamento proporcionais às ${chDia}h]
+
+AVALIAÇÕES
+
+| Instrumento | Descrição | Pontuação |
+|---|---|---|
+| Avaliação Teórica | Prova escrita individual com questões sobre os conteúdos da UC | 4,0 pts |
+| Avaliação Prática | Atividade prática avaliando aplicação das competências da UC | 6,0 pts |
+
+REFERÊNCIAS
+• SENAI. Itinerário Nacional Alimentos e Bebidas. Brasília: SENAI/DN, 2025.
+• [Normas RDC ANVISA pertinentes à UC]
+• [Normas ABNT/NBR pertinentes]
+• [Referências técnicas e bibliográficas da área]`;
+    const text = await callGemini(prompt);
+    showOutput('pa',text);
+  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar. Tente novamente.','error'); }
+  setLoading('pa',false);
+}
+
+async function gerarSA(){
+  const uc  = document.getElementById('sa-uc').value || ucAtual.nome;
+  const ctx = document.getElementById('sa-ctx').value;
+  setLoading('sa',true);
+  try{
+    const prompt = `${MSEP_BASE}
+Gere uma SITUAÇÃO DE APRENDIZAGEM completa no padrão MSEP SENAI para:
+- UC/Competência: ${uc}
+- Contexto: ${ctx||'Indústria alimentícia brasileira'}${getCtxTransversal(ucAtual.id)}
+
+Estrutura obrigatória:
 1. Título da SA
 2. Contexto / Situação-Problema (narrativa realista da indústria)
 3. Desafio proposto ao aluno
-4. Competências desenvolvidas (gerúndio)
-5. Etapas de desenvolvimento (pesquisa, análise, proposição, implementação, avaliação)
+4. Competências desenvolvidas (no gerúndio)
+5. Etapas de desenvolvimento (pesquisa → análise → proposição → implementação → avaliação)
 6. Produtos/Evidências esperados
-7. Critérios de avaliação
-8. Referências técnicas e legislações aplicáveis`;
+7. Critérios de avaliação (rubrica)
+8. Referências técnicas e legislações aplicáveis (RDC ANVISA, Codex, MAPA)`;
     const text = await callGemini(prompt);
-    showOutput('sa', text);
-  } catch(e) { if (e.message !== 'Unauthorized') showToast('Erro ao gerar.', 'error'); }
-  setLoading('sa', false);
+    showOutput('sa',text);
+  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar.','error'); }
+  setLoading('sa',false);
 }
 
-async function gerarPratica() {
+async function gerarPratica(){
   const uc      = document.getElementById('pr-uc').value || ucAtual.nome;
   const tipo    = document.getElementById('pr-tipo').value;
   const recursos = document.getElementById('pr-recursos').value;
-  setLoading('pr', true);
-  try {
+  setLoading('pr',true);
+  try{
     const prompt = `${MSEP_BASE}
-
 Gere um ROTEIRO DE PRÁTICAS detalhado para:
-- UC: ${uc}
-- Tipo de prática: ${tipo}
-- Recursos: ${recursos || 'Laboratório de alimentos padrão SENAI'}
+- UC/Competência: ${uc} | Tipo: ${tipo}${getCtxTransversal(ucAtual.id)}
+- Recursos: ${recursos||'Laboratório de alimentos padrão SENAI'}
 
-Estruture com:
-1. Título e objetivos da prática
+Estrutura:
+1. Título e objetivos
 2. Fundamentação teórica (resumida)
-3. Materiais e equipamentos (lista)
+3. Materiais e equipamentos
 4. EPIs obrigatórios
 5. Procedimentos (passo a passo numerado)
-6. Pontos de controle / Pontos Críticos
-7. Análise de resultados esperados
+6. Pontos de controle / PCCs
+7. Resultados esperados
 8. Descarte de resíduos (conforme legislação ambiental)
-9. Relatório de prática (campos para o aluno preencher)
-10. Referências (NBR, RDC ANVISA, MAPA, Codex)`;
+9. Relatório de prática (campos para o aluno)
+10. Referências (RDC ANVISA, NBR, MAPA, Codex)`;
     const text = await callGemini(prompt);
-    showOutput('pr', text);
-  } catch(e) { if (e.message !== 'Unauthorized') showToast('Erro ao gerar.', 'error'); }
-  setLoading('pr', false);
+    showOutput('pr',text);
+  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar.','error'); }
+  setLoading('pr',false);
 }
 
-async function gerarOA() {
+async function gerarOA(){
   const uc    = document.getElementById('oa-uc').value || ucAtual.nome;
   const nivel = document.getElementById('oa-nivel').value;
-  setLoading('oa', true);
-  try {
+  setLoading('oa',true);
+  try{
     const prompt = `${MSEP_BASE}
+Gere um OBJETO DE APRENDIZAGEM para: ${uc} | Nível: ${nivel}${getCtxTransversal(ucAtual.id)}
 
-Gere um OBJETO DE APRENDIZAGEM (material teórico) para:
-- UC/Tema: ${uc}
-- Nível: ${nivel}
-
-Estruture com:
+Estrutura:
 1. Apresentação do tema
 2. Objetivos de aprendizagem
-3. Conteúdo principal (seções com subtítulos, conceitos, exemplos da indústria alimentícia)
-4. Saiba mais (aplicações, tendências, inovações — inclua IoT e IA quando pertinente)
+3. Conteúdo principal (seções com subtítulos, conceitos, exemplos da indústria)
+4. Saiba mais (IoT, IA, tendências quando pertinente)
 5. Atividades de fixação (3 questões)
 6. Glossário técnico
-7. Referências (normas, RDC ANVISA, Codex Alimentarius, MAPA, literatura técnica)`;
+7. Referências (normas, RDC ANVISA, Codex, MAPA, literatura técnica)`;
     const text = await callGemini(prompt);
-    showOutput('oa', text);
-  } catch(e) { if (e.message !== 'Unauthorized') showToast('Erro ao gerar.', 'error'); }
-  setLoading('oa', false);
+    showOutput('oa',text);
+  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar.','error'); }
+  setLoading('oa',false);
 }
 
-async function gerarMapa() {
+async function gerarMapa(){
   const uc = document.getElementById('mm-uc').value || ucAtual.nome || 'Técnico em Alimentos';
-  setLoading('mm', true);
-  try {
+  setLoading('mm',true);
+  try{
     const prompt = `${MSEP_BASE}
-
-Gere um MAPA MENTAL em SVG (800x600px) sobre: "${uc}"
-- Tema central no meio
-- 5 a 7 ramos principais com conceitos-chave da UC
-- Sub-ramos com detalhes técnicos
-- Use a cor #F4A020 como cor principal
-- Fundo branco (#FFFFFF)
-- Texto legível, fonte sans-serif
-- Retorne APENAS o código SVG completo, sem markdown, sem explicações.`;
+Gere um MAPA MENTAL em SVG (viewBox="0 0 900 620") sobre: "${uc}"${getCtxTransversal(ucAtual.id)}
+- Tema central no meio em retângulo arredondado laranja (#F4A020), texto branco bold
+- 5 a 7 ramos principais com elipses coloridas (paleta: #F4A020, #B87210, #5C4A1A, #8B6914, #2E7D32, #1565C0, #7B1FA2)
+- Linhas curvas conectando ao centro
+- Sub-ramos com texto em retângulos brancos com borda colorida
+- Fundo branco #FFFFFF
+- Fonte sans-serif, tamanhos: 16px centro, 13px ramos, 11px sub-ramos
+- Retorne APENAS o SVG completo começando com <svg, sem markdown, sem explicação.`;
     const svg = await callGemini(prompt);
     const container = document.getElementById('mm-svg-container');
-    const cleanSVG = svg.replace(/```svg|```/gi,'').trim();
-    container.innerHTML = cleanSVG;
-    container.style.display = 'block';
-    document.getElementById('mm-actions').style.display = 'flex';
-    window._lastSVG = cleanSVG;
-  } catch(e) { if (e.message !== 'Unauthorized') showToast('Erro ao gerar mapa.', 'error'); }
-  setLoading('mm', false);
+    const clean = svg.replace(/```svg|```xml|```/gi,'').trim();
+    container.innerHTML = clean;
+    container.style.display='block';
+    document.getElementById('mm-actions').style.display='flex';
+    window._lastSVG = clean;
+  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar mapa.','error'); }
+  setLoading('mm',false);
 }
 
-function downloadSVG() {
-  if (!window._lastSVG) return;
-  const blob = new Blob([window._lastSVG], {type:'image/svg+xml'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+function downloadSVG(){
+  if(!window._lastSVG) return;
+  const blob = new Blob([window._lastSVG],{type:'image/svg+xml'});
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
   a.download = `Mapa_Mental_${new Date().toISOString().slice(0,10)}.svg`;
   a.click();
   showToast('SVG baixado!');
 }
 
-async function gerarCaca() {
+// ── CAÇA-PALAVRAS COM CANVAS PNG ──────────────────────────────
+async function gerarCaca(){
   const uc  = document.getElementById('cw-uc').value || ucAtual.nome || 'Técnico em Alimentos';
-  const num = document.getElementById('cw-num').value;
-  setLoading('cw', true);
-  try {
+  const num = parseInt(document.getElementById('cw-num').value)||15;
+  setLoading('cw',true);
+  try{
     const prompt = `${MSEP_BASE}
-
-Crie um CAÇA-PALAVRAS para a UC: "${uc}"
-- ${num} palavras técnicas da área de Alimentos e Bebidas
-- Grade 15x15 letras
-- Palavras na horizontal, vertical e diagonal
-- Retorne em JSON puro (sem markdown): {"palavras": ["PALAVRA1",...], "grade": [["A","B",...], ...], "titulo": "..."}`;
+Crie um CAÇA-PALAVRAS para a UC/Competência: "${uc}"${getCtxTransversal(ucAtual.id)}
+- Exatamente ${num} palavras técnicas da área de Alimentos e Bebidas (máximo 12 letras cada)
+- Grade 15x15 letras maiúsculas
+- Preencha todas as células com letras aleatórias (sem espaços vazios)
+- Palavras podem ser horizontal (→), vertical (↓) ou diagonal (↘)
+- Retorne APENAS JSON puro sem markdown:
+{"titulo":"Caça-Palavras: [tema]","palavras":["PALAVRA1","PALAVRA2",...],"grade":[["A","B",...15 letras...],... 15 linhas...]}`;
     const json = await callGemini(prompt);
     const clean = json.replace(/```json|```/gi,'').trim();
     const data  = JSON.parse(clean);
-    renderCaca(data);
-  } catch(e) {
-    if (e.message !== 'Unauthorized') showToast('Erro ao gerar caça-palavras.', 'error');
+    renderCacaCanvas(data);
+  }catch(e){
+    if(e.message!=='Unauthorized') showToast('Erro ao gerar caça-palavras.','error');
   }
-  setLoading('cw', false);
+  setLoading('cw',false);
 }
 
-function renderCaca(data) {
-  const c = document.getElementById('cw-container');
-  let html = `<h4 style="margin-bottom:10px;color:var(--cor-dark)">${data.titulo || 'Caça-Palavras'}</h4>`;
-  html += '<div style="overflow-x:auto"><table class="output-table" style="font-family:monospace;letter-spacing:6px">';
-  data.grade.forEach(row => {
-    html += '<tr>' + row.map(l => `<td style="text-align:center;padding:5px 8px">${l}</td>`).join('') + '</tr>';
+function renderCacaCanvas(data){
+  const canvas = document.getElementById('cw-canvas');
+  const COLS   = data.grade[0].length;
+  const ROWS   = data.grade.length;
+  const CELL   = 36;
+  const PAD    = 20;
+  const FOOTER = 120 + Math.ceil(data.palavras.length / 4) * 22;
+  canvas.width  = COLS * CELL + PAD * 2;
+  canvas.height = ROWS * CELL + PAD * 2 + 60 + FOOTER;
+  const ctx = canvas.getContext('2d');
+
+  // fundo
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // cabeçalho
+  ctx.fillStyle = '#F4A020';
+  ctx.fillRect(0,0,canvas.width,52);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font      = 'bold 16px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('SENAI BAHIA · MQCT — Alimentos e Bebidas', canvas.width/2, 22);
+  ctx.font = 'bold 13px Arial';
+  ctx.fillText(data.titulo||'Caça-Palavras', canvas.width/2, 42);
+
+  // grade
+  const gx = PAD;
+  const gy = 62;
+  ctx.strokeStyle = '#E8DCC8';
+  ctx.lineWidth   = 1;
+  data.grade.forEach((row, r) => {
+    row.forEach((letra, c) => {
+      const x = gx + c*CELL;
+      const y = gy + r*CELL;
+      // célula
+      ctx.fillStyle = '#FFFBF2';
+      ctx.fillRect(x,y,CELL,CELL);
+      ctx.strokeRect(x,y,CELL,CELL);
+      // letra
+      ctx.fillStyle = '#1A1208';
+      ctx.font      = 'bold 15px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(letra, x+CELL/2, y+CELL/2);
+    });
   });
-  html += '</table></div>';
-  html += `<p style="margin-top:12px;font-size:12px;color:var(--text-2)"><strong>Encontre:</strong> ${data.palavras.join(' · ')}</p>`;
-  c.innerHTML = html;
-  c.style.display = 'block';
+
+  // separador
+  const sepY = gy + ROWS*CELL + 14;
+  ctx.strokeStyle = '#F4A020';
+  ctx.lineWidth   = 2;
+  ctx.beginPath(); ctx.moveTo(PAD,sepY); ctx.lineTo(canvas.width-PAD,sepY); ctx.stroke();
+
+  // título lista
+  ctx.fillStyle = '#B87210';
+  ctx.font      = 'bold 13px Arial';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText('Encontre as palavras:', PAD, sepY+18);
+
+  // palavras em colunas de 4
+  ctx.fillStyle = '#5C4A1A';
+  ctx.font      = '12px Arial';
+  const colW    = Math.floor((canvas.width - PAD*2) / 4);
+  data.palavras.forEach((p,i) => {
+    const col = i % 4;
+    const row = Math.floor(i / 4);
+    ctx.fillText('• '+p, PAD + col*colW, sepY+38 + row*22);
+  });
+
+  // rodapé
+  const footY = canvas.height - 18;
+  ctx.fillStyle = '#B0A080';
+  ctx.font      = '10px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText('Hub MQCT · SENAI Bahia · '+new Date().toLocaleDateString('pt-BR'), canvas.width/2, footY);
+
+  canvas.style.display = 'block';
   document.getElementById('cw-actions').style.display = 'flex';
-  window._cacaData = data;
+  window._cacaCanvas = canvas;
 }
 
-function downloadCacaPNG() {
-  showToast('Para salvar como PNG, use Ctrl+P → "Salvar como PDF" ou Print Screen da grade.');
+function downloadCacaPNG(){
+  const canvas = window._cacaCanvas;
+  if(!canvas){ showToast('Gere o caça-palavras primeiro.','error'); return; }
+  canvas.toBlob(blob => {
+    const a    = document.createElement('a');
+    a.href     = URL.createObjectURL(blob);
+    a.download = `Caca_Palavras_${new Date().toISOString().slice(0,10)}.png`;
+    a.click();
+    showToast('PNG baixado com sucesso!');
+  },'image/png');
 }
 
-async function gerarAvaliacao() {
+async function gerarAvaliacao(){
   const uc    = document.getElementById('av-uc').value || ucAtual.nome;
   const obj   = document.getElementById('av-obj').value;
   const disc  = document.getElementById('av-disc').value;
   const nivel = document.getElementById('av-nivel').value;
-  setLoading('av', true);
-  try {
+  setLoading('av',true);
+  try{
     const prompt = `${MSEP_BASE}
-
 Gere uma AVALIAÇÃO/PROVA para:
-- UC: ${uc}
-- ${obj} questões OBJETIVAS (múltipla escolha com 4 alternativas, indique o gabarito)
-- ${disc} questões DISCURSIVAS (com critérios de correção e valor em pontos)
-- Nível: ${nivel}
-- Total: 10 pontos
+- UC/Competência: ${uc} | ${obj} questões objetivas (A/B/C/D) | ${disc} questões discursivas | Nível: ${nivel}${getCtxTransversal(ucAtual.id)} | Total: 10 pontos
 
 Inclua:
-- Cabeçalho (nome, data, turma, assinatura)
+- Cabeçalho (Curso, UC, Nome, Data, Turma, Assinatura, Nota)
 - Instruções gerais
-- Questões objetivas numeradas com (A)(B)(C)(D)
-- Questões discursivas com espaço para resposta e critérios de avaliação
-- Gabarito ao final (separado)
-- Baseie as questões nas normas: RDC ANVISA, NBR, Codex Alimentarius, legislação MAPA`;
+- Questões objetivas (A)(B)(C)(D) com gabarito destacado ao final
+- Questões discursivas com espaço para resposta e valor
+- Gabarito completo ao final
+- Baseie nas normas: RDC ANVISA, NBR, Codex Alimentarius, MAPA`;
     const text = await callGemini(prompt);
-    showOutput('av', text);
-  } catch(e) { if (e.message !== 'Unauthorized') showToast('Erro ao gerar.', 'error'); }
-  setLoading('av', false);
+    showOutput('av',text);
+  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar.','error'); }
+  setLoading('av',false);
 }
 
-async function gerarSlides() {
+async function gerarSlides(){
   const uc  = document.getElementById('sl-uc').value || ucAtual.nome;
   const num = document.getElementById('sl-num').value;
-  setLoading('sl', true);
-  try {
+  setLoading('sl',true);
+  try{
     const prompt = `${MSEP_BASE}
-
-Gere um roteiro de ${num} SLIDES para apresentação sobre:
-- Tema: ${uc}
-
-Para cada slide, forneça:
+Gere roteiro de ${num} SLIDES para: "${uc}"${getCtxTransversal(ucAtual.id)}
+Para cada slide:
 SLIDE N: [Título]
-Conteúdo: [pontos principais, máximo 5 tópicos]
-Nota do docente: [orientação para fala]
+Conteúdo: [máximo 5 tópicos objetivos]
+Nota docente: [orientação de fala, 1-2 frases]
 
-Inclua: slide de abertura, slides de conteúdo, slide de atividade/reflexão e slide de referências.
-Baseie em normas técnicas reais (RDC ANVISA, Codex, MAPA, NBR).`;
+Inclua: abertura, conteúdos progressivos, atividade/reflexão, referências técnicas reais.`;
     const text = await callGemini(prompt);
-    showOutput('sl', text);
-    window._slidesContent = text;
-  } catch(e) { if (e.message !== 'Unauthorized') showToast('Erro ao gerar.', 'error'); }
-  setLoading('sl', false);
+    showOutput('sl',text);
+    window._slidesContent=text;
+  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar.','error'); }
+  setLoading('sl',false);
 }
 
-function downloadSlides() {
+function downloadSlides(){
   const content = window._slidesContent || document.getElementById('sl-output').textContent;
-  const slides  = content.split(/SLIDE \d+:/i).filter(s => s.trim());
-  let html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+  const blocks  = content.split(/SLIDE \d+:/i).filter(s=>s.trim());
+  let slidesHtml = '';
+  blocks.forEach((s,i) => {
+    const lines  = s.trim().split('\n');
+    const titulo = lines[0].trim();
+    const corpo  = lines.slice(1).join('\n').replace(/^Conteúdo:/im,'').replace(/^Nota docente:/im,'<hr style="border:none;border-top:1px solid rgba(255,255,255,.3);margin:16px 0"><em style="font-size:11px;opacity:.75">📝 ').replace(/\n/g,'<br>');
+    slidesHtml += `<section class="slide${i===0?' cover':''}"><h${i===0?'1':'2'}>${titulo}</h${i===0?'1':'2'}><div class="corpo">${corpo}</div></section>`;
+  });
+  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
 <title>Slides — ${AREA_NOME}</title>
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#1a1008}
-.slide{width:960px;min-height:540px;margin:20px auto;padding:60px 70px;
-  background:#fff;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.3);
-  display:flex;flex-direction:column;justify-content:center;page-break-after:always}
-.slide:first-child{background:linear-gradient(135deg,#F4A020,#B87210);color:#fff}
-h1{font-size:36px;margin:0 0 16px}h2{font-size:26px;color:#B87210;margin:0 0 20px}
-li{margin:8px 0;font-size:17px;line-height:1.5}
-.nota{margin-top:auto;padding-top:20px;border-top:1px solid #eee;
-  font-size:12px;color:#888;font-style:italic}
-</style></head><body>`;
-  slides.forEach((s, i) => {
-    const lines = s.trim().split('\n');
-    const titulo = lines[0].trim();
-    const corpo  = lines.slice(1).join('\n')
-      .replace('Conteúdo:','').replace('Nota do docente:','<hr class="nota-sep">Nota:');
-    html += `<div class="slide"><h${i===0?'1':'2'}>${titulo}</h${i===0?'1':'2'}><p>${corpo.replace(/\n/g,'<br>')}</p></div>`;
-  });
-  html += '</body></html>';
-  const blob = new Blob([html], {type:'text/html'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  body{margin:0;background:#1A0C00;font-family:Arial,sans-serif;padding:20px}
+  .slide{width:900px;min-height:506px;margin:16px auto;padding:50px 60px;background:#fff;border-radius:10px;
+    display:flex;flex-direction:column;justify-content:center;box-shadow:0 4px 24px rgba(0,0,0,.4);page-break-after:always}
+  .cover{background:linear-gradient(135deg,#F4A020,#7A4A08);color:#fff}
+  .cover h1{font-size:34px;margin:0 0 12px;font-family:Georgia,serif}
+  h2{font-size:24px;color:#B87210;margin:0 0 18px;border-left:4px solid #F4A020;padding-left:12px}
+  .corpo{font-size:15px;line-height:1.7;color:#2A1A00}
+  .cover .corpo{color:rgba(255,255,255,.9)}
+  @media print{body{background:#fff}.slide{box-shadow:none;margin:0;border-radius:0}}
+</style></head><body>${slidesHtml}</body></html>`;
+  const blob = new Blob([html],{type:'text/html'});
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
   a.download = `Slides_${new Date().toISOString().slice(0,10)}.html`;
   a.click();
   showToast('Slides baixados!');
 }
 
-async function gerarCustom() {
+async function gerarCustom(){
   const desc = document.getElementById('cu-desc').value;
-  if (!desc.trim()) { showToast('Descreva o material desejado.', 'error'); return; }
-  setLoading('cu', true);
-  try {
+  if(!desc.trim()){ showToast('Descreva o material desejado.','error'); return; }
+  setLoading('cu',true);
+  try{
     const prompt = `${MSEP_BASE}
-
-Gere o seguinte MATERIAL DIDÁTICO personalizado para docentes do SENAI Bahia — área de Alimentos e Bebidas:
-
+Gere o seguinte MATERIAL DIDÁTICO personalizado para docentes do SENAI Bahia — Alimentos e Bebidas:
 ${desc}
-
-Mantenha alinhamento com o Itinerário Nacional, MSEP e as normas técnicas da área alimentícia.
+Mantenha alinhamento com o Itinerário Nacional, MSEP e normas técnicas da área alimentícia.
 Formate de forma clara, profissional e pronto para uso em sala de aula ou laboratório.`;
     const text = await callGemini(prompt);
-    showOutput('cu', text);
-  } catch(e) { if (e.message !== 'Unauthorized') showToast('Erro ao gerar.', 'error'); }
-  setLoading('cu', false);
+    showOutput('cu',text);
+  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar.','error'); }
+  setLoading('cu',false);
 }
 
-// ── INIT ─────────────────────────────────────────────────────
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    document.querySelectorAll('.modal-overlay.open').forEach(m => {
+// ── INIT ──────────────────────────────────────────────────────
+document.getElementById('pa-data').value = new Date().toISOString().slice(0,10);
+calcAulas();
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    document.querySelectorAll('.modal-overlay.open').forEach(m=>{
       closeModal(m.id.replace('modal-',''));
     });
   }
