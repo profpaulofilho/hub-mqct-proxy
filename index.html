@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Hub MQCT · Agentes de IA para Docentes · SENAI Bahia</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 :root{
   --bg:#F8F9FA;--bg2:#FFFFFF;--bg3:#F1F3F5;
@@ -21,25 +22,22 @@
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
 a{text-decoration:none;color:inherit}
 
-/* NAV */
 nav{background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;transition:background .3s}
 [data-theme="dark"] nav{background:rgba(10,15,30,.85)}
 .nav-inner{max-width:1200px;margin:0 auto;padding:0 28px;height:68px;display:flex;align-items:center;justify-content:space-between}
 .nav-logo{display:flex;align-items:center;gap:14px}
-.senai-logo{height:38px;width:auto}
 .nav-divider{width:1px;height:28px;background:var(--border)}
 .nav-product{font-size:13px;font-weight:700;color:var(--blue);line-height:1.2}
 .nav-product span{display:block;font-weight:400;color:var(--text2);font-size:11px;margin-top:1px}
 .nav-right{display:flex;align-items:center;gap:10px}
 .btn-theme{background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;color:var(--text2);font-size:15px;transition:.2s;line-height:1}
 .btn-theme:hover{background:var(--bg3)}
-.btn-login{background:linear-gradient(135deg,#1A3A8F,#2B5CE6);color:white;border:none;border-radius:99px;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;letter-spacing:.01em}
+.btn-login{background:linear-gradient(135deg,#1A3A8F,#2B5CE6);color:white;border:none;border-radius:99px;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer;transition:.2s}
 .btn-login:hover{opacity:.9;transform:translateY(-1px)}
 .user-pill{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:99px;padding:4px 14px 4px 4px;font-size:13px;color:var(--text2)}
 .user-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#1A3A8F,#2B5CE6);display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700}
 .btn-logout{background:none;border:none;color:var(--red);font-size:12px;cursor:pointer;margin-left:4px}
 
-/* HERO */
 .hero{background:linear-gradient(135deg,#060D1F 0%,#0D1B3E 50%,#0A1628 100%);color:white;padding:80px 28px 90px;position:relative;overflow:hidden;min-height:520px;display:flex;align-items:center}
 .hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(100,150,255,.15) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
 .hero-glow{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(43,92,230,.18) 0%,transparent 70%);top:-100px;right:5%;pointer-events:none}
@@ -51,16 +49,11 @@ nav{background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1p
 .hero h1{font-size:clamp(30px,4.5vw,52px);font-weight:800;line-height:1.1;margin-bottom:20px;letter-spacing:-.02em}
 .hero h1 em{font-style:normal;background:linear-gradient(90deg,#4A9EFF,#7B61FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero p{font-size:17px;color:rgba(255,255,255,.65);margin-bottom:36px;line-height:1.7;max-width:480px}
-.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
-.btn-hero-primary{background:linear-gradient(135deg,#2B5CE6,#7B61FF);color:white;border:none;border-radius:99px;padding:14px 28px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s;letter-spacing:.01em}
+.btn-hero-primary{background:linear-gradient(135deg,#2B5CE6,#7B61FF);color:white;border:none;border-radius:99px;padding:14px 28px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s}
 .btn-hero-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(43,92,230,.4)}
-.btn-hero-secondary{background:rgba(255,255,255,.08);color:white;border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:14px 28px;font-size:15px;font-weight:500;cursor:pointer;transition:.2s}
-.btn-hero-secondary:hover{background:rgba(255,255,255,.14)}
 .hero-stats{display:flex;gap:32px;margin-top:40px;padding-top:32px;border-top:1px solid rgba(255,255,255,.1)}
 .stat-n{font-size:26px;font-weight:800;color:white}
 .stat-l{font-size:12px;color:rgba(255,255,255,.45);margin-top:2px}
-
-/* HERO IMAGEM ANIMADA */
 .hero-visual{display:flex;justify-content:center;align-items:center;position:relative}
 .doc-float{animation:float 4s ease-in-out infinite}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
@@ -68,7 +61,6 @@ nav{background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1p
 @keyframes shadow-pulse{0%,100%{transform:scaleX(1);opacity:.5}50%{transform:scaleX(.7);opacity:.2}}
 .doc-wrap{position:relative;margin-bottom:16px}
 .doc-svg{width:220px;height:auto;filter:drop-shadow(0 20px 40px rgba(43,92,230,.35))}
-/* partículas */
 .particle{position:absolute;border-radius:50%;animation:float-p 3s ease-in-out infinite}
 @keyframes float-p{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-10px) rotate(180deg)}}
 .p1{width:8px;height:8px;background:#4CF0A0;top:10%;left:5%;animation-delay:.5s;opacity:.7}
@@ -77,34 +69,44 @@ nav{background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1p
 .p4{width:5px;height:5px;background:#7B61FF;bottom:35%;left:8%;animation-delay:.8s;opacity:.6}
 .p5{width:7px;height:7px;background:#4CF0A0;top:55%;right:15%;animation-delay:2s;opacity:.4}
 
-/* LOGIN */
-#loginGate{max-width:460px;margin:56px auto;padding:0 24px}
-.login-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:40px;box-shadow:var(--shadow)}
-.login-icon{width:52px;height:52px;background:linear-gradient(135deg,#1A3A8F,#2B5CE6);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:24px}
-.login-card h2{font-size:22px;font-weight:700;margin-bottom:6px}
-.login-card p{font-size:14px;color:var(--text2);margin-bottom:28px;line-height:1.5}
-.field-wrap{margin-bottom:16px}
-.field-wrap label{display:block;font-size:11px;font-weight:700;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em}
-.field-wrap input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg3);color:var(--text);font-size:14px;transition:.2s}
-.field-wrap input:focus{outline:none;border-color:#2B5CE6;background:var(--bg2)}
-.btn-full{width:100%;background:linear-gradient(135deg,#1A3A8F,#2B5CE6);color:white;border:none;border-radius:99px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s;margin-top:4px;letter-spacing:.01em}
+/* AUTH CARD */
+.auth-wrap{max-width:440px;margin:56px auto;padding:0 24px}
+.auth-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:40px;box-shadow:var(--shadow)}
+.auth-icon{width:52px;height:52px;background:linear-gradient(135deg,#1A3A8F,#2B5CE6);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:26px}
+.auth-card h2{font-size:21px;font-weight:700;margin-bottom:6px}
+.auth-card p{font-size:14px;color:var(--text2);margin-bottom:28px;line-height:1.55}
+.tabs{display:flex;gap:0;margin-bottom:28px;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.tab{flex:1;padding:9px;font-size:13px;font-weight:600;border:none;cursor:pointer;background:transparent;color:var(--text2);transition:.2s}
+.tab.active{background:linear-gradient(135deg,#1A3A8F,#2B5CE6);color:white}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em}
+.field input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg3);color:var(--text);font-size:14px;transition:.2s}
+.field input:focus{outline:none;border-color:#2B5CE6;background:var(--bg2)}
+.btn-full{width:100%;background:linear-gradient(135deg,#1A3A8F,#2B5CE6);color:white;border:none;border-radius:99px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s;letter-spacing:.01em}
 .btn-full:hover{opacity:.9;transform:translateY(-1px)}
 .btn-full:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.login-note{font-size:12px;color:var(--text3);text-align:center;margin-top:16px}
-.msg-ok{background:#ECFDF5;border:1px solid #A7F3D0;border-radius:8px;padding:12px 16px;font-size:13px;color:#065F46;margin-top:16px;display:none}
-.msg-err{background:#FEE2E2;border:1px solid #FCA5A5;border-radius:8px;padding:12px 16px;font-size:13px;color:#991B1B;margin-top:16px;display:none}
+.auth-note{font-size:12px;color:var(--text3);text-align:center;margin-top:14px;line-height:1.5}
+.msg{border-radius:8px;padding:12px 16px;font-size:13px;margin-top:14px;display:none}
+.msg-ok{background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46}
+.msg-err{background:#FEE2E2;border:1px solid #FCA5A5;color:#991B1B}
+
+/* OTP */
+.otp-wrap{text-align:center}
+.otp-email-display{font-weight:700;color:var(--blue);word-break:break-all}
+.otp-inputs{display:flex;gap:10px;justify-content:center;margin:20px 0}
+.otp-inputs input{width:48px;height:56px;text-align:center;font-size:22px;font-weight:700;border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--bg3);color:var(--text);transition:.2s}
+.otp-inputs input:focus{outline:none;border-color:#2B5CE6;background:var(--bg2)}
+.btn-resend{background:none;border:none;color:#2B5CE6;font-size:13px;cursor:pointer;margin-top:8px}
+.btn-resend:disabled{color:var(--text3);cursor:not-allowed}
 
 /* MAIN */
 #mainContent{display:none;max-width:1200px;margin:0 auto;padding:48px 28px}
-.section-header{margin-bottom:32px}
-.section-title{font-size:24px;font-weight:700;color:var(--text)}
-.section-sub{font-size:14px;color:var(--text2);margin-top:6px}
+.section-title{font-size:24px;font-weight:700;color:var(--text);margin-bottom:6px}
+.section-sub{font-size:14px;color:var(--text2);margin-top:4px;margin-bottom:28px}
 .search-wrap{position:relative;margin-bottom:32px;max-width:480px}
 .search-wrap input{width:100%;padding:12px 16px 12px 44px;border:1.5px solid var(--border);border-radius:99px;background:var(--bg2);color:var(--text);font-size:14px;transition:.2s}
 .search-wrap input:focus{outline:none;border-color:#2B5CE6}
 .search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:17px}
-
-/* CARDS */
 .areas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
 .area-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s;display:block}
 .area-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.12);border-color:rgba(43,92,230,.3)}
@@ -117,14 +119,10 @@ nav{background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1p
 .card-desc{font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:16px}
 .card-footer{display:flex;align-items:center;justify-content:space-between}
 .card-tag{font-size:11px;color:var(--text3);background:var(--bg3);padding:3px 10px;border-radius:99px;border:0.5px solid var(--border)}
-.card-cta{font-size:12px;font-weight:600;color:#2B5CE6;display:flex;align-items:center;gap:4px}
+.card-cta{font-size:12px;font-weight:600;color:#2B5CE6}
 
-/* FOOTER */
 footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28px;margin-top:56px}
 .footer-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
-.footer-left{display:flex;align-items:center;gap:12px}
-.footer-senai{height:28px}
-.footer-text{font-size:13px;color:var(--text2)}
 .footer-copy{font-size:12px;color:var(--text3)}
 
 .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;display:inline-block;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
@@ -134,7 +132,6 @@ footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28p
   .hero-visual{display:none}
   .hero{padding:60px 20px 70px}
   #mainContent{padding:32px 16px}
-  .footer-inner{flex-direction:column;text-align:center}
 }
 </style>
 </head>
@@ -143,8 +140,7 @@ footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28p
 <nav>
   <div class="nav-inner">
     <div class="nav-logo">
-      <!-- Logo SENAI real SVG baseado na imagem enviada -->
-      <svg class="senai-logo" viewBox="0 0 220 70" xmlns="http://www.w3.org/2000/svg">
+      <svg height="36" viewBox="0 0 220 70" xmlns="http://www.w3.org/2000/svg">
         <text x="0" y="58" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="68" fill="#1A3A8F" letter-spacing="-2">SEN</text>
         <text x="144" y="58" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="68" fill="#1A3A8F">A</text>
         <text x="192" y="58" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="68" fill="#1A3A8F" transform="skewX(-8)">i</text>
@@ -154,8 +150,8 @@ footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28p
       <div class="nav-product">Agentes de IA para Docentes<span>Hub MQCT · SENAI Bahia 2026</span></div>
     </div>
     <div class="nav-right">
-      <button class="btn-theme" onclick="toggleTheme()" title="Alternar tema" id="themeBtn">🌙</button>
-      <div id="navLogin"><button class="btn-login" onclick="showLogin()">Entrar</button></div>
+      <button class="btn-theme" onclick="toggleTheme()" id="themeBtn">🌙</button>
+      <div id="navLogin"><button class="btn-login" onclick="irParaAuth()">Entrar</button></div>
       <div id="navUser" style="display:none">
         <div class="user-pill">
           <div class="user-avatar" id="userInitial">P</div>
@@ -173,14 +169,11 @@ footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28p
   <div class="hero-glow"></div>
   <div class="hero-glow2"></div>
   <div class="hero-inner">
-    <div class="hero-left">
+    <div>
       <div class="hero-badge">✦ Plataforma Docente Inteligente · SENAI Bahia</div>
       <h1>Agentes de IA para<br><em>Docentes SENAI</em></h1>
       <p>Planos de aula, situações de aprendizagem, avaliações e muito mais — alinhados ao MSEP e Itinerários Nacionais, gerados em segundos.</p>
-      <div class="hero-btns">
-        <button class="btn-hero-primary" onclick="showLogin()">Acessar agora →</button>
-        <button class="btn-hero-secondary" onclick="document.getElementById('loginGate').scrollIntoView({behavior:'smooth'})">Como funciona</button>
-      </div>
+      <button class="btn-hero-primary" onclick="irParaAuth()">Acessar agora →</button>
       <div class="hero-stats">
         <div class="stat"><div class="stat-n">19</div><div class="stat-l">Áreas técnicas</div></div>
         <div class="stat"><div class="stat-n">9</div><div class="stat-l">Tipos de material</div></div>
@@ -191,34 +184,19 @@ footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28p
       <div>
         <div class="doc-float">
           <div class="doc-wrap">
-            <div class="particle p1"></div>
-            <div class="particle p2"></div>
-            <div class="particle p3"></div>
-            <div class="particle p4"></div>
-            <div class="particle p5"></div>
+            <div class="particle p1"></div><div class="particle p2"></div>
+            <div class="particle p3"></div><div class="particle p4"></div><div class="particle p5"></div>
             <svg class="doc-svg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
               <defs>
-                <linearGradient id="docGrad" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#2A3A6E" stop-opacity=".9"/>
-                  <stop offset="100%" stop-color="#1A2550" stop-opacity=".95"/>
-                </linearGradient>
-                <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stop-color="#4A9EFF"/>
-                  <stop offset="100%" stop-color="#7B61FF" stop-opacity=".3"/>
-                </linearGradient>
-                <filter id="glow">
-                  <feGaussianBlur stdDeviation="3" result="blur"/>
-                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                </filter>
+                <linearGradient id="dg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#2A3A6E" stop-opacity=".9"/><stop offset="100%" stop-color="#1A2550" stop-opacity=".95"/></linearGradient>
+                <linearGradient id="lg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#4A9EFF"/><stop offset="100%" stop-color="#7B61FF" stop-opacity=".3"/></linearGradient>
+                <radialGradient id="cg" cx="35%" cy="35%"><stop offset="0%" stop-color="#4A9EFF"/><stop offset="100%" stop-color="#2B5CE6"/></radialGradient>
+                <filter id="gw"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
               </defs>
-              <!-- Documento -->
-              <rect x="20" y="10" width="145" height="185" rx="10" fill="url(#docGrad)" stroke="rgba(100,140,255,.3)" stroke-width="1"/>
-              <!-- Canto dobrado -->
+              <rect x="20" y="10" width="145" height="185" rx="10" fill="url(#dg)" stroke="rgba(100,140,255,.3)" stroke-width="1"/>
               <polygon points="135,10 165,10 165,38" fill="rgba(20,30,70,.8)"/>
-              <polygon points="135,10 165,38 135,38" fill="rgba(100,140,255,.25)" stroke="rgba(100,140,255,.3)" stroke-width="0.5"/>
-              <!-- Linha destaque azul -->
-              <rect x="32" y="52" width="100" height="3" rx="1.5" fill="url(#lineGrad)" filter="url(#glow)"/>
-              <!-- Linhas de texto -->
+              <polygon points="135,10 165,38 135,38" fill="rgba(100,140,255,.25)"/>
+              <rect x="32" y="52" width="100" height="3" rx="1.5" fill="url(#lg)" filter="url(#gw)"/>
               <rect x="32" y="64" width="110" height="2.5" rx="1.2" fill="rgba(160,180,255,.35)"/>
               <rect x="32" y="73" width="95" height="2.5" rx="1.2" fill="rgba(160,180,255,.3)"/>
               <rect x="32" y="82" width="105" height="2.5" rx="1.2" fill="rgba(160,180,255,.28)"/>
@@ -229,17 +207,9 @@ footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28p
               <rect x="32" y="132" width="90" height="2.5" rx="1.2" fill="rgba(160,180,255,.2)"/>
               <rect x="32" y="146" width="110" height="2.5" rx="1.2" fill="rgba(160,180,255,.25)"/>
               <rect x="32" y="155" width="75" height="2.5" rx="1.2" fill="rgba(160,180,255,.2)"/>
-              <!-- Reflexo superior -->
               <rect x="20" y="10" width="145" height="40" rx="10" fill="rgba(255,255,255,.04)"/>
-              <!-- Circulo check -->
               <circle cx="145" cy="185" r="26" fill="rgba(10,20,50,.6)"/>
-              <circle cx="145" cy="185" r="22" fill="url(#checkGrad)" filter="url(#glow)"/>
-              <defs>
-                <radialGradient id="checkGrad" cx="35%" cy="35%">
-                  <stop offset="0%" stop-color="#4A9EFF"/>
-                  <stop offset="100%" stop-color="#2B5CE6"/>
-                </radialGradient>
-              </defs>
+              <circle cx="145" cy="185" r="22" fill="url(#cg)" filter="url(#gw)"/>
               <polyline points="135,185 142,193 157,176" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
             </svg>
           </div>
@@ -250,30 +220,60 @@ footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28p
   </div>
 </div>
 
-<!-- LOGIN -->
-<div id="loginGate" style="display:none;max-width:460px;margin:56px auto;padding:0 24px">
-  <div class="login-card">
-    <div class="login-icon">🤖</div>
-    <h2>Acesso Docente</h2>
-    <p>Entre com seu e-mail institucional SENAI Bahia para acessar os agentes de IA.</p>
-    <div class="field-wrap">
-      <label>E-mail institucional</label>
-      <input type="email" id="emailInput" placeholder="nome@ba.docente.senai.br" autocomplete="email">
+<!-- AUTH -->
+<div id="authWrap" style="display:none">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-icon">🤖</div>
+
+      <!-- STEP 1: Email -->
+      <div id="stepEmail">
+        <div class="tabs">
+          <button class="tab active" id="tabLogin" onclick="setTab('login')">Entrar</button>
+          <button class="tab" id="tabCadastro" onclick="setTab('cadastro')">Cadastrar</button>
+        </div>
+        <h2 id="authTitle">Bem-vindo de volta</h2>
+        <p id="authDesc">Digite seu e-mail institucional SENAI Bahia para receber o código de acesso.</p>
+        <div class="field">
+          <label>E-mail institucional</label>
+          <input type="email" id="emailInput" placeholder="nome@ba.docente.senai.br" autocomplete="email">
+        </div>
+        <button class="btn-full" id="btnEnviar" onclick="enviarOTP()">Enviar código →</button>
+        <div class="msg msg-err" id="msgEmailErr"></div>
+        <p class="auth-note">Apenas e-mails <strong>@ba.docente.senai.br</strong> são aceitos.<br>Um código de 6 dígitos será enviado para seu e-mail.</p>
+      </div>
+
+      <!-- STEP 2: OTP -->
+      <div id="stepOTP" style="display:none">
+        <div class="otp-wrap">
+          <div style="font-size:36px;margin-bottom:12px">📧</div>
+          <h2>Verifique seu e-mail</h2>
+          <p style="color:var(--text2);font-size:14px;margin:10px 0 6px">Enviamos um código de 6 dígitos para</p>
+          <div class="otp-email-display" id="otpEmailDisplay"></div>
+          <div class="otp-inputs">
+            <input type="text" maxlength="1" class="otp-digit" id="d0" oninput="moveNext(0)" onkeydown="movePrev(event,0)">
+            <input type="text" maxlength="1" class="otp-digit" id="d1" oninput="moveNext(1)" onkeydown="movePrev(event,1)">
+            <input type="text" maxlength="1" class="otp-digit" id="d2" oninput="moveNext(2)" onkeydown="movePrev(event,2)">
+            <input type="text" maxlength="1" class="otp-digit" id="d3" oninput="moveNext(3)" onkeydown="movePrev(event,3)">
+            <input type="text" maxlength="1" class="otp-digit" id="d4" oninput="moveNext(4)" onkeydown="movePrev(event,4)">
+            <input type="text" maxlength="1" class="otp-digit" id="d5" oninput="moveNext(5)" onkeydown="movePrev(event,5)">
+          </div>
+          <button class="btn-full" id="btnVerificar" onclick="verificarOTP()">Verificar código</button>
+          <div class="msg msg-err" id="msgOTPErr" style="margin-top:12px"></div>
+          <div class="msg msg-ok" id="msgOTPOk" style="margin-top:12px"></div>
+          <br>
+          <button class="btn-resend" id="btnReenviar" onclick="reenviarOTP()">Reenviar código</button>
+          <br>
+          <button style="background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;margin-top:8px" onclick="voltarEmail()">← Trocar e-mail</button>
+        </div>
+      </div>
     </div>
-    <div class="field-wrap">
-      <label>Senha</label>
-      <input type="password" id="senhaInput" placeholder="••••••••">
-    </div>
-    <button class="btn-full" id="btnLogin" onclick="fazerLogin()">Entrar na plataforma</button>
-    <div class="msg-ok" id="msgOk">✅ Login realizado! Carregando agentes...</div>
-    <div class="msg-err" id="msgErr">❌ <span id="msgErrTxt">Verifique seus dados.</span></div>
-    <p class="login-note">Apenas e-mails <strong>@ba.docente.senai.br</strong> são aceitos.</p>
   </div>
 </div>
 
 <!-- CONTEÚDO -->
 <div id="mainContent">
-  <div class="section-header">
+  <div style="margin-bottom:32px">
     <div class="section-title">Escolha a área técnica</div>
     <div class="section-sub">Selecione sua área e gere materiais alinhados ao MSEP e ao Itinerário Nacional SENAI</div>
   </div>
@@ -284,23 +284,32 @@ footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28p
   <div class="areas-grid" id="areasGrid"></div>
 </div>
 
-<!-- FOOTER -->
 <footer>
   <div class="footer-inner">
-    <div class="footer-left">
-      <svg class="footer-senai" viewBox="0 0 220 70" xmlns="http://www.w3.org/2000/svg">
+    <div style="display:flex;align-items:center;gap:12px">
+      <svg height="28" viewBox="0 0 220 70" xmlns="http://www.w3.org/2000/svg">
         <text x="0" y="58" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="68" fill="#1A3A8F" letter-spacing="-2">SEN</text>
         <text x="144" y="58" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="68" fill="#1A3A8F">A</text>
         <text x="192" y="58" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="68" fill="#1A3A8F" transform="skewX(-8)">i</text>
         <polygon points="204,2 220,2 220,18" fill="#C00000"/>
       </svg>
-      <div class="footer-text">Hub MQCT · Agentes de IA para Docentes</div>
+      <span style="font-size:13px;color:var(--text2)">Hub MQCT · Agentes de IA para Docentes</span>
     </div>
     <div class="footer-copy">Paulo da Silva Filho · Especialista em TI · GEP · SENAI Bahia · 2026</div>
   </div>
 </footer>
 
 <script>
+// ── SUPABASE ─────────────────────────────────────────────────
+const SUPA_URL = "https://afvdrtmmxgvuyipsnatq.supabase.co";
+const SUPA_KEY = "sb_publishable_-Gi-ZXwN14vLzz2iHcvWfg_NdCy7lvG";
+const DOMAIN = "ba.docente.senai.br";
+const PROXY = "https://hub-mqct-proxy.vercel.app/api/gemini";
+
+const { createClient } = supabase;
+const sb = createClient(SUPA_URL, SUPA_KEY);
+
+// ── ÁREAS ────────────────────────────────────────────────────
 const AREAS=[
   {id:"alimentos",emoji:"🍽️",title:"Alimentos e Bebidas",desc:"Técnico em Alimentos, Confeitaria, Panificação, Cervejaria, Gastronomia e Agroindústria.",cursos:6,cor:"#F4A020",bg:"#FFF8EC",file:"areas/alimentos.html"},
   {id:"automacao",emoji:"⚙️",title:"Automação e Mecatrônica",desc:"Técnico em Automação Industrial, Mecatrônica e Eletromecânica.",cursos:3,cor:"#0055B8",bg:"#E8F0FF",file:"areas/automacao.html"},
@@ -323,67 +332,137 @@ const AREAS=[
   {id:"vestuario",emoji:"👗",title:"Vestuário",desc:"Técnico em Vestuário, Modelagem e Produção de Moda.",cursos:3,cor:"#880E4F",bg:"#FCEAF4",file:"areas/vestuario.html"},
 ];
 
-const PROXY="https://hub-mqct-proxy.vercel.app/api/gemini";
-const DOMAIN="ba.docente.senai.br";
+// ── ESTADO ───────────────────────────────────────────────────
+let emailAtual = "", tabAtual = "login", resendTimer = null;
 
-function getUser(){return sessionStorage.getItem("mqctUser");}
-function setUser(e){sessionStorage.setItem("mqctUser",e);}
-function clearUser(){sessionStorage.removeItem("mqctUser");}
-
-async function fazerLogin(){
-  const email=document.getElementById("emailInput").value.trim().toLowerCase();
-  const senha=document.getElementById("senhaInput").value;
-  const btn=document.getElementById("btnLogin");
-  const msgOk=document.getElementById("msgOk"),msgErr=document.getElementById("msgErr");
-  msgOk.style.display="none";msgErr.style.display="none";
-  if(!email.endsWith("@"+DOMAIN)){
-    document.getElementById("msgErrTxt").textContent="Use seu e-mail @"+DOMAIN;
-    msgErr.style.display="block";return;
-  }
-  if(senha.length<6){
-    document.getElementById("msgErrTxt").textContent="Senha deve ter pelo menos 6 caracteres.";
-    msgErr.style.display="block";return;
-  }
-  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Verificando...';
-  try{
-    const res=await fetch(PROXY,{method:"POST",headers:{"Content-Type":"application/json","X-User-Email":email},body:JSON.stringify({prompt:"OK",forceJSON:false})});
-    if(res.ok){setUser(email);msgOk.style.display="block";setTimeout(()=>mostrarHub(email),700);}
-    else{const d=await res.json();document.getElementById("msgErrTxt").textContent=d.error||"Erro.";msgErr.style.display="block";}
-  }catch(e){document.getElementById("msgErrTxt").textContent="Erro de conexão.";msgErr.style.display="block";}
-  btn.disabled=false;btn.innerHTML="Entrar na plataforma";
+// ── UI HELPERS ───────────────────────────────────────────────
+function irParaAuth(){
+  document.getElementById("authWrap").style.display="block";
+  document.getElementById("authWrap").scrollIntoView({behavior:"smooth"});
 }
 
-function mostrarHub(email){
-  document.getElementById("loginGate").style.display="none";
+function setTab(tab){
+  tabAtual = tab;
+  document.getElementById("tabLogin").className = "tab"+(tab==="login"?" active":"");
+  document.getElementById("tabCadastro").className = "tab"+(tab==="cadastro"?" active":"");
+  document.getElementById("authTitle").textContent = tab==="login"?"Bem-vindo de volta":"Criar conta";
+  document.getElementById("authDesc").textContent = tab==="login"
+    ? "Digite seu e-mail institucional para receber o código de acesso."
+    : "Cadastre-se com seu e-mail @ba.docente.senai.br para acessar os agentes.";
+  document.getElementById("msgEmailErr").style.display="none";
+}
+
+function showErr(id, msg){ const el=document.getElementById(id); el.textContent=msg; el.style.display="block"; }
+function hideMsg(id){ document.getElementById(id).style.display="none"; }
+
+// ── OTP FLOW ─────────────────────────────────────────────────
+async function enviarOTP(){
+  const email = document.getElementById("emailInput").value.trim().toLowerCase();
+  hideMsg("msgEmailErr");
+  if(!email.endsWith("@"+DOMAIN)){
+    showErr("msgEmailErr","❌ Use seu e-mail @"+DOMAIN);return;
+  }
+  const btn = document.getElementById("btnEnviar");
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Enviando...';
+
+  const { error } = await sb.auth.signInWithOtp({
+    email,
+    options:{ shouldCreateUser: true }
+  });
+
+  btn.disabled=false; btn.innerHTML="Enviar código →";
+
+  if(error){
+    showErr("msgEmailErr","❌ "+error.message); return;
+  }
+  emailAtual = email;
+  document.getElementById("stepEmail").style.display="none";
+  document.getElementById("stepOTP").style.display="block";
+  document.getElementById("otpEmailDisplay").textContent = email;
+  document.getElementById("d0").focus();
+  iniciarTimerReenvio();
+}
+
+function moveNext(i){
+  const v = document.getElementById("d"+i).value;
+  if(v && i<5) document.getElementById("d"+(i+1)).focus();
+  if(i===5) verificarOTP();
+}
+function movePrev(e,i){
+  if(e.key==="Backspace"&&!document.getElementById("d"+i).value&&i>0)
+    document.getElementById("d"+(i-1)).focus();
+}
+
+async function verificarOTP(){
+  const token = [0,1,2,3,4,5].map(i=>document.getElementById("d"+i).value).join("");
+  if(token.length<6){ showErr("msgOTPErr","❌ Digite os 6 dígitos."); return; }
+  hideMsg("msgOTPErr"); hideMsg("msgOTPOk");
+  const btn = document.getElementById("btnVerificar");
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Verificando...';
+
+  const { data, error } = await sb.auth.verifyOtp({
+    email: emailAtual, token, type:"email"
+  });
+
+  btn.disabled=false; btn.innerHTML="Verificar código";
+
+  if(error){ showErr("msgOTPErr","❌ Código inválido ou expirado. Tente novamente."); return; }
+
+  const msgOk = document.getElementById("msgOTPOk");
+  msgOk.textContent="✅ Verificado! Carregando plataforma...";
+  msgOk.style.display="block";
+  setTimeout(()=>mostrarHub(data.user), 800);
+}
+
+async function reenviarOTP(){
+  const btn = document.getElementById("btnReenviar");
+  btn.disabled=true;
+  await sb.auth.signInWithOtp({ email: emailAtual, options:{ shouldCreateUser:true }});
+  iniciarTimerReenvio();
+}
+
+function iniciarTimerReenvio(){
+  let t = 60;
+  const btn = document.getElementById("btnReenviar");
+  btn.disabled=true; btn.textContent=`Reenviar em ${t}s`;
+  if(resendTimer) clearInterval(resendTimer);
+  resendTimer = setInterval(()=>{
+    t--;
+    btn.textContent=`Reenviar em ${t}s`;
+    if(t<=0){ clearInterval(resendTimer); btn.disabled=false; btn.textContent="Reenviar código"; }
+  },1000);
+}
+
+function voltarEmail(){
+  document.getElementById("stepOTP").style.display="none";
+  document.getElementById("stepEmail").style.display="block";
+  [0,1,2,3,4,5].forEach(i=>document.getElementById("d"+i).value="");
+}
+
+// ── HUB ──────────────────────────────────────────────────────
+function mostrarHub(user){
+  document.getElementById("authWrap").style.display="none";
   document.getElementById("mainContent").style.display="block";
   document.getElementById("navLogin").style.display="none";
   document.getElementById("navUser").style.display="block";
-  const p=email.split("@");
-  document.getElementById("userEmailNav").textContent=p[0].substring(0,14);
-  document.getElementById("userInitial").textContent=p[0][0].toUpperCase();
+  const nome = user.email.split("@")[0];
+  document.getElementById("userEmailNav").textContent = nome.substring(0,14);
+  document.getElementById("userInitial").textContent = nome[0].toUpperCase();
+  // Salva token para as áreas
+  sb.auth.getSession().then(({data})=>{
+    if(data?.session?.access_token)
+      sessionStorage.setItem("mqctToken", data.session.access_token);
+  });
   renderAreas(AREAS);
 }
 
-function showLogin(){
-  document.getElementById("loginGate").style.display="block";
-  document.getElementById("loginGate").scrollIntoView({behavior:"smooth"});
-}
-
-function logout(){
-  clearUser();
-  document.getElementById("mainContent").style.display="none";
-  document.getElementById("loginGate").style.display="none";
-  document.getElementById("navLogin").style.display="block";
-  document.getElementById("navUser").style.display="none";
-}
-
 function renderAreas(lista){
-  document.getElementById("areasGrid").innerHTML=lista.map(a=>`
-    <a class="area-card" href="${a.file}?user=${encodeURIComponent(getUser()||'')}">
+  document.getElementById("areasGrid").innerHTML = lista.map(a=>`
+    <a class="area-card" href="${a.file}">
       <div class="card-stripe" style="background:${a.cor}"></div>
       <div class="card-body">
         <div class="card-top">
-          <div class="card-icon-wrap" style="background:${a.bg}"><span style="font-size:22px">${a.emoji}</span></div>
+          <div class="card-icon-wrap" style="background:${a.bg}"><span>${a.emoji}</span></div>
           <div><div class="card-title">${a.title}</div><div class="card-count">${a.cursos} curso${a.cursos>1?"s":""} técnico${a.cursos>1?"s":""}</div></div>
         </div>
         <div class="card-desc">${a.desc}</div>
@@ -396,26 +475,38 @@ function renderAreas(lista){
 }
 
 function filtrarAreas(){
-  const q=document.getElementById("searchInput").value.toLowerCase();
+  const q = document.getElementById("searchInput").value.toLowerCase();
   renderAreas(AREAS.filter(a=>a.title.toLowerCase().includes(q)||a.desc.toLowerCase().includes(q)));
 }
 
+async function logout(){
+  await sb.auth.signOut();
+  sessionStorage.removeItem("mqctToken");
+  document.getElementById("mainContent").style.display="none";
+  document.getElementById("navLogin").style.display="block";
+  document.getElementById("navUser").style.display="none";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+// ── TEMA ─────────────────────────────────────────────────────
 function toggleTheme(){
-  const t=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
+  const t = document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
   document.documentElement.setAttribute("data-theme",t);
-  document.getElementById("themeBtn").textContent=t==="dark"?"☀️":"🌙";
+  document.getElementById("themeBtn").textContent = t==="dark"?"☀️":"🌙";
   localStorage.setItem("mqctTheme",t);
 }
 (function(){
-  const t=localStorage.getItem("mqctTheme")||"light";
+  const t = localStorage.getItem("mqctTheme")||"light";
   document.documentElement.setAttribute("data-theme",t);
-  document.getElementById("themeBtn").textContent=t==="dark"?"☀️":"🌙";
+  document.getElementById("themeBtn").textContent = t==="dark"?"☀️":"🌙";
 })();
 
-window.addEventListener("load",()=>{const u=getUser();if(u)mostrarHub(u);});
-document.addEventListener("DOMContentLoaded",()=>{
-  document.getElementById("senhaInput").addEventListener("keydown",e=>{if(e.key==="Enter")fazerLogin();});
-  document.getElementById("emailInput").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("senhaInput").focus();});
+// ── AUTO LOGIN ────────────────────────────────────────────────
+window.addEventListener("load", async ()=>{
+  const { data } = await sb.auth.getSession();
+  if(data?.session?.user){
+    mostrarHub(data.session.user);
+  }
 });
 </script>
 </body>
