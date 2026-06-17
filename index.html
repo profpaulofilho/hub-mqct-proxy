@@ -257,6 +257,8 @@ footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28p
             <input type="text" maxlength="1" class="otp-digit" id="d3" oninput="moveNext(3)" onkeydown="movePrev(event,3)">
             <input type="text" maxlength="1" class="otp-digit" id="d4" oninput="moveNext(4)" onkeydown="movePrev(event,4)">
             <input type="text" maxlength="1" class="otp-digit" id="d5" oninput="moveNext(5)" onkeydown="movePrev(event,5)">
+            <input type="text" maxlength="1" class="otp-digit" id="d6" oninput="moveNext(6)" onkeydown="movePrev(event,6)">
+            <input type="text" maxlength="1" class="otp-digit" id="d7" oninput="moveNext(7)" onkeydown="movePrev(event,7)">
           </div>
           <button class="btn-full" id="btnVerificar" onclick="verificarOTP()">Verificar código</button>
           <div class="msg msg-err" id="msgOTPErr" style="margin-top:12px"></div>
@@ -367,7 +369,10 @@ async function enviarOTP(){
 
   const { error } = await sb.auth.signInWithOtp({
     email,
-    options:{ shouldCreateUser: true }
+    options:{
+      shouldCreateUser: true,
+      emailRedirectTo: null,  // força OTP, não magic link
+    }
   });
 
   btn.disabled=false; btn.innerHTML="Enviar código →";
@@ -385,8 +390,8 @@ async function enviarOTP(){
 
 function moveNext(i){
   const v = document.getElementById("d"+i).value;
-  if(v && i<5) document.getElementById("d"+(i+1)).focus();
-  if(i===5) verificarOTP();
+  if(v && i<7) document.getElementById("d"+(i+1)).focus();
+  if(i===7) verificarOTP();
 }
 function movePrev(e,i){
   if(e.key==="Backspace"&&!document.getElementById("d"+i).value&&i>0)
@@ -394,8 +399,8 @@ function movePrev(e,i){
 }
 
 async function verificarOTP(){
-  const token = [0,1,2,3,4,5].map(i=>document.getElementById("d"+i).value).join("");
-  if(token.length<6){ showErr("msgOTPErr","❌ Digite os 6 dígitos."); return; }
+  const token = [0,1,2,3,4,5,6,7].map(i=>document.getElementById("d"+i).value).join("");
+  if(token.length<8){ showErr("msgOTPErr","❌ Digite os 8 dígitos."); return; }
   hideMsg("msgOTPErr"); hideMsg("msgOTPOk");
   const btn = document.getElementById("btnVerificar");
   btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Verificando...';
