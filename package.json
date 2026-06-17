@@ -1,0 +1,9 @@
+{
+  "name": "hub-mqct-proxy",
+  "version": "1.0.0",
+  "description": "Proxy Vercel para Gemini API — Hub MQCT SENAI Bahia",
+  "private": true,
+  "engines": {
+    "node": ">=18"
+  }
+}
