@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Hub MQCT · Agentes de IA para Docentes · SENAI Bahia</title>
+<style>
+:root{
+  --bg:#F8F9FA;--bg2:#FFFFFF;--bg3:#F1F3F5;
+  --text:#1A1A2E;--text2:#4A4A6A;--text3:#8A8AAA;
+  --border:#E2E4E9;--shadow:0 2px 16px rgba(0,0,0,.08);
+  --blue:#1A3A8F;--red:#C00000;--gold:#F4A020;
+  --radius:14px;--radius-sm:8px;
+}
+[data-theme="dark"]{
+  --bg:#0A0F1E;--bg2:#111827;--bg3:#1A2236;
+  --text:#E8EEFF;--text2:#8892AA;--text3:#3A4460;
+  --border:#1E2A42;--shadow:0 2px 16px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
+a{text-decoration:none;color:inherit}
+
+/* NAV */
+nav{background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;transition:background .3s}
+[data-theme="dark"] nav{background:rgba(10,15,30,.85)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 28px;height:68px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:14px}
+.senai-logo{height:38px;width:auto}
+.nav-divider{width:1px;height:28px;background:var(--border)}
+.nav-product{font-size:13px;font-weight:700;color:var(--blue);line-height:1.2}
+.nav-product span{display:block;font-weight:400;color:var(--text2);font-size:11px;margin-top:1px}
+.nav-right{display:flex;align-items:center;gap:10px}
+.btn-theme{background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;color:var(--text2);font-size:15px;transition:.2s;line-height:1}
+.btn-theme:hover{background:var(--bg3)}
+.btn-login{background:linear-gradient(135deg,#1A3A8F,#2B5CE6);color:white;border:none;border-radius:99px;padding:9px 22px;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;letter-spacing:.01em}
+.btn-login:hover{opacity:.9;transform:translateY(-1px)}
+.user-pill{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:99px;padding:4px 14px 4px 4px;font-size:13px;color:var(--text2)}
+.user-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#1A3A8F,#2B5CE6);display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700}
+.btn-logout{background:none;border:none;color:var(--red);font-size:12px;cursor:pointer;margin-left:4px}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#060D1F 0%,#0D1B3E 50%,#0A1628 100%);color:white;padding:80px 28px 90px;position:relative;overflow:hidden;min-height:520px;display:flex;align-items:center}
+.hero-dots{position:absolute;inset:0;background-image:radial-gradient(rgba(100,150,255,.15) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
+.hero-glow{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(43,92,230,.18) 0%,transparent 70%);top:-100px;right:5%;pointer-events:none}
+.hero-glow2{position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(244,160,32,.1) 0%,transparent 70%);bottom:-50px;left:10%;pointer-events:none}
+.hero-inner{max-width:1200px;margin:0 auto;width:100%;display:grid;grid-template-columns:1fr 420px;gap:60px;align-items:center;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(43,92,230,.2);border:1px solid rgba(43,92,230,.4);border-radius:99px;padding:5px 16px;font-size:12px;font-weight:500;margin-bottom:24px;color:#A8C4FF}
+.hero-badge::before{content:'';width:8px;height:8px;border-radius:50%;background:#4CF0A0;box-shadow:0 0 8px #4CF0A0;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero h1{font-size:clamp(30px,4.5vw,52px);font-weight:800;line-height:1.1;margin-bottom:20px;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,#4A9EFF,#7B61FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:17px;color:rgba(255,255,255,.65);margin-bottom:36px;line-height:1.7;max-width:480px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-hero-primary{background:linear-gradient(135deg,#2B5CE6,#7B61FF);color:white;border:none;border-radius:99px;padding:14px 28px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s;letter-spacing:.01em}
+.btn-hero-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(43,92,230,.4)}
+.btn-hero-secondary{background:rgba(255,255,255,.08);color:white;border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:14px 28px;font-size:15px;font-weight:500;cursor:pointer;transition:.2s}
+.btn-hero-secondary:hover{background:rgba(255,255,255,.14)}
+.hero-stats{display:flex;gap:32px;margin-top:40px;padding-top:32px;border-top:1px solid rgba(255,255,255,.1)}
+.stat-n{font-size:26px;font-weight:800;color:white}
+.stat-l{font-size:12px;color:rgba(255,255,255,.45);margin-top:2px}
+
+/* HERO IMAGEM ANIMADA */
+.hero-visual{display:flex;justify-content:center;align-items:center;position:relative}
+.doc-float{animation:float 4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+.doc-shadow{width:200px;height:20px;background:rgba(43,92,230,.25);border-radius:50%;margin:0 auto;filter:blur(10px);animation:shadow-pulse 4s ease-in-out infinite}
+@keyframes shadow-pulse{0%,100%{transform:scaleX(1);opacity:.5}50%{transform:scaleX(.7);opacity:.2}}
+.doc-wrap{position:relative;margin-bottom:16px}
+.doc-svg{width:220px;height:auto;filter:drop-shadow(0 20px 40px rgba(43,92,230,.35))}
+/* partículas */
+.particle{position:absolute;border-radius:50%;animation:float-p 3s ease-in-out infinite}
+@keyframes float-p{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-10px) rotate(180deg)}}
+.p1{width:8px;height:8px;background:#4CF0A0;top:10%;left:5%;animation-delay:.5s;opacity:.7}
+.p2{width:6px;height:6px;background:#4A9EFF;top:20%;right:8%;animation-delay:1s;opacity:.6}
+.p3{width:10px;height:10px;background:#F4A020;bottom:25%;right:4%;animation-delay:1.5s;opacity:.5;border-radius:2px}
+.p4{width:5px;height:5px;background:#7B61FF;bottom:35%;left:8%;animation-delay:.8s;opacity:.6}
+.p5{width:7px;height:7px;background:#4CF0A0;top:55%;right:15%;animation-delay:2s;opacity:.4}
+
+/* LOGIN */
+#loginGate{max-width:460px;margin:56px auto;padding:0 24px}
+.login-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:40px;box-shadow:var(--shadow)}
+.login-icon{width:52px;height:52px;background:linear-gradient(135deg,#1A3A8F,#2B5CE6);border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:24px}
+.login-card h2{font-size:22px;font-weight:700;margin-bottom:6px}
+.login-card p{font-size:14px;color:var(--text2);margin-bottom:28px;line-height:1.5}
+.field-wrap{margin-bottom:16px}
+.field-wrap label{display:block;font-size:11px;font-weight:700;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em}
+.field-wrap input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--bg3);color:var(--text);font-size:14px;transition:.2s}
+.field-wrap input:focus{outline:none;border-color:#2B5CE6;background:var(--bg2)}
+.btn-full{width:100%;background:linear-gradient(135deg,#1A3A8F,#2B5CE6);color:white;border:none;border-radius:99px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;transition:.2s;margin-top:4px;letter-spacing:.01em}
+.btn-full:hover{opacity:.9;transform:translateY(-1px)}
+.btn-full:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.login-note{font-size:12px;color:var(--text3);text-align:center;margin-top:16px}
+.msg-ok{background:#ECFDF5;border:1px solid #A7F3D0;border-radius:8px;padding:12px 16px;font-size:13px;color:#065F46;margin-top:16px;display:none}
+.msg-err{background:#FEE2E2;border:1px solid #FCA5A5;border-radius:8px;padding:12px 16px;font-size:13px;color:#991B1B;margin-top:16px;display:none}
+
+/* MAIN */
+#mainContent{display:none;max-width:1200px;margin:0 auto;padding:48px 28px}
+.section-header{margin-bottom:32px}
+.section-title{font-size:24px;font-weight:700;color:var(--text)}
+.section-sub{font-size:14px;color:var(--text2);margin-top:6px}
+.search-wrap{position:relative;margin-bottom:32px;max-width:480px}
+.search-wrap input{width:100%;padding:12px 16px 12px 44px;border:1.5px solid var(--border);border-radius:99px;background:var(--bg2);color:var(--text);font-size:14px;transition:.2s}
+.search-wrap input:focus{outline:none;border-color:#2B5CE6}
+.search-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:17px}
+
+/* CARDS */
+.areas-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
+.area-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s;display:block}
+.area-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.12);border-color:rgba(43,92,230,.3)}
+.card-stripe{height:3px}
+.card-body{padding:22px}
+.card-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
+.card-icon-wrap{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.card-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px}
+.card-count{font-size:11px;color:var(--text3)}
+.card-desc{font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:16px}
+.card-footer{display:flex;align-items:center;justify-content:space-between}
+.card-tag{font-size:11px;color:var(--text3);background:var(--bg3);padding:3px 10px;border-radius:99px;border:0.5px solid var(--border)}
+.card-cta{font-size:12px;font-weight:600;color:#2B5CE6;display:flex;align-items:center;gap:4px}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28px;margin-top:56px}
+.footer-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.footer-left{display:flex;align-items:center;gap:12px}
+.footer-senai{height:28px}
+.footer-text{font-size:13px;color:var(--text2)}
+.footer-copy{font-size:12px;color:var(--text3)}
+
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;display:inline-block;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:768px){
+  .hero-inner{grid-template-columns:1fr}
+  .hero-visual{display:none}
+  .hero{padding:60px 20px 70px}
+  #mainContent{padding:32px 16px}
+  .footer-inner{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">
+      <!-- Logo SENAI real SVG baseado na imagem enviada -->
+      <svg class="senai-logo" viewBox="0 0 220 70" xmlns="http://www.w3.org/2000/svg">
+        <text x="0" y="58" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="68" fill="#1A3A8F" letter-spacing="-2">SEN</text>
+        <text x="144" y="58" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="68" fill="#1A3A8F">A</text>
+        <text x="192" y="58" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="68" fill="#1A3A8F" transform="skewX(-8)">i</text>
+        <polygon points="204,2 220,2 220,18" fill="#C00000"/>
+      </svg>
+      <div class="nav-divider"></div>
+      <div class="nav-product">Agentes de IA para Docentes<span>Hub MQCT · SENAI Bahia 2026</span></div>
+    </div>
+    <div class="nav-right">
+      <button class="btn-theme" onclick="toggleTheme()" title="Alternar tema" id="themeBtn">🌙</button>
+      <div id="navLogin"><button class="btn-login" onclick="showLogin()">Entrar</button></div>
+      <div id="navUser" style="display:none">
+        <div class="user-pill">
+          <div class="user-avatar" id="userInitial">P</div>
+          <span id="userEmailNav">docente</span>
+          <button class="btn-logout" onclick="logout()">Sair</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-dots"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-badge">✦ Plataforma Docente Inteligente · SENAI Bahia</div>
+      <h1>Agentes de IA para<br><em>Docentes SENAI</em></h1>
+      <p>Planos de aula, situações de aprendizagem, avaliações e muito mais — alinhados ao MSEP e Itinerários Nacionais, gerados em segundos.</p>
+      <div class="hero-btns">
+        <button class="btn-hero-primary" onclick="showLogin()">Acessar agora →</button>
+        <button class="btn-hero-secondary" onclick="document.getElementById('loginGate').scrollIntoView({behavior:'smooth'})">Como funciona</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-n">19</div><div class="stat-l">Áreas técnicas</div></div>
+        <div class="stat"><div class="stat-n">9</div><div class="stat-l">Tipos de material</div></div>
+        <div class="stat"><div class="stat-n">100+</div><div class="stat-l">Cursos técnicos</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div>
+        <div class="doc-float">
+          <div class="doc-wrap">
+            <div class="particle p1"></div>
+            <div class="particle p2"></div>
+            <div class="particle p3"></div>
+            <div class="particle p4"></div>
+            <div class="particle p5"></div>
+            <svg class="doc-svg" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="docGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#2A3A6E" stop-opacity=".9"/>
+                  <stop offset="100%" stop-color="#1A2550" stop-opacity=".95"/>
+                </linearGradient>
+                <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#4A9EFF"/>
+                  <stop offset="100%" stop-color="#7B61FF" stop-opacity=".3"/>
+                </linearGradient>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="3" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+              <!-- Documento -->
+              <rect x="20" y="10" width="145" height="185" rx="10" fill="url(#docGrad)" stroke="rgba(100,140,255,.3)" stroke-width="1"/>
+              <!-- Canto dobrado -->
+              <polygon points="135,10 165,10 165,38" fill="rgba(20,30,70,.8)"/>
+              <polygon points="135,10 165,38 135,38" fill="rgba(100,140,255,.25)" stroke="rgba(100,140,255,.3)" stroke-width="0.5"/>
+              <!-- Linha destaque azul -->
+              <rect x="32" y="52" width="100" height="3" rx="1.5" fill="url(#lineGrad)" filter="url(#glow)"/>
+              <!-- Linhas de texto -->
+              <rect x="32" y="64" width="110" height="2.5" rx="1.2" fill="rgba(160,180,255,.35)"/>
+              <rect x="32" y="73" width="95" height="2.5" rx="1.2" fill="rgba(160,180,255,.3)"/>
+              <rect x="32" y="82" width="105" height="2.5" rx="1.2" fill="rgba(160,180,255,.28)"/>
+              <rect x="32" y="91" width="80" height="2.5" rx="1.2" fill="rgba(160,180,255,.25)"/>
+              <rect x="32" y="105" width="110" height="2.5" rx="1.2" fill="rgba(160,180,255,.3)"/>
+              <rect x="32" y="114" width="70" height="2.5" rx="1.2" fill="rgba(160,180,255,.22)"/>
+              <rect x="32" y="123" width="100" height="2.5" rx="1.2" fill="rgba(160,180,255,.28)"/>
+              <rect x="32" y="132" width="90" height="2.5" rx="1.2" fill="rgba(160,180,255,.2)"/>
+              <rect x="32" y="146" width="110" height="2.5" rx="1.2" fill="rgba(160,180,255,.25)"/>
+              <rect x="32" y="155" width="75" height="2.5" rx="1.2" fill="rgba(160,180,255,.2)"/>
+              <!-- Reflexo superior -->
+              <rect x="20" y="10" width="145" height="40" rx="10" fill="rgba(255,255,255,.04)"/>
+              <!-- Circulo check -->
+              <circle cx="145" cy="185" r="26" fill="rgba(10,20,50,.6)"/>
+              <circle cx="145" cy="185" r="22" fill="url(#checkGrad)" filter="url(#glow)"/>
+              <defs>
+                <radialGradient id="checkGrad" cx="35%" cy="35%">
+                  <stop offset="0%" stop-color="#4A9EFF"/>
+                  <stop offset="100%" stop-color="#2B5CE6"/>
+                </radialGradient>
+              </defs>
+              <polyline points="135,185 142,193 157,176" stroke="white" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+        </div>
+        <div class="doc-shadow"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginGate" style="display:none;max-width:460px;margin:56px auto;padding:0 24px">
+  <div class="login-card">
+    <div class="login-icon">🤖</div>
+    <h2>Acesso Docente</h2>
+    <p>Entre com seu e-mail institucional SENAI Bahia para acessar os agentes de IA.</p>
+    <div class="field-wrap">
+      <label>E-mail institucional</label>
+      <input type="email" id="emailInput" placeholder="nome@ba.docente.senai.br" autocomplete="email">
+    </div>
+    <div class="field-wrap">
+      <label>Senha</label>
+      <input type="password" id="senhaInput" placeholder="••••••••">
+    </div>
+    <button class="btn-full" id="btnLogin" onclick="fazerLogin()">Entrar na plataforma</button>
+    <div class="msg-ok" id="msgOk">✅ Login realizado! Carregando agentes...</div>
+    <div class="msg-err" id="msgErr">❌ <span id="msgErrTxt">Verifique seus dados.</span></div>
+    <p class="login-note">Apenas e-mails <strong>@ba.docente.senai.br</strong> são aceitos.</p>
+  </div>
+</div>
+
+<!-- CONTEÚDO -->
+<div id="mainContent">
+  <div class="section-header">
+    <div class="section-title">Escolha a área técnica</div>
+    <div class="section-sub">Selecione sua área e gere materiais alinhados ao MSEP e ao Itinerário Nacional SENAI</div>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Buscar área técnica..." oninput="filtrarAreas()">
+  </div>
+  <div class="areas-grid" id="areasGrid"></div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <svg class="footer-senai" viewBox="0 0 220 70" xmlns="http://www.w3.org/2000/svg">
+        <text x="0" y="58" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="68" fill="#1A3A8F" letter-spacing="-2">SEN</text>
+        <text x="144" y="58" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="68" fill="#1A3A8F">A</text>
+        <text x="192" y="58" font-family="Arial Black,Impact,sans-serif" font-weight="900" font-size="68" fill="#1A3A8F" transform="skewX(-8)">i</text>
+        <polygon points="204,2 220,2 220,18" fill="#C00000"/>
+      </svg>
+      <div class="footer-text">Hub MQCT · Agentes de IA para Docentes</div>
+    </div>
+    <div class="footer-copy">Paulo da Silva Filho · Especialista em TI · GEP · SENAI Bahia · 2026</div>
+  </div>
+</footer>
+
+<script>
+const AREAS=[
+  {id:"alimentos",emoji:"🍽️",title:"Alimentos e Bebidas",desc:"Técnico em Alimentos, Confeitaria, Panificação, Cervejaria, Gastronomia e Agroindústria.",cursos:6,cor:"#F4A020",bg:"#FFF8EC",file:"areas/alimentos.html"},
+  {id:"automacao",emoji:"⚙️",title:"Automação e Mecatrônica",desc:"Técnico em Automação Industrial, Mecatrônica e Eletromecânica.",cursos:3,cor:"#0055B8",bg:"#E8F0FF",file:"areas/automacao.html"},
+  {id:"automotiva",emoji:"🚗",title:"Automotiva",desc:"Técnico em Manutenção Automotiva e Funilaria e Pintura.",cursos:2,cor:"#C00000",bg:"#FFEBEB",file:"areas/automotiva.html"},
+  {id:"couro",emoji:"👞",title:"Couro e Calçados",desc:"Técnico em Calçados, Design de Calçados e Curtimento.",cursos:3,cor:"#8B4513",bg:"#F5EDE6",file:"areas/couro.html"},
+  {id:"ds",emoji:"💻",title:"DS e Informática para Internet",desc:"Técnico em Desenvolvimento de Sistemas, Informática para Internet e Jogos Digitais.",cursos:3,cor:"#6A0DAD",bg:"#F3EAFF",file:"areas/ds.html"},
+  {id:"edificacoes",emoji:"🏗️",title:"Edificações",desc:"Técnico em Edificações e Modelagem Digital da Construção (BIM).",cursos:2,cor:"#5D4037",bg:"#EDE8E5",file:"areas/edificacoes.html"},
+  {id:"eletro",emoji:"🔌",title:"Eletroeletrônica",desc:"Técnico em Eletroeletrônica e Equipamentos Biomédicos.",cursos:2,cor:"#E65100",bg:"#FFF3EB",file:"areas/eletroeletronica.html"},
+  {id:"energia",emoji:"🌱",title:"Energias Renováveis",desc:"Técnico em Sistemas de Energia Renovável.",cursos:1,cor:"#2E7D32",bg:"#EAF5EA",file:"areas/energias.html"},
+  {id:"gestao",emoji:"📈",title:"Gestão",desc:"Técnico em Administração, Qualidade e Planejamento e Controle da Produção.",cursos:3,cor:"#1A3A8F",bg:"#E8EDFF",file:"areas/gestao.html"},
+  {id:"grafica",emoji:"🎨",title:"Gráfica e Mídias",desc:"Técnico em Design Gráfico, Multimídia e Processos Gráficos.",cursos:3,cor:"#C2185B",bg:"#FCEAF2",file:"areas/grafica.html"},
+  {id:"logistica",emoji:"📦",title:"Logística",desc:"Técnico em Logística e Transporte.",cursos:2,cor:"#00838F",bg:"#E5F6F7",file:"areas/logistica.html"},
+  {id:"redes",emoji:"🌐",title:"Redes de Computadores",desc:"Técnico em Redes, Suporte em Informática e Cibersegurança.",cursos:3,cor:"#1565C0",bg:"#E8F1FF",file:"areas/redes.html"},
+  {id:"metal",emoji:"🛠️",title:"Metalmecânica Geral",desc:"Técnico em Usinagem, Mecânica e Caldeiraria.",cursos:3,cor:"#455A64",bg:"#EAEEF0",file:"areas/metalmecanica.html"},
+  {id:"petroleo",emoji:"🛢️",title:"Petróleo e Gás",desc:"Técnico em Petróleo e Gás e Perfuração de Petróleo.",cursos:2,cor:"#37474F",bg:"#E8ECED",file:"areas/petroleo.html"},
+  {id:"quimica",emoji:"🧪",title:"Química",desc:"Técnico em Química e Controle Ambiental.",cursos:2,cor:"#00695C",bg:"#E5F5F3",file:"areas/quimica.html"},
+  {id:"refrig",emoji:"❄️",title:"Refrigeração e Climatização",desc:"Técnico em Refrigeração e Climatização.",cursos:1,cor:"#0288D1",bg:"#E8F5FF",file:"areas/refrigeracao.html"},
+  {id:"seguranca",emoji:"🦺",title:"Segurança do Trabalho",desc:"Técnico em Segurança do Trabalho.",cursos:1,cor:"#E65100",bg:"#FFF3EB",file:"areas/seguranca.html"},
+  {id:"telecom",emoji:"📡",title:"Telecomunicações",desc:"Técnico em Telecomunicações e Redes de Telecomunicações.",cursos:2,cor:"#283593",bg:"#EAEDFF",file:"areas/telecom.html"},
+  {id:"vestuario",emoji:"👗",title:"Vestuário",desc:"Técnico em Vestuário, Modelagem e Produção de Moda.",cursos:3,cor:"#880E4F",bg:"#FCEAF4",file:"areas/vestuario.html"},
+];
+
+const PROXY="https://hub-mqct-proxy.vercel.app/api/gemini";
+const DOMAIN="ba.docente.senai.br";
+
+function getUser(){return sessionStorage.getItem("mqctUser");}
+function setUser(e){sessionStorage.setItem("mqctUser",e);}
+function clearUser(){sessionStorage.removeItem("mqctUser");}
+
+async function fazerLogin(){
+  const email=document.getElementById("emailInput").value.trim().toLowerCase();
+  const senha=document.getElementById("senhaInput").value;
+  const btn=document.getElementById("btnLogin");
+  const msgOk=document.getElementById("msgOk"),msgErr=document.getElementById("msgErr");
+  msgOk.style.display="none";msgErr.style.display="none";
+  if(!email.endsWith("@"+DOMAIN)){
+    document.getElementById("msgErrTxt").textContent="Use seu e-mail @"+DOMAIN;
+    msgErr.style.display="block";return;
+  }
+  if(senha.length<6){
+    document.getElementById("msgErrTxt").textContent="Senha deve ter pelo menos 6 caracteres.";
+    msgErr.style.display="block";return;
+  }
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Verificando...';
+  try{
+    const res=await fetch(PROXY,{method:"POST",headers:{"Content-Type":"application/json","X-User-Email":email},body:JSON.stringify({prompt:"OK",forceJSON:false})});
+    if(res.ok){setUser(email);msgOk.style.display="block";setTimeout(()=>mostrarHub(email),700);}
+    else{const d=await res.json();document.getElementById("msgErrTxt").textContent=d.error||"Erro.";msgErr.style.display="block";}
+  }catch(e){document.getElementById("msgErrTxt").textContent="Erro de conexão.";msgErr.style.display="block";}
+  btn.disabled=false;btn.innerHTML="Entrar na plataforma";
+}
+
+function mostrarHub(email){
+  document.getElementById("loginGate").style.display="none";
+  document.getElementById("mainContent").style.display="block";
+  document.getElementById("navLogin").style.display="none";
+  document.getElementById("navUser").style.display="block";
+  const p=email.split("@");
+  document.getElementById("userEmailNav").textContent=p[0].substring(0,14);
+  document.getElementById("userInitial").textContent=p[0][0].toUpperCase();
+  renderAreas(AREAS);
+}
+
+function showLogin(){
+  document.getElementById("loginGate").style.display="block";
+  document.getElementById("loginGate").scrollIntoView({behavior:"smooth"});
+}
+
+function logout(){
+  clearUser();
+  document.getElementById("mainContent").style.display="none";
+  document.getElementById("loginGate").style.display="none";
+  document.getElementById("navLogin").style.display="block";
+  document.getElementById("navUser").style.display="none";
+}
+
+function renderAreas(lista){
+  document.getElementById("areasGrid").innerHTML=lista.map(a=>`
+    <a class="area-card" href="${a.file}?user=${encodeURIComponent(getUser()||'')}">
+      <div class="card-stripe" style="background:${a.cor}"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <div class="card-icon-wrap" style="background:${a.bg}"><span style="font-size:22px">${a.emoji}</span></div>
+          <div><div class="card-title">${a.title}</div><div class="card-count">${a.cursos} curso${a.cursos>1?"s":""} técnico${a.cursos>1?"s":""}</div></div>
+        </div>
+        <div class="card-desc">${a.desc}</div>
+        <div class="card-footer">
+          <span class="card-tag">MSEP · Itinerário Nacional</span>
+          <span class="card-cta">Acessar →</span>
+        </div>
+      </div>
+    </a>`).join("");
+}
+
+function filtrarAreas(){
+  const q=document.getElementById("searchInput").value.toLowerCase();
+  renderAreas(AREAS.filter(a=>a.title.toLowerCase().includes(q)||a.desc.toLowerCase().includes(q)));
+}
+
+function toggleTheme(){
+  const t=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
+  document.documentElement.setAttribute("data-theme",t);
+  document.getElementById("themeBtn").textContent=t==="dark"?"☀️":"🌙";
+  localStorage.setItem("mqctTheme",t);
+}
+(function(){
+  const t=localStorage.getItem("mqctTheme")||"light";
+  document.documentElement.setAttribute("data-theme",t);
+  document.getElementById("themeBtn").textContent=t==="dark"?"☀️":"🌙";
+})();
+
+window.addEventListener("load",()=>{const u=getUser();if(u)mostrarHub(u);});
+document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("senhaInput").addEventListener("keydown",e=>{if(e.key==="Enter")fazerLogin();});
+  document.getElementById("emailInput").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("senhaInput").focus();});
+});
+</script>
+</body>
+</html>
