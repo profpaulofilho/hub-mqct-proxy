@@ -128,6 +128,11 @@ nav{background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1p
 .card-footer{display:flex;align-items:center;justify-content:space-between}
 .card-tag{font-size:11px;color:var(--text3);background:var(--bg3);padding:3px 10px;border-radius:99px;border:.5px solid var(--border)}
 .card-cta{font-size:12px;font-weight:600;color:#2B5CE6}
+.area-card.disabled{opacity:.72;cursor:not-allowed;filter:saturate(.75)}
+.area-card.disabled:hover{transform:none;box-shadow:none;border-color:var(--border)}
+.badge-em-breve{background:#dc2626;color:#fff;font-size:10px;font-weight:800;padding:4px 10px;border-radius:99px;letter-spacing:.04em}
+.area-card.ready .card-tag{border-color:rgba(16,185,129,.35);color:#16a34a}
+
 
 footer{border-top:1px solid var(--border);background:var(--bg2);padding:32px 28px;margin-top:56px}
 .footer-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
@@ -359,25 +364,25 @@ const {createClient}=supabase;
 const sb=createClient(SUPA_URL,SUPA_KEY);
 
 const AREAS=[
-  {id:"alimentos",emoji:"🍽️",title:"Alimentos e Bebidas",desc:"Técnico em Alimentos, Confeitaria, Panificação, Cervejaria, Gastronomia e Agroindústria.",cursos:6,cor:"#F4A020",bg:"#FFF8EC",file:"areas/alimentos.html"},
-  {id:"automacao",emoji:"⚙️",title:"Automação e Mecatrônica",desc:"Técnico em Automação Industrial, Mecatrônica e Eletromecânica.",cursos:3,cor:"#0055B8",bg:"#E8F0FF",file:"areas/automacao.html"},
-  {id:"automotiva",emoji:"🚗",title:"Automotiva",desc:"Técnico em Manutenção Automotiva e Funilaria e Pintura.",cursos:2,cor:"#C00000",bg:"#FFEBEB",file:"areas/automotiva.html"},
-  {id:"couro",emoji:"👞",title:"Couro e Calçados",desc:"Técnico em Calçados, Design de Calçados e Curtimento.",cursos:3,cor:"#8B4513",bg:"#F5EDE6",file:"areas/couro.html"},
-  {id:"ds",emoji:"💻",title:"DS e Informática para Internet",desc:"Técnico em Desenvolvimento de Sistemas, Informática para Internet e Jogos Digitais.",cursos:3,cor:"#6A0DAD",bg:"#F3EAFF",file:"areas/ds.html"},
-  {id:"edificacoes",emoji:"🏗️",title:"Edificações",desc:"Técnico em Edificações e Modelagem Digital da Construção (BIM).",cursos:2,cor:"#5D4037",bg:"#EDE8E5",file:"areas/edificacoes.html"},
-  {id:"eletro",emoji:"🔌",title:"Eletroeletrônica",desc:"Técnico em Eletroeletrônica e Equipamentos Biomédicos.",cursos:2,cor:"#E65100",bg:"#FFF3EB",file:"areas/eletroeletronica.html"},
-  {id:"energia",emoji:"🌱",title:"Energias Renováveis",desc:"Técnico em Sistemas de Energia Renovável.",cursos:1,cor:"#2E7D32",bg:"#EAF5EA",file:"areas/energias.html"},
-  {id:"gestao",emoji:"📈",title:"Gestão",desc:"Técnico em Administração, Qualidade e Planejamento e Controle da Produção.",cursos:3,cor:"#1A3A8F",bg:"#E8EDFF",file:"areas/gestao.html"},
-  {id:"grafica",emoji:"🎨",title:"Gráfica e Mídias",desc:"Técnico em Design Gráfico, Multimídia e Processos Gráficos.",cursos:3,cor:"#C2185B",bg:"#FCEAF2",file:"areas/grafica.html"},
-  {id:"logistica",emoji:"📦",title:"Logística",desc:"Técnico em Logística e Transporte.",cursos:2,cor:"#00838F",bg:"#E5F6F7",file:"areas/logistica.html"},
-  {id:"redes",emoji:"🌐",title:"Redes de Computadores",desc:"Técnico em Redes, Suporte em Informática e Cibersegurança.",cursos:3,cor:"#1565C0",bg:"#E8F1FF",file:"areas/redes.html"},
-  {id:"metal",emoji:"🛠️",title:"Metalmecânica Geral",desc:"Técnico em Usinagem, Mecânica e Caldeiraria.",cursos:3,cor:"#455A64",bg:"#EAEEF0",file:"areas/metalmecanica.html"},
-  {id:"petroleo",emoji:"🛢️",title:"Petróleo e Gás",desc:"Técnico em Petróleo e Gás e Perfuração de Petróleo.",cursos:2,cor:"#37474F",bg:"#E8ECED",file:"areas/petroleo.html"},
-  {id:"quimica",emoji:"🧪",title:"Química",desc:"Técnico em Química e Controle Ambiental.",cursos:2,cor:"#00695C",bg:"#E5F5F3",file:"areas/quimica.html"},
-  {id:"refrig",emoji:"❄️",title:"Refrigeração e Climatização",desc:"Técnico em Refrigeração e Climatização.",cursos:1,cor:"#0288D1",bg:"#E8F5FF",file:"areas/refrigeracao.html"},
-  {id:"seguranca",emoji:"🦺",title:"Segurança do Trabalho",desc:"Técnico em Segurança do Trabalho.",cursos:1,cor:"#E65100",bg:"#FFF3EB",file:"areas/seguranca.html"},
-  {id:"telecom",emoji:"📡",title:"Telecomunicações",desc:"Técnico em Telecomunicações e Redes de Telecomunicações.",cursos:2,cor:"#283593",bg:"#EAEDFF",file:"areas/telecom.html"},
-  {id:"vestuario",emoji:"👗",title:"Vestuário",desc:"Técnico em Vestuário, Modelagem e Produção de Moda.",cursos:3,cor:"#880E4F",bg:"#FCEAF4",file:"areas/vestuario.html"},
+  {id:"alimentos",emoji:"🍽️",title:"Alimentos e Bebidas",desc:"Técnico em Alimentos, Confeitaria, Panificação, Cervejaria, Gastronomia e Agroindústria.",cursos:6,cor:"#F4A020",bg:"#FFF8EC",file:"areas/alimentos.html",status:"ready"},
+  {id:"automacao",emoji:"⚙️",title:"Automação e Mecatrônica",desc:"Técnico em Automação Industrial, Mecatrônica e Eletromecânica.",cursos:3,cor:"#0055B8",bg:"#E8F0FF",file:"areas/automacao.html",status:"soon"},
+  {id:"automotiva",emoji:"🚗",title:"Automotiva",desc:"Técnico em Manutenção Automotiva e Funilaria e Pintura.",cursos:2,cor:"#C00000",bg:"#FFEBEB",file:"areas/automotiva.html",status:"soon"},
+  {id:"couro",emoji:"👞",title:"Couro e Calçados",desc:"Técnico em Calçados, Design de Calçados e Curtimento.",cursos:3,cor:"#8B4513",bg:"#F5EDE6",file:"areas/couro.html",status:"soon"},
+  {id:"ds",emoji:"💻",title:"DS e Informática para Internet",desc:"Técnico em Desenvolvimento de Sistemas, Informática para Internet e Jogos Digitais.",cursos:3,cor:"#6A0DAD",bg:"#F3EAFF",file:"areas/ds.html",status:"soon"},
+  {id:"edificacoes",emoji:"🏗️",title:"Edificações",desc:"Técnico em Edificações e Modelagem Digital da Construção (BIM).",cursos:2,cor:"#5D4037",bg:"#EDE8E5",file:"areas/edificacoes.html",status:"soon"},
+  {id:"eletro",emoji:"🔌",title:"Eletroeletrônica",desc:"Técnico em Eletroeletrônica e Equipamentos Biomédicos.",cursos:2,cor:"#E65100",bg:"#FFF3EB",file:"areas/eletroeletronica.html",status:"soon"},
+  {id:"energia",emoji:"🌱",title:"Energias Renováveis",desc:"Técnico em Sistemas de Energia Renovável.",cursos:1,cor:"#2E7D32",bg:"#EAF5EA",file:"areas/energias.html",status:"soon"},
+  {id:"gestao",emoji:"📈",title:"Gestão",desc:"Técnico em Administração, Qualidade e Planejamento e Controle da Produção.",cursos:3,cor:"#1A3A8F",bg:"#E8EDFF",file:"areas/gestao.html",status:"soon"},
+  {id:"grafica",emoji:"🎨",title:"Gráfica e Mídias",desc:"Técnico em Design Gráfico, Multimídia e Processos Gráficos.",cursos:3,cor:"#C2185B",bg:"#FCEAF2",file:"areas/grafica.html",status:"soon"},
+  {id:"logistica",emoji:"📦",title:"Logística",desc:"Técnico em Logística e Transporte.",cursos:2,cor:"#00838F",bg:"#E5F6F7",file:"areas/logistica.html",status:"soon"},
+  {id:"redes",emoji:"🌐",title:"Redes de Computadores",desc:"Técnico em Redes, Suporte em Informática e Cibersegurança.",cursos:3,cor:"#1565C0",bg:"#E8F1FF",file:"areas/redes.html",status:"soon"},
+  {id:"metal",emoji:"🛠️",title:"Metalmecânica Geral",desc:"Técnico em Usinagem, Mecânica e Caldeiraria.",cursos:3,cor:"#455A64",bg:"#EAEEF0",file:"areas/metalmecanica.html",status:"soon"},
+  {id:"petroleo",emoji:"🛢️",title:"Petróleo e Gás",desc:"Técnico em Petróleo e Gás e Perfuração de Petróleo.",cursos:2,cor:"#37474F",bg:"#E8ECED",file:"areas/petroleo.html",status:"soon"},
+  {id:"quimica",emoji:"🧪",title:"Química",desc:"Técnico em Química e Controle Ambiental.",cursos:2,cor:"#00695C",bg:"#E5F5F3",file:"areas/quimica.html",status:"soon"},
+  {id:"refrig",emoji:"❄️",title:"Refrigeração e Climatização",desc:"Técnico em Refrigeração e Climatização.",cursos:1,cor:"#0288D1",bg:"#E8F5FF",file:"areas/refrigeracao.html",status:"soon"},
+  {id:"seguranca",emoji:"🦺",title:"Segurança do Trabalho",desc:"Técnico em Segurança do Trabalho.",cursos:1,cor:"#E65100",bg:"#FFF3EB",file:"areas/seguranca.html",status:"ready"},
+  {id:"telecom",emoji:"📡",title:"Telecomunicações",desc:"Técnico em Telecomunicações e Redes de Telecomunicações.",cursos:2,cor:"#283593",bg:"#EAEDFF",file:"areas/telecom.html",status:"soon"},
+  {id:"vestuario",emoji:"👗",title:"Vestuário",desc:"Técnico em Vestuário, Modelagem e Produção de Moda.",cursos:3,cor:"#880E4F",bg:"#FCEAF4",file:"areas/vestuario.html",status:"soon"},
 ];
 
 let emailAtual="",resendTimer=null;
@@ -526,9 +531,15 @@ function mostrarHub(nome){
 }
 
 function renderAreas(lista){
-  document.getElementById("areasGrid").innerHTML=lista.map(a=>`
-    <a class="area-card" href="${a.file}">
-      <div class="card-stripe" style="background:${a.cor}"></div>
+  document.getElementById("areasGrid").innerHTML=lista.map(a=>{
+    const pronto = a.status === "ready";
+    const href = pronto ? a.file : "javascript:void(0)";
+    const click = pronto ? "" : " onclick=\"alert('🚧 Área em construção. Em breve os geradores desta área estarão disponíveis com base oficial do Itinerário Nacional SENAI.');return false;\"";
+    const tag = pronto ? "MSEP · Itinerário Nacional" : "🚧 Em construção";
+    const cta = pronto ? "Acessar →" : "EM BREVE";
+    return `
+    <a class="area-card ${pronto?'ready':'disabled'}" href="${href}"${click} aria-label="${a.title} ${pronto?'disponível':'em construção'}">
+      <div class="card-stripe" style="background:${pronto?a.cor:'#dc2626'}"></div>
       <div class="card-body">
         <div class="card-top">
           <div class="card-icon" style="background:${a.bg}">${a.emoji}</div>
@@ -536,11 +547,12 @@ function renderAreas(lista){
         </div>
         <div class="card-desc">${a.desc}</div>
         <div class="card-footer">
-          <span class="card-tag">MSEP · Itinerário Nacional</span>
-          <span class="card-cta">Acessar →</span>
+          <span class="card-tag">${tag}</span>
+          <span class="${pronto?'card-cta':'badge-em-breve'}">${cta}</span>
         </div>
       </div>
-    </a>`).join("");
+    </a>`;
+  }).join("");
 }
 
 function filtrarAreas(){
