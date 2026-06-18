@@ -330,6 +330,19 @@
           </select>
         </div>
       </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Modelo do plano</label>
+          <select id="pa-modelo">
+            <option value="exemplo" selected>Modelo SENAI simples — igual ao exemplo enviado</option>
+            <option value="detalhado">Modelo detalhado — com maior aprofundamento por aula</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Quantidade de aulas/encontros</label>
+          <input type="number" id="pa-aulas-custom" placeholder="Automático pela CH" min="1" max="60" oninput="calcAulas()" />
+        </div>
+      </div>
       <div class="ch-info-box visible" id="pa-aulas-info">
         <strong id="pa-aulas-txt">Calculando...</strong>
         <span id="pa-aulas-sub"></span>
@@ -599,171 +612,7 @@ const SUPABASE_URL = 'https://afvdrtmmxgvuyipsnatq.supabase.co';
 const AREA_NOME    = 'Alimentos e Bebidas';
 const CURSO        = 'Técnico em Alimentos — 1200h';
 
-
-let ucAtual = {id:'',nome:'',desc:'',cht:0,chp:0,modulo:'',dados:null};
-
-// ── BASE OFICIAL DE CHAs (data/alimentos.js) ─────────────────────────────
-const BASE_ALIMENTOS = (typeof window !== 'undefined' && window.ALIMENTOS) ? window.ALIMENTOS : null;
-
-function escHtml(str){
-  return String(str ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
-}
-
-function todasUCsOficiais(){
-  if(!BASE_ALIMENTOS?.modulos) return [];
-  const lista=[];
-  BASE_ALIMENTOS.modulos.forEach(modulo => {
-    (modulo.ucs||[]).forEach(uc => lista.push({...uc, moduloNome:modulo.nome, moduloId:modulo.id, funcao:modulo.funcao||''}));
-  });
-  return lista;
-}
-
-function buscarUCOficial(chave){
-  if(!chave || !BASE_ALIMENTOS) return null;
-  const k=String(chave).toLowerCase().trim();
-  return todasUCsOficiais().find(uc =>
-    String(uc.id).toLowerCase()===k ||
-    String(`${uc.moduloId}_${uc.codigo}`).toLowerCase()===k ||
-    String(uc.nome).toLowerCase()===k ||
-    String(`${uc.codigo} — ${uc.nome}`).toLowerCase()===k ||
-    String(`${uc.id} — ${uc.nome}`).toLowerCase()===k
-  ) || null;
-}
-
-function resumoUCOficial(uc){
-  if(!uc) return '';
-  const caps=(uc.capacidades||[]).map(c=>c.texto).filter(Boolean).slice(0,3).join(' ');
-  const pads=(uc.padroes||[]).slice(0,2).join(' ');
-  return caps || pads || BASE_ALIMENTOS?.competenciaGeral || '';
-}
-
-function buildSidebarOficial(){
-  if(!BASE_ALIMENTOS?.modulos) return;
-  const sidebar=document.querySelector('.sidebar');
-  if(!sidebar) return;
-  let html='<div class="sidebar-title">Módulos e UCs · Base oficial</div>';
-  BASE_ALIMENTOS.modulos.forEach(modulo => {
-    const chModulo=(modulo.ucs||[]).reduce((acc,uc)=>acc+(Number(uc.ch)||0),0);
-    html += `<div class="uc-group-header" onclick="setModuloOficial('${escHtml(modulo.id)}')">${BASE_ALIMENTOS.area?.emoji||'🍞'} ${escHtml(modulo.nome)} <span class="ch-tag">${chModulo}h</span></div>`;
-    (modulo.ucs||[]).forEach(uc => {
-      const key=`${modulo.id}_${uc.codigo}`;
-      html += `<div class="uc-item" onclick="setUCOficial('${escHtml(key)}')"><span>${escHtml(uc.codigo)} — ${escHtml(uc.nome)}</span><span class="ch-tag">${uc.ch}h</span></div>`;
-    });
-    html += '<div class="sidebar-divider"></div>';
-  });
-  html += '<div class="sidebar-title">Competências Transversais</div>';
-  html += `<div class="uc-item" onclick="setTransversalOficial('SOCIO')"><span>Socioemocionais oficiais</span><span class="ch-tag">8 itens</span></div>`;
-  html += `<div class="uc-item" onclick="setTransversalOficial('IA')"><span>Inteligência Artificial</span><span class="ch-tag">2 itens</span></div>`;
-  sidebar.innerHTML=html;
-}
-
-function setModuloOficial(moduloId){
-  const modulo=(BASE_ALIMENTOS?.modulos||[]).find(m=>m.id===moduloId);
-  if(!modulo) return;
-  const ch=(modulo.ucs||[]).reduce((acc,uc)=>acc+(Number(uc.ch)||0),0);
-  ucAtual={id:modulo.id,nome:modulo.nome,desc:BASE_ALIMENTOS.competenciaGeral,cht:0,chp:0,modulo:modulo.nome,dados:{tipo:'modulo',...modulo}};
-  document.getElementById('uc-nome').textContent=modulo.nome;
-  document.getElementById('uc-desc').textContent=BASE_ALIMENTOS.competenciaGeral;
-  document.getElementById('uc-meta').innerHTML=`<span>${escHtml(modulo.funcao||'Módulo')}</span><span class="ch-total">⏱ Total: ${ch}h</span><span>UCs: ${(modulo.ucs||[]).length}</span>`;
-  preencherCamposModais(modulo.nome);
-  document.querySelector('.main').scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-function setUCOficial(key){
-  const uc=buscarUCOficial(key);
-  if(!uc) return;
-  const desc=resumoUCOficial(uc);
-  setUC(uc.id, uc.nome, desc, Number(uc.cht)||0, Number(uc.chp)||0, uc.moduloNome);
-  ucAtual.dados=uc;
-  ucAtual.ch=uc.ch;
-  const meta=document.getElementById('uc-meta');
-  meta.innerHTML += `<span>Capacidades: ${(uc.capacidades||[]).length}</span><span>Padrões: ${(uc.padroes||[]).length}</span><span class="ch-total">Base oficial</span>`;
-  preencherCamposModais(`${uc.codigo} — ${uc.nome}`);
-}
-
-function setTransversalOficial(tipo){
-  if(tipo==='SOCIO'){
-    const texto=(BASE_ALIMENTOS?.socioemocionais||[]).map(s=>s.nome).join(', ');
-    ucAtual={id:'SOCIO',nome:'Competências Socioemocionais Oficiais',desc:texto,cht:8,chp:8,modulo:'Transversal',dados:{tipo:'socioemocional',itens:BASE_ALIMENTOS.socioemocionais||[]}};
-  }else{
-    const texto=(BASE_ALIMENTOS?.competenciasIA||[]).map(s=>s.nome).join(', ');
-    ucAtual={id:'IA',nome:'Competências de Inteligência Artificial',desc:texto,cht:8,chp:8,modulo:'Transversal',dados:{tipo:'ia',itens:BASE_ALIMENTOS.competenciasIA||[]}};
-  }
-  document.getElementById('uc-nome').textContent=ucAtual.nome;
-  document.getElementById('uc-desc').textContent=ucAtual.desc;
-  document.getElementById('uc-meta').innerHTML=`<span>${ucAtual.modulo}</span><span class="ch-t">📖 Teórica: ${ucAtual.cht}h</span><span class="ch-p">🧪 Prática: ${ucAtual.chp}h</span><span class="ch-total">Base oficial</span>`;
-  document.getElementById('pa-cht').value=ucAtual.cht; document.getElementById('pa-chp').value=ucAtual.chp; calcAulas();
-  preencherCamposModais(ucAtual.nome);
-  document.querySelector('.main').scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-function preencherCamposModais(valor){
-  ['pa-uc','sa-uc','pr-uc','oa-uc','mm-uc','cw-uc','av-uc','sl-uc'].forEach(fid=>{
-    const el=document.getElementById(fid);
-    if(el) el.value=valor;
-  });
-}
-
-function montarContextoOficial(){
-  if(!BASE_ALIMENTOS) return '';
-  const area=BASE_ALIMENTOS.area || {};
-  let linhas=[];
-  linhas.push('CONTEXTO OFICIAL FECHADO — use exclusivamente os dados abaixo.');
-  linhas.push('Não invente capacidades, conhecimentos, padrões, carga horária ou nomes de UC. Se faltar informação, declare que não consta na base oficial.');
-  linhas.push(`Área: ${area.nome||AREA_NOME} | Curso: ${area.curso||CURSO} | CH: ${area.ch||1200}h | CBO: ${area.cbo||'3252-05'} | Versão: ${area.versao||''} | Emissão: ${area.emissao||''}`);
-  linhas.push(`Competência geral: ${BASE_ALIMENTOS.competenciaGeral||''}`);
-  const dados=ucAtual.dados || buscarUCOficial(document.getElementById('pa-uc')?.value || ucAtual.nome);
-  if(dados?.tipo==='socioemocional'){
-    linhas.push('Competências socioemocionais oficiais:');
-    (dados.itens||[]).forEach(item=>{
-      linhas.push(`- ${item.nome}: ${item.descricao}`);
-      (item.capacidades||[]).forEach(c=>linhas.push(`  Capacidade: ${c}`));
-    });
-    return linhas.join('\n');
-  }
-  if(dados?.tipo==='ia'){
-    linhas.push('Competências de IA oficiais:');
-    (dados.itens||[]).forEach(item=>{
-      linhas.push(`- ${item.nome}: ${item.descricao}`);
-      (item.capacidades||[]).forEach(c=>linhas.push(`  Capacidade: ${c}`));
-    });
-    return linhas.join('\n');
-  }
-  if(dados?.tipo==='modulo'){
-    linhas.push(`Módulo selecionado: ${dados.nome}`);
-    (dados.ucs||[]).forEach(uc=>linhas.push(`- ${uc.codigo} — ${uc.nome} | CH ${uc.ch}h | T ${uc.cht}h | P ${uc.chp}h`));
-    return linhas.join('\n');
-  }
-  if(dados){
-    linhas.push(`UC selecionada: ${dados.codigo||dados.id} — ${dados.nome}`);
-    linhas.push(`Módulo: ${dados.moduloNome||ucAtual.modulo} | CH total: ${dados.ch}h | Teórica: ${dados.cht}h | Prática: ${dados.chp}h | Subfunção: ${dados.subfuncao||'não informada'}`);
-    if((dados.padroes||[]).length){
-      linhas.push('Padrões de desempenho oficiais:');
-      dados.padroes.forEach(p=>linhas.push(`- ${p}`));
-    }
-    if((dados.capacidades||[]).length){
-      linhas.push('Capacidades e conhecimentos oficiais:');
-      dados.capacidades.forEach((cap,i)=>{
-        linhas.push(`C${i+1} — ${cap.tipo} | Domínio: ${cap.dominio} | ${cap.texto}`);
-        (cap.conhecimentos||[]).forEach(k=>linhas.push(`  ${k}`));
-      });
-    }
-    return linhas.join('\n');
-  }
-  linhas.push('Nenhuma UC oficial selecionada. Solicite ao usuário que selecione uma UC na barra lateral antes de gerar materiais específicos.');
-  return linhas.join('\n');
-}
-
-function atualizarHeroComBase(){
-  if(!BASE_ALIMENTOS?.area) return;
-  const a=BASE_ALIMENTOS.area;
-  document.title=`${a.nome} — Hub MQCT · SENAI Bahia`;
-  const h1=document.querySelector('.hero h1'); if(h1) h1.textContent=a.nome;
-  const sub=document.querySelector('.hero-sub'); if(sub) sub.textContent=`Materiais didáticos alinhados ao Itinerário Nacional · Versão ${a.versao} · Emissão ${a.emissao}`;
-  const badges=document.querySelector('.hero-badges');
-  if(badges) badges.innerHTML=`<span class="badge">${escHtml(a.curso)}</span><span class="badge ch">⏱ ${a.ch}h</span><span class="badge">CBO ${a.cbo}</span><span class="badge">${escHtml(a.nivel)}</span>`;
-}
-
+let ucAtual = {id:'',nome:'',desc:'',cht:0,chp:0,modulo:''};
 
 // ── TEMA ─────────────────────────────────────────────────────
 function toggleTheme(){
@@ -780,16 +629,20 @@ function calcAulas(){
   const chp    = parseInt(document.getElementById('pa-chp').value)||0;
   const chDia  = parseInt(document.getElementById('pa-chpordia').value)||4;
   const total  = cht + chp;
+  const customAulas = parseInt(document.getElementById('pa-aulas-custom')?.value)||0;
   const isTransversal = (total === 0);
   // Transversais: exibe 1 aula no placeholder; docente ajusta a CH acima
   const totalEfetivo = isTransversal ? chDia : total;
-  const nAulas = Math.max(1, Math.ceil(totalEfetivo / chDia));
+  const nAulasAuto = Math.max(1, Math.ceil(totalEfetivo / chDia));
+  const nAulas = customAulas > 0 ? customAulas : nAulasAuto;
   const box = document.getElementById('pa-aulas-info');
   if(!isTransversal){
     document.getElementById('pa-aulas-txt').textContent =
       `📊 Total da UC: ${cht}h teórica + ${chp}h prática = ${total}h`;
     document.getElementById('pa-aulas-sub').textContent =
-      `→ Serão geradas ${nAulas} aula${nAulas>1?"s":""} de ${chDia}h cada`;
+      customAulas > 0
+        ? `→ Serão geradas ${nAulas} aula${nAulas>1?"s":""} conforme informado no formulário`
+        : `→ Serão geradas ${nAulas} aula${nAulas>1?"s":""} de ${chDia}h cada`;
   } else {
     document.getElementById('pa-aulas-txt').textContent =
       `📊 Competência Transversal — CH definida pela instituição`;
@@ -802,7 +655,7 @@ function calcAulas(){
 
 // ── SELECIONAR UC ─────────────────────────────────────────────
 function setUC(id, nome, desc, cht, chp, modulo){
-  ucAtual = {id, nome, desc, cht, chp, modulo, dados: ucAtual.dados || null};
+  ucAtual = {id, nome, desc, cht, chp, modulo};
   document.getElementById('uc-nome').textContent = nome;
   document.getElementById('uc-desc').textContent = desc;
   const total = cht + chp;
@@ -862,21 +715,10 @@ function getToken(){
 
 // ── GEMINI ────────────────────────────────────────────────────
 async function callGemini(prompt){
-  const contextoOficial = montarContextoOficial();
-  const promptFinal = `${contextoOficial}
-
-REGRAS DE USO DA BASE:
-1. Use os CHAs oficiais como fonte principal.
-2. Não crie capacidades, padrões ou conhecimentos fora da base.
-3. Pode criar estratégias didáticas, exemplos e atividades, desde que vinculados aos CHAs oficiais.
-4. Caso o pedido esteja fora da base, informe isso claramente.
-
-SOLICITAÇÃO DO USUÁRIO/SISTEMA:
-${prompt}`;
   const token   = getToken();
   const headers = {'Content-Type':'application/json'};
   if(token) headers['Authorization'] = `Bearer ${token}`;
-  const res = await fetch(PROXY_URL,{method:'POST',headers,body:JSON.stringify({prompt: promptFinal})});
+  const res = await fetch(PROXY_URL,{method:'POST',headers,body:JSON.stringify({prompt})});
   if(res.status===401){
     showToast('Sessão expirada. Redirecionando...','error');
     setTimeout(()=>window.location.href='../index.html',2000);
@@ -909,31 +751,71 @@ function showOutput(p,text){
 }
 
 // ── DOWNLOAD DOC ──────────────────────────────────────────────
+function escapeHTML(str){
+  return String(str||'').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+}
+function inlineFormat(str){
+  return escapeHTML(str)
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>');
+}
+function markdownTableToHtml(rows){
+  const parsed = rows
+    .map(r => r.trim())
+    .filter(Boolean)
+    .map(r => r.replace(/^\|/,'').replace(/\|$/,'').split('|').map(c => c.trim()));
+  if(parsed.length === 0) return '';
+  let header = parsed[0];
+  let body = parsed.slice(1).filter(cells => !cells.every(c => /^:?-{2,}:?$/.test(c)));
+  let html = '<table><thead><tr>' + header.map(c => `<th>${inlineFormat(c)}</th>`).join('') + '</tr></thead><tbody>';
+  html += body.map(cells => '<tr>' + cells.map(c => `<td>${inlineFormat(c)}</td>`).join('') + '</tr>').join('');
+  html += '</tbody></table>';
+  return html;
+}
+function markdownToHtml(text){
+  const lines = String(text||'').replace(/\r\n/g,'\n').split('\n');
+  const out = [];
+  let table = [];
+  let list = [];
+  const flushList = () => { if(list.length){ out.push('<ul>'+list.map(i=>`<li>${inlineFormat(i)}</li>`).join('')+'</ul>'); list=[]; } };
+  const flushTable = () => { if(table.length){ out.push(markdownTableToHtml(table)); table=[]; } };
+
+  for(const line of lines){
+    const t=line.trim();
+    if(t.startsWith('|') && t.endsWith('|')){ flushList(); table.push(line); continue; }
+    flushTable();
+    if(!t){ flushList(); out.push('<br>'); continue; }
+    if(t.startsWith('• ')){ list.push(t.slice(2)); continue; }
+    if(t.startsWith('- ')){ list.push(t.slice(2)); continue; }
+    flushList();
+    if(/^#{1,3}\s+/.test(t)){
+      const level = (t.match(/^#+/)||['#'])[0].length;
+      out.push(`<h${level}>${inlineFormat(t.replace(/^#{1,3}\s+/,''))}</h${level}>`);
+    } else if(/^(PLANO DE AULA|OBJETIVO|CAPACIDADES|HABILIDADES|TABELA DE AULAS|AVALIAÇÕES|REFERÊNCIAS)$/i.test(t)){
+      out.push(`<h2>${inlineFormat(t)}</h2>`);
+    } else {
+      out.push(`<p>${inlineFormat(t)}</p>`);
+    }
+  }
+  flushTable(); flushList();
+  return out.join('\n');
+}
 function downloadDoc(outputId, nomeArq){
   const text = document.getElementById(outputId).textContent;
-  // Converte markdown básico em HTML
-  let html = text
-    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-    .replace(/^# (.+)$/gm,'<h1>$1</h1>')
-    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
-    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
-    .replace(/^• (.+)$/gm,'<li>$1</li>')
-    .replace(/^\| (.+) \|$/gm, row => {
-      const cells = row.split('|').filter(c=>c.trim()&&!c.match(/^[-\s]+$/));
-      return '<tr>'+cells.map(c=>`<td>${c.trim()}</td>`).join('')+'</tr>';
-    })
-    .replace(/\n/g,'<br>');
+  const html = markdownToHtml(text);
   const docHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8">
 <style>
   @page{size:A4 landscape;margin:2cm}
-  body{font-family:Arial,sans-serif;font-size:11pt;line-height:1.6;color:#1A1208}
-  h1{font-size:15pt;color:#B87210;border-bottom:2px solid #F4A020;padding-bottom:6px;margin:16px 0 8px}
+  body{font-family:Arial,sans-serif;font-size:11pt;line-height:1.45;color:#1A1208}
+  h1{font-size:16pt;color:#B87210;border-bottom:2px solid #F4A020;padding-bottom:6px;margin:16px 0 8px}
   h2{font-size:13pt;color:#5C4A1A;margin:14px 0 6px}
   h3{font-size:11pt;color:#8A7040;margin:10px 0 4px}
-  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:10pt}
-  td,th{border:1px solid #E8DCC8;padding:6px 10px;vertical-align:top}
-  th{background:#FDE8B4;color:#B87210;font-weight:bold}
+  p{margin:4px 0 8px}
+  table{border-collapse:collapse;width:100%;margin:10px 0 14px;font-size:9.5pt}
+  td,th{border:1px solid #E8DCC8;padding:6px 8px;vertical-align:top}
+  th{background:#FDE8B4;color:#B87210;font-weight:bold;text-align:left}
   tr:nth-child(even) td{background:#FFFBF2}
+  ul{margin:5px 0 10px 18px;padding:0}
   li{margin:4px 0}
   .header-box{background:#F4A020;color:#fff;padding:10px 16px;border-radius:6px;margin-bottom:16px}
 </style></head><body>
@@ -963,6 +845,40 @@ Competências Socioemocionais: Aprendizagem Ativa, Empreendedorismo, Inteligênc
 Competências de IA: Alfabetização em IA, uso ético de GenAI, análise de dados com IA.
 REGRAS MSEP: Capacidades no gerúndio (C1 — Identificando...) | Habilidades associadas às capacidades | Conhecimentos técnicos específicos | Referências técnicas reais (RDC ANVISA, NBR, Codex Alimentarius, MAPA) | Contexto da indústria alimentícia brasileira.`;
 
+// ── CONTEXTO OFICIAL DO ITINERÁRIO (data/alimentos.js) ──────
+function normalizeTxt(v){
+  return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+}
+function getAllOfficialUCs(){
+  try{
+    if(typeof ALIMENTOS === 'undefined' || !ALIMENTOS.modulos) return [];
+    return ALIMENTOS.modulos.flatMap(m => (m.ucs||[]).map(uc => ({...uc, modulo:m.nome, moduloId:m.id})));
+  }catch(e){ return []; }
+}
+function findOfficialUC(input){
+  const alvo = normalizeTxt(input + ' ' + (ucAtual?.nome||'') + ' ' + (ucAtual?.id||''));
+  const ucs = getAllOfficialUCs();
+  if(!ucs.length) return null;
+  let found = ucs.find(uc => alvo.includes(normalizeTxt(uc.nome)) || normalizeTxt(uc.nome).includes(alvo));
+  if(found) return found;
+  found = ucs.find(uc => alvo.includes(normalizeTxt(uc.id)) || alvo.includes(normalizeTxt(uc.codigo)));
+  if(found) return found;
+  const words = alvo.split(/\s+/).filter(w => w.length > 4);
+  return ucs.map(uc => ({uc,score:words.filter(w => normalizeTxt(uc.nome).includes(w)).length}))
+    .sort((a,b)=>b.score-a.score)[0]?.score > 0 ? ucs.map(uc => ({uc,score:words.filter(w => normalizeTxt(uc.nome).includes(w)).length})).sort((a,b)=>b.score-a.score)[0].uc : null;
+}
+function buildOfficialContext(ucInput){
+  const uc = findOfficialUC(ucInput);
+  if(!uc) return '\nBASE OFICIAL: Não foi localizada uma UC correspondente em data/alimentos.js. Use somente as informações selecionadas no formulário e não invente CHAs.';
+  const capacidades = (uc.capacidades||[]).map((c,i)=>{
+    const conhecimentos = (c.conhecimentos||[]).map(k=>`      - ${k}`).join('\n');
+    return `C${i+1} — ${c.texto}\n    Tipo: ${c.tipo} | Domínio: ${c.dominio}\n    Conhecimentos oficiais:\n${conhecimentos}`;
+  }).join('\n\n');
+  const padroes = (uc.padroes||[]).map(p=>`- ${p}`).join('\n') || '- Não há padrões de desempenho específicos para esta UC.';
+  return `\nBASE OFICIAL FECHADA — USE EXCLUSIVAMENTE ESTES CHAs\nMódulo: ${uc.modulo}\nUC oficial: ${uc.codigo || uc.id} — ${uc.nome}\nCH oficial: ${uc.ch}h (Teórica: ${uc.cht}h | Prática: ${uc.chp}h)\n\nPadrões de desempenho oficiais:\n${padroes}\n\nCapacidades e conhecimentos oficiais:\n${capacidades}\n\nREGRA CRÍTICA: não crie capacidades, conhecimentos ou padrões fora desta base. Você pode apenas reorganizar didaticamente os CHAs oficiais no plano de aula.`;
+}
+
+
 // ── CONTEXTO TRANSVERSAL (helper compartilhado) ─────────────────
 function getCtxTransversal(ucId){
   if(ucId === 'SOCIO'){
@@ -989,6 +905,8 @@ async function gerarPlano(){
   const data    = document.getElementById('pa-data').value || '___/___/______';
   const turma   = document.getElementById('pa-turma').value || 'Técnico em Alimentos';
   const obs     = document.getElementById('pa-obs').value;
+  const modelo  = document.getElementById('pa-modelo')?.value || 'exemplo';
+  const contextoOficial = buildOfficialContext(uc);
 
   // Contexto extra para competências transversais
   const contextoTransversal = isTransversal ? `
@@ -998,57 +916,74 @@ A tabela de aulas deve ter ${nAulas} aula(s) de ${chDia}h, com exemplos prático
 
   setLoading('pa',true);
   try{
-    const prompt = `${MSEP_BASE}
+    const prompt = `${MSEP_BASE}${contextoOficial}
 
-Gere um PLANO DE AULA COMPLETO no EXATO formato abaixo, para:
-- UC/Competência: ${uc}
+Gere um PLANO DE AULA COMPLETO seguindo o MODELO SENAI SIMPLES do arquivo de exemplo enviado pelo usuário.
+
+DADOS DO FORMULÁRIO:
+- Curso: Alimentos e Bebidas
+- UC: ${uc}
 - Docente: ${docente}
 - Data: ${data}
-- Turma: ${turma}
+- Turma/Período: ${turma}
 - CH Teórica: ${cht}h | CH Prática: ${chp}h | Total: ${total}h
-- CH por aula: ${chDia}h | Número total de aulas: ${nAulas} aula${nAulas>1?'s':''}
+- Quantidade de aulas/encontros: ${nAulas}
+- Modelo selecionado: ${modelo === 'exemplo' ? 'Modelo SENAI simples igual ao exemplo' : 'Modelo detalhado'}
 - Observações: ${obs||'Nenhuma'}${contextoTransversal}
 
-FORMATO OBRIGATÓRIO (siga EXATAMENTE esta estrutura):
+REGRAS DE SAÍDA — MUITO IMPORTANTE:
+1. Siga a aparência textual do exemplo “Produção de Biscoito”: cabeçalho simples, seções OBJETIVO, CAPACIDADES, HABILIDADES, TABELA DE AULAS, AVALIAÇÕES e REFERÊNCIAS.
+2. Use Markdown com tabelas reais. Toda tabela deve ter pipes, cabeçalho e linha separadora.
+3. Não junte colunas. Não escreva “NºCapacidadeHab.Conteúdo...”. Cada coluna deve estar separada por “ | ”.
+4. Não use HTML. Não use blocos de código. Não use comentários explicativos fora do plano.
+5. Distribua a CH em ${nAulas} aulas/encontros, mantendo progressão didática.
+6. Use capacidades, padrões e conhecimentos oficiais da BASE OFICIAL FECHADA. Não invente CHAs.
+
+FORMATO EXATO:
 
 PLANO DE AULA — SENAI BAHIA · MQCT
 
-| CURSO: Alimentos e Bebidas | DOCENTE: ${docente} | DATA: ${data} |
-| UC: ${uc} | CH T: ${cht}h │ P: ${chp}h │ Total: ${total}h |
+| CURSO | DOCENTE | DATA |
+|---|---|---|
+| Alimentos e Bebidas | ${docente} | ${data} |
+
+| UC | CH T | CH P | TOTAL |
+|---|---:|---:|---:|
+| ${uc} | ${cht}h | ${chp}h | ${total}h |
 
 OBJETIVO
-[Parágrafo objetivo geral da UC, contextualizando com a indústria alimentícia]
+[Escreva 1 parágrafo claro e direto, igual ao exemplo, contextualizando a UC e a indústria de alimentos.]
 
 CAPACIDADES
-• C1 — [no gerúndio, ex: Identificando e selecionando matérias-primas...]
-• C2 — [no gerúndio]
-• C3 — [no gerúndio]
-[continuar conforme necessário, coerente com o total de ${total}h]
+• C1 — [usar capacidade oficial, podendo ajustar apenas para ficar no gerúndio quando necessário]
+• C2 — [usar capacidade oficial]
+• C3 — [usar capacidade oficial, se houver]
 
 HABILIDADES
-• H1 — [associada às capacidades]
-• H2 — [associada às capacidades]
-• H3 — [associada às capacidades]
+• H1 — [derivar dos padrões de desempenho oficiais]
+• H2 — [derivar dos padrões de desempenho oficiais]
+• H3 — [derivar dos padrões de desempenho oficiais]
 
-TABELA DE AULAS (${nAulas} aulas de ${chDia}h cada = ${total}h total)
+TABELA DE AULAS
 
 | Nº | Capacidade | Hab. | Conteúdo | Estratégias | Recursos |
 |---|---|---|---|---|---|
-| Aula 1 | C? | H? | [tema e subtemas detalhados] | Abertura (${Math.round(chDia*60*0.15)}min): [...] Desenvolvimento: [...] Fechamento (${Math.round(chDia*60*0.15)}min): [...] | [lista de recursos] |
-[GERAR TODAS AS ${nAulas} AULAS, distribuindo conteúdo progressivamente, com abertura/desenvolvimento/fechamento proporcionais às ${chDia}h]
+| Aula 1 | C? | H? | 1. Tema da aula<br>1.1 Subtema<br>1.2 Subtema<br>1.3 Subtema | Abertura (30min): ... Desenvolvimento: ... Fechamento (30min): ... | Slides | Quadro branco | Materiais didáticos |
+
+[GERAR TODAS AS ${nAulas} AULAS. Use a mesma linguagem do exemplo. Conteúdo com numeração 1, 1.1, 1.2 etc. Estratégias com Abertura, Desenvolvimento e Fechamento.]
 
 AVALIAÇÕES
 
 | Instrumento | Descrição | Pontuação |
 |---|---|---|
-| Avaliação Teórica | Prova escrita individual com questões sobre os conteúdos da UC | 4,0 pts |
-| Avaliação Prática | Atividade prática avaliando aplicação das competências da UC | 6,0 pts |
+| Avaliação Teórica | Prova escrita individual com questões relacionadas aos conhecimentos oficiais da UC. | 4,0 pts |
+| Avaliação Prática | Atividade prática avaliando a aplicação das capacidades oficiais da UC, BPF, controle de processo e qualidade. | 6,0 pts |
 
 REFERÊNCIAS
 • SENAI. Itinerário Nacional Alimentos e Bebidas. Brasília: SENAI/DN, 2025.
-• [Normas RDC ANVISA pertinentes à UC]
-• [Normas ABNT/NBR pertinentes]
-• [Referências técnicas e bibliográficas da área]`;
+• BRASIL. Agência Nacional de Vigilância Sanitária (ANVISA). Resoluções aplicáveis às Boas Práticas de Fabricação e Segurança dos Alimentos.
+• Codex Alimentarius. General Principles of Food Hygiene.
+• [Incluir referências técnicas coerentes com a UC, sem inventar norma específica se não tiver certeza.]`;
     const text = await callGemini(prompt);
     showOutput('pa',text);
   }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar. Tente novamente.','error'); }
@@ -1487,8 +1422,6 @@ Formate de forma clara, profissional e pronto para uso em sala de aula ou labora
 
 // ── INIT ──────────────────────────────────────────────────────
 document.getElementById('pa-data').value = new Date().toISOString().slice(0,10);
-atualizarHeroComBase();
-buildSidebarOficial();
 calcAulas();
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){

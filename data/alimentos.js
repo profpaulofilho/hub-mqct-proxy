@@ -1243,6 +1243,3 @@ const ALIMENTOS = {
 
 // Exporta para uso nos módulos HTML
 if (typeof module !== 'undefined') module.exports = ALIMENTOS;
-
-// Disponibiliza a base oficial no navegador (HTML estático/Vercel)
-if (typeof window !== 'undefined') window.ALIMENTOS = ALIMENTOS;
