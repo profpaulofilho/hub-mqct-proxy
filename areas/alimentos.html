@@ -592,13 +592,178 @@
 <div class="toast" id="toast"></div>
 
 <!-- ═══════════════════════════════ SCRIPTS ═══════════════════════════════ -->
+<script src="../data/alimentos.js"></script>
 <script>
 const PROXY_URL    = 'https://hub-mqct-proxy.vercel.app/api/gemini';
 const SUPABASE_URL = 'https://afvdrtmmxgvuyipsnatq.supabase.co';
 const AREA_NOME    = 'Alimentos e Bebidas';
 const CURSO        = 'Técnico em Alimentos — 1200h';
 
-let ucAtual = {id:'',nome:'',desc:'',cht:0,chp:0,modulo:''};
+
+let ucAtual = {id:'',nome:'',desc:'',cht:0,chp:0,modulo:'',dados:null};
+
+// ── BASE OFICIAL DE CHAs (data/alimentos.js) ─────────────────────────────
+const BASE_ALIMENTOS = (typeof window !== 'undefined' && window.ALIMENTOS) ? window.ALIMENTOS : null;
+
+function escHtml(str){
+  return String(str ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+}
+
+function todasUCsOficiais(){
+  if(!BASE_ALIMENTOS?.modulos) return [];
+  const lista=[];
+  BASE_ALIMENTOS.modulos.forEach(modulo => {
+    (modulo.ucs||[]).forEach(uc => lista.push({...uc, moduloNome:modulo.nome, moduloId:modulo.id, funcao:modulo.funcao||''}));
+  });
+  return lista;
+}
+
+function buscarUCOficial(chave){
+  if(!chave || !BASE_ALIMENTOS) return null;
+  const k=String(chave).toLowerCase().trim();
+  return todasUCsOficiais().find(uc =>
+    String(uc.id).toLowerCase()===k ||
+    String(`${uc.moduloId}_${uc.codigo}`).toLowerCase()===k ||
+    String(uc.nome).toLowerCase()===k ||
+    String(`${uc.codigo} — ${uc.nome}`).toLowerCase()===k ||
+    String(`${uc.id} — ${uc.nome}`).toLowerCase()===k
+  ) || null;
+}
+
+function resumoUCOficial(uc){
+  if(!uc) return '';
+  const caps=(uc.capacidades||[]).map(c=>c.texto).filter(Boolean).slice(0,3).join(' ');
+  const pads=(uc.padroes||[]).slice(0,2).join(' ');
+  return caps || pads || BASE_ALIMENTOS?.competenciaGeral || '';
+}
+
+function buildSidebarOficial(){
+  if(!BASE_ALIMENTOS?.modulos) return;
+  const sidebar=document.querySelector('.sidebar');
+  if(!sidebar) return;
+  let html='<div class="sidebar-title">Módulos e UCs · Base oficial</div>';
+  BASE_ALIMENTOS.modulos.forEach(modulo => {
+    const chModulo=(modulo.ucs||[]).reduce((acc,uc)=>acc+(Number(uc.ch)||0),0);
+    html += `<div class="uc-group-header" onclick="setModuloOficial('${escHtml(modulo.id)}')">${BASE_ALIMENTOS.area?.emoji||'🍞'} ${escHtml(modulo.nome)} <span class="ch-tag">${chModulo}h</span></div>`;
+    (modulo.ucs||[]).forEach(uc => {
+      const key=`${modulo.id}_${uc.codigo}`;
+      html += `<div class="uc-item" onclick="setUCOficial('${escHtml(key)}')"><span>${escHtml(uc.codigo)} — ${escHtml(uc.nome)}</span><span class="ch-tag">${uc.ch}h</span></div>`;
+    });
+    html += '<div class="sidebar-divider"></div>';
+  });
+  html += '<div class="sidebar-title">Competências Transversais</div>';
+  html += `<div class="uc-item" onclick="setTransversalOficial('SOCIO')"><span>Socioemocionais oficiais</span><span class="ch-tag">8 itens</span></div>`;
+  html += `<div class="uc-item" onclick="setTransversalOficial('IA')"><span>Inteligência Artificial</span><span class="ch-tag">2 itens</span></div>`;
+  sidebar.innerHTML=html;
+}
+
+function setModuloOficial(moduloId){
+  const modulo=(BASE_ALIMENTOS?.modulos||[]).find(m=>m.id===moduloId);
+  if(!modulo) return;
+  const ch=(modulo.ucs||[]).reduce((acc,uc)=>acc+(Number(uc.ch)||0),0);
+  ucAtual={id:modulo.id,nome:modulo.nome,desc:BASE_ALIMENTOS.competenciaGeral,cht:0,chp:0,modulo:modulo.nome,dados:{tipo:'modulo',...modulo}};
+  document.getElementById('uc-nome').textContent=modulo.nome;
+  document.getElementById('uc-desc').textContent=BASE_ALIMENTOS.competenciaGeral;
+  document.getElementById('uc-meta').innerHTML=`<span>${escHtml(modulo.funcao||'Módulo')}</span><span class="ch-total">⏱ Total: ${ch}h</span><span>UCs: ${(modulo.ucs||[]).length}</span>`;
+  preencherCamposModais(modulo.nome);
+  document.querySelector('.main').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function setUCOficial(key){
+  const uc=buscarUCOficial(key);
+  if(!uc) return;
+  const desc=resumoUCOficial(uc);
+  setUC(uc.id, uc.nome, desc, Number(uc.cht)||0, Number(uc.chp)||0, uc.moduloNome);
+  ucAtual.dados=uc;
+  ucAtual.ch=uc.ch;
+  const meta=document.getElementById('uc-meta');
+  meta.innerHTML += `<span>Capacidades: ${(uc.capacidades||[]).length}</span><span>Padrões: ${(uc.padroes||[]).length}</span><span class="ch-total">Base oficial</span>`;
+  preencherCamposModais(`${uc.codigo} — ${uc.nome}`);
+}
+
+function setTransversalOficial(tipo){
+  if(tipo==='SOCIO'){
+    const texto=(BASE_ALIMENTOS?.socioemocionais||[]).map(s=>s.nome).join(', ');
+    ucAtual={id:'SOCIO',nome:'Competências Socioemocionais Oficiais',desc:texto,cht:8,chp:8,modulo:'Transversal',dados:{tipo:'socioemocional',itens:BASE_ALIMENTOS.socioemocionais||[]}};
+  }else{
+    const texto=(BASE_ALIMENTOS?.competenciasIA||[]).map(s=>s.nome).join(', ');
+    ucAtual={id:'IA',nome:'Competências de Inteligência Artificial',desc:texto,cht:8,chp:8,modulo:'Transversal',dados:{tipo:'ia',itens:BASE_ALIMENTOS.competenciasIA||[]}};
+  }
+  document.getElementById('uc-nome').textContent=ucAtual.nome;
+  document.getElementById('uc-desc').textContent=ucAtual.desc;
+  document.getElementById('uc-meta').innerHTML=`<span>${ucAtual.modulo}</span><span class="ch-t">📖 Teórica: ${ucAtual.cht}h</span><span class="ch-p">🧪 Prática: ${ucAtual.chp}h</span><span class="ch-total">Base oficial</span>`;
+  document.getElementById('pa-cht').value=ucAtual.cht; document.getElementById('pa-chp').value=ucAtual.chp; calcAulas();
+  preencherCamposModais(ucAtual.nome);
+  document.querySelector('.main').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function preencherCamposModais(valor){
+  ['pa-uc','sa-uc','pr-uc','oa-uc','mm-uc','cw-uc','av-uc','sl-uc'].forEach(fid=>{
+    const el=document.getElementById(fid);
+    if(el) el.value=valor;
+  });
+}
+
+function montarContextoOficial(){
+  if(!BASE_ALIMENTOS) return '';
+  const area=BASE_ALIMENTOS.area || {};
+  let linhas=[];
+  linhas.push('CONTEXTO OFICIAL FECHADO — use exclusivamente os dados abaixo.');
+  linhas.push('Não invente capacidades, conhecimentos, padrões, carga horária ou nomes de UC. Se faltar informação, declare que não consta na base oficial.');
+  linhas.push(`Área: ${area.nome||AREA_NOME} | Curso: ${area.curso||CURSO} | CH: ${area.ch||1200}h | CBO: ${area.cbo||'3252-05'} | Versão: ${area.versao||''} | Emissão: ${area.emissao||''}`);
+  linhas.push(`Competência geral: ${BASE_ALIMENTOS.competenciaGeral||''}`);
+  const dados=ucAtual.dados || buscarUCOficial(document.getElementById('pa-uc')?.value || ucAtual.nome);
+  if(dados?.tipo==='socioemocional'){
+    linhas.push('Competências socioemocionais oficiais:');
+    (dados.itens||[]).forEach(item=>{
+      linhas.push(`- ${item.nome}: ${item.descricao}`);
+      (item.capacidades||[]).forEach(c=>linhas.push(`  Capacidade: ${c}`));
+    });
+    return linhas.join('\n');
+  }
+  if(dados?.tipo==='ia'){
+    linhas.push('Competências de IA oficiais:');
+    (dados.itens||[]).forEach(item=>{
+      linhas.push(`- ${item.nome}: ${item.descricao}`);
+      (item.capacidades||[]).forEach(c=>linhas.push(`  Capacidade: ${c}`));
+    });
+    return linhas.join('\n');
+  }
+  if(dados?.tipo==='modulo'){
+    linhas.push(`Módulo selecionado: ${dados.nome}`);
+    (dados.ucs||[]).forEach(uc=>linhas.push(`- ${uc.codigo} — ${uc.nome} | CH ${uc.ch}h | T ${uc.cht}h | P ${uc.chp}h`));
+    return linhas.join('\n');
+  }
+  if(dados){
+    linhas.push(`UC selecionada: ${dados.codigo||dados.id} — ${dados.nome}`);
+    linhas.push(`Módulo: ${dados.moduloNome||ucAtual.modulo} | CH total: ${dados.ch}h | Teórica: ${dados.cht}h | Prática: ${dados.chp}h | Subfunção: ${dados.subfuncao||'não informada'}`);
+    if((dados.padroes||[]).length){
+      linhas.push('Padrões de desempenho oficiais:');
+      dados.padroes.forEach(p=>linhas.push(`- ${p}`));
+    }
+    if((dados.capacidades||[]).length){
+      linhas.push('Capacidades e conhecimentos oficiais:');
+      dados.capacidades.forEach((cap,i)=>{
+        linhas.push(`C${i+1} — ${cap.tipo} | Domínio: ${cap.dominio} | ${cap.texto}`);
+        (cap.conhecimentos||[]).forEach(k=>linhas.push(`  ${k}`));
+      });
+    }
+    return linhas.join('\n');
+  }
+  linhas.push('Nenhuma UC oficial selecionada. Solicite ao usuário que selecione uma UC na barra lateral antes de gerar materiais específicos.');
+  return linhas.join('\n');
+}
+
+function atualizarHeroComBase(){
+  if(!BASE_ALIMENTOS?.area) return;
+  const a=BASE_ALIMENTOS.area;
+  document.title=`${a.nome} — Hub MQCT · SENAI Bahia`;
+  const h1=document.querySelector('.hero h1'); if(h1) h1.textContent=a.nome;
+  const sub=document.querySelector('.hero-sub'); if(sub) sub.textContent=`Materiais didáticos alinhados ao Itinerário Nacional · Versão ${a.versao} · Emissão ${a.emissao}`;
+  const badges=document.querySelector('.hero-badges');
+  if(badges) badges.innerHTML=`<span class="badge">${escHtml(a.curso)}</span><span class="badge ch">⏱ ${a.ch}h</span><span class="badge">CBO ${a.cbo}</span><span class="badge">${escHtml(a.nivel)}</span>`;
+}
+
 
 // ── TEMA ─────────────────────────────────────────────────────
 function toggleTheme(){
@@ -637,7 +802,7 @@ function calcAulas(){
 
 // ── SELECIONAR UC ─────────────────────────────────────────────
 function setUC(id, nome, desc, cht, chp, modulo){
-  ucAtual = {id, nome, desc, cht, chp, modulo};
+  ucAtual = {id, nome, desc, cht, chp, modulo, dados: ucAtual.dados || null};
   document.getElementById('uc-nome').textContent = nome;
   document.getElementById('uc-desc').textContent = desc;
   const total = cht + chp;
@@ -697,10 +862,21 @@ function getToken(){
 
 // ── GEMINI ────────────────────────────────────────────────────
 async function callGemini(prompt){
+  const contextoOficial = montarContextoOficial();
+  const promptFinal = `${contextoOficial}
+
+REGRAS DE USO DA BASE:
+1. Use os CHAs oficiais como fonte principal.
+2. Não crie capacidades, padrões ou conhecimentos fora da base.
+3. Pode criar estratégias didáticas, exemplos e atividades, desde que vinculados aos CHAs oficiais.
+4. Caso o pedido esteja fora da base, informe isso claramente.
+
+SOLICITAÇÃO DO USUÁRIO/SISTEMA:
+${prompt}`;
   const token   = getToken();
   const headers = {'Content-Type':'application/json'};
   if(token) headers['Authorization'] = `Bearer ${token}`;
-  const res = await fetch(PROXY_URL,{method:'POST',headers,body:JSON.stringify({prompt})});
+  const res = await fetch(PROXY_URL,{method:'POST',headers,body:JSON.stringify({prompt: promptFinal})});
   if(res.status===401){
     showToast('Sessão expirada. Redirecionando...','error');
     setTimeout(()=>window.location.href='../index.html',2000);
@@ -988,106 +1164,218 @@ function downloadSVG(){
   showToast('SVG baixado!');
 }
 
-// ── CAÇA-PALAVRAS COM CANVAS PNG ──────────────────────────────
+// ── CAÇA-PALAVRAS — ALGORITMO REAL DE POSICIONAMENTO ────────
+// A IA só escolhe as palavras; o JS posiciona tudo corretamente.
+
+// Normaliza palavra: remove acentos, espaços, deixa só A-Z
+function normalizarPalavra(p){
+  return p.normalize('NFD').replace(/[̀-ͯ]/g,'')
+          .replace(/[^A-Za-z]/g,'').toUpperCase();
+}
+
+// Tenta posicionar uma palavra na grade; retorna true se conseguiu
+function posicionarPalavra(grade, palavra, ROWS, COLS){
+  // direções: [deltaRow, deltaCol]
+  const direcoes = [
+    [0,1],   // horizontal →
+    [1,0],   // vertical ↓
+    [1,1],   // diagonal ↘
+    [0,-1],  // horizontal ←
+    [-1,0],  // vertical ↑
+    [1,-1],  // diagonal ↙
+    [-1,1],  // diagonal ↗
+    [-1,-1], // diagonal ↖
+  ];
+  // embaralha direções para variedade
+  for(let i=direcoes.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [direcoes[i],direcoes[j]]=[direcoes[j],direcoes[i]];
+  }
+  // tenta posições aleatórias (máx 200 tentativas)
+  for(let tentativa=0;tentativa<200;tentativa++){
+    const [dr,dc] = direcoes[tentativa % direcoes.length];
+    const startR  = Math.floor(Math.random()*ROWS);
+    const startC  = Math.floor(Math.random()*COLS);
+    // verifica se cabe
+    const endR = startR + dr*(palavra.length-1);
+    const endC = startC + dc*(palavra.length-1);
+    if(endR<0||endR>=ROWS||endC<0||endC>=COLS) continue;
+    // verifica conflito de letras
+    let ok = true;
+    for(let i=0;i<palavra.length;i++){
+      const r=startR+dr*i, c=startC+dc*i;
+      if(grade[r][c]!=='' && grade[r][c]!==palavra[i]){ ok=false; break; }
+    }
+    if(!ok) continue;
+    // posiciona
+    for(let i=0;i<palavra.length;i++){
+      grade[startR+dr*i][startC+dc*i]=palavra[i];
+    }
+    return true;
+  }
+  return false; // não conseguiu posicionar
+}
+
+// Monta a grade completa com algoritmo
+function montarGrade(palavrasRaw, ROWS, COLS){
+  // normaliza e ordena do maior para o menor (mais fácil posicionar grandes primeiro)
+  const palavras = palavrasRaw
+    .map(p=>normalizarPalavra(p))
+    .filter(p=>p.length>=3 && p.length<=Math.max(ROWS,COLS))
+    .sort((a,b)=>b.length-a.length);
+
+  // grade vazia
+  const grade = Array.from({length:ROWS},()=>Array(COLS).fill(''));
+
+  const posicionadas = [];
+  const falhas = [];
+
+  for(const p of palavras){
+    if(posicionarPalavra(grade,p,ROWS,COLS)) posicionadas.push(p);
+    else falhas.push(p);
+  }
+
+  // preenche espaços vazios com letras aleatórias variadas
+  const LETRAS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for(let r=0;r<ROWS;r++)
+    for(let c=0;c<COLS;c++)
+      if(grade[r][c]==='')
+        grade[r][c]=LETRAS[Math.floor(Math.random()*LETRAS.length)];
+
+  if(falhas.length>0) console.warn('Palavras não posicionadas:',falhas);
+  return {grade, posicionadas, falhas};
+}
+
 async function gerarCaca(){
   const uc  = document.getElementById('cw-uc').value || ucAtual.nome || 'Técnico em Alimentos';
   const num = parseInt(document.getElementById('cw-num').value)||15;
   setLoading('cw',true);
   try{
+    // IA só escolhe as palavras — sem grade, sem posicionamento
     const prompt = `${MSEP_BASE}
-Crie um CAÇA-PALAVRAS para a UC/Competência: "${uc}"${getCtxTransversal(ucAtual.id)}
-- Exatamente ${num} palavras técnicas da área de Alimentos e Bebidas (máximo 12 letras cada)
-- Grade 15x15 letras maiúsculas
-- Preencha todas as células com letras aleatórias (sem espaços vazios)
-- Palavras podem ser horizontal (→), vertical (↓) ou diagonal (↘)
-- Retorne APENAS JSON puro sem markdown:
-{"titulo":"Caça-Palavras: [tema]","palavras":["PALAVRA1","PALAVRA2",...],"grade":[["A","B",...15 letras...],... 15 linhas...]}`;
+Selecione exatamente ${num} termos técnicos relacionados a: "${uc}"${getCtxTransversal(ucAtual.id)}
+
+REGRAS OBRIGATÓRIAS:
+- Apenas termos técnicos reais da área de Alimentos e Bebidas / SENAI
+- Sem acentos, sem espaços, sem hífens — só letras A-Z
+- Mínimo 4 letras, máximo 12 letras cada
+- Todos em MAIÚSCULAS
+- Retorne APENAS JSON puro sem markdown, sem explicação:
+{"titulo":"Caça-Palavras: [tema resumido]","palavras":["PALAVRA1","PALAVRA2",...]}`;
+
     const json = await callGemini(prompt);
     const clean = json.replace(/```json|```/gi,'').trim();
     const data  = JSON.parse(clean);
-    renderCacaCanvas(data);
+
+    // Algoritmo JS monta a grade — IA não participa disso
+    const ROWS=15, COLS=15;
+    const {grade, posicionadas} = montarGrade(data.palavras, ROWS, COLS);
+
+    renderCacaCanvas({
+      titulo:   data.titulo || 'Caça-Palavras',
+      palavras: posicionadas,
+      grade:    grade
+    });
   }catch(e){
-    if(e.message!=='Unauthorized') showToast('Erro ao gerar caça-palavras.','error');
+    console.error(e);
+    if(e.message!=='Unauthorized') showToast('Erro ao gerar caça-palavras. Tente novamente.','error');
   }
   setLoading('cw',false);
 }
 
 function renderCacaCanvas(data){
   const canvas = document.getElementById('cw-canvas');
-  const COLS   = data.grade[0].length;
   const ROWS   = data.grade.length;
-  const CELL   = 36;
-  const PAD    = 20;
-  const FOOTER = 120 + Math.ceil(data.palavras.length / 4) * 22;
+  const COLS   = data.grade[0].length;
+  const CELL   = 34;
+  const PAD    = 18;
+  const nCols  = Math.min(4, data.palavras.length);
+  const nRows  = Math.ceil(data.palavras.length / nCols);
+  const FOOTER = 50 + nRows * 22;
+
   canvas.width  = COLS * CELL + PAD * 2;
-  canvas.height = ROWS * CELL + PAD * 2 + 60 + FOOTER;
+  canvas.height = 58 + ROWS * CELL + 14 + FOOTER + 28;
   const ctx = canvas.getContext('2d');
 
-  // fundo
+  // ── fundo geral
   ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
-  // cabeçalho
+  // ── cabeçalho laranja
   ctx.fillStyle = '#F4A020';
-  ctx.fillRect(0,0,canvas.width,52);
+  ctx.fillRect(0,0,canvas.width,54);
   ctx.fillStyle = '#FFFFFF';
-  ctx.font      = 'bold 16px Arial';
+  ctx.font      = 'bold 15px Arial';
   ctx.textAlign = 'center';
-  ctx.fillText('SENAI BAHIA · MQCT — Alimentos e Bebidas', canvas.width/2, 22);
-  ctx.font = 'bold 13px Arial';
-  ctx.fillText(data.titulo||'Caça-Palavras', canvas.width/2, 42);
+  ctx.textBaseline = 'middle';
+  ctx.fillText('SENAI BAHIA · MQCT — Alimentos e Bebidas', canvas.width/2, 18);
+  ctx.font = 'bold 12px Arial';
+  ctx.fillText(data.titulo, canvas.width/2, 40);
 
-  // grade
+  // ── grade
   const gx = PAD;
   const gy = 62;
-  ctx.strokeStyle = '#E8DCC8';
-  ctx.lineWidth   = 1;
+
   data.grade.forEach((row, r) => {
     row.forEach((letra, c) => {
-      const x = gx + c*CELL;
-      const y = gy + r*CELL;
-      // célula
-      ctx.fillStyle = '#FFFBF2';
-      ctx.fillRect(x,y,CELL,CELL);
-      ctx.strokeRect(x,y,CELL,CELL);
+      const x = gx + c * CELL;
+      const y = gy + r * CELL;
+
+      // fundo célula alternado suave
+      ctx.fillStyle = (r+c)%2===0 ? '#FFFFFF' : '#FFFBF2';
+      ctx.fillRect(x, y, CELL, CELL);
+
+      // borda célula
+      ctx.strokeStyle = '#E8DCC8';
+      ctx.lineWidth   = 0.8;
+      ctx.strokeRect(x, y, CELL, CELL);
+
       // letra
-      ctx.fillStyle = '#1A1208';
-      ctx.font      = 'bold 15px Arial';
-      ctx.textAlign = 'center';
+      ctx.fillStyle    = '#1A1208';
+      ctx.font         = 'bold 14px Arial';
+      ctx.textAlign    = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(letra, x+CELL/2, y+CELL/2);
+      ctx.fillText(letra, x + CELL/2, y + CELL/2);
     });
   });
 
-  // separador
-  const sepY = gy + ROWS*CELL + 14;
+  // ── borda externa da grade
   ctx.strokeStyle = '#F4A020';
   ctx.lineWidth   = 2;
-  ctx.beginPath(); ctx.moveTo(PAD,sepY); ctx.lineTo(canvas.width-PAD,sepY); ctx.stroke();
+  ctx.strokeRect(gx, gy, COLS*CELL, ROWS*CELL);
 
-  // título lista
-  ctx.fillStyle = '#B87210';
-  ctx.font      = 'bold 13px Arial';
-  ctx.textAlign = 'left';
+  // ── separador
+  const sepY = gy + ROWS * CELL + 14;
+  ctx.strokeStyle = '#F4A020';
+  ctx.lineWidth   = 1.5;
+  ctx.beginPath(); ctx.moveTo(PAD, sepY); ctx.lineTo(canvas.width-PAD, sepY); ctx.stroke();
+
+  // ── "Encontre as palavras:"
+  ctx.fillStyle    = '#B87210';
+  ctx.font         = 'bold 12px Arial';
+  ctx.textAlign    = 'left';
   ctx.textBaseline = 'alphabetic';
-  ctx.fillText('Encontre as palavras:', PAD, sepY+18);
+  ctx.fillText('Encontre as palavras:', PAD, sepY + 16);
 
-  // palavras em colunas de 4
+  // ── lista de palavras em colunas
   ctx.fillStyle = '#5C4A1A';
-  ctx.font      = '12px Arial';
-  const colW    = Math.floor((canvas.width - PAD*2) / 4);
-  data.palavras.forEach((p,i) => {
-    const col = i % 4;
-    const row = Math.floor(i / 4);
-    ctx.fillText('• '+p, PAD + col*colW, sepY+38 + row*22);
+  ctx.font      = '11px Arial';
+  const colW    = Math.floor((canvas.width - PAD*2) / nCols);
+  data.palavras.forEach((p, i) => {
+    const col = i % nCols;
+    const row = Math.floor(i / nCols);
+    ctx.fillText('• ' + p, PAD + col*colW, sepY + 34 + row*22);
   });
 
-  // rodapé
-  const footY = canvas.height - 18;
-  ctx.fillStyle = '#B0A080';
-  ctx.font      = '10px Arial';
-  ctx.textAlign = 'center';
-  ctx.fillText('Hub MQCT · SENAI Bahia · '+new Date().toLocaleDateString('pt-BR'), canvas.width/2, footY);
+  // ── rodapé
+  ctx.fillStyle    = '#C8A84A';
+  ctx.font         = '9px Arial';
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText(
+    'Hub MQCT · SENAI Bahia · ' + new Date().toLocaleDateString('pt-BR'),
+    canvas.width/2, canvas.height - 8
+  );
 
   canvas.style.display = 'block';
   document.getElementById('cw-actions').style.display = 'flex';
@@ -1199,6 +1487,8 @@ Formate de forma clara, profissional e pronto para uso em sala de aula ou labora
 
 // ── INIT ──────────────────────────────────────────────────────
 document.getElementById('pa-data').value = new Date().toISOString().slice(0,10);
+atualizarHeroComBase();
+buildSidebarOficial();
 calcAulas();
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape'){
