@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Química — Escolha a base · Hub MQCT SENAI Bahia</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--green:#00695C;--green-d:#004D40;--green-l:#E0F2F1;--text:#1a1a1a;--muted:#555;--border:#d1d5db;--bg:#f5f7f8}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);min-height:100vh;padding:24px 16px;color:var(--text)}
+  .wrap{max-width:860px;margin:0 auto}
+  .top{margin-bottom:20px}
+  .back{display:inline-flex;align-items:center;gap:6px;color:var(--green);text-decoration:none;font-size:14px;font-weight:600;padding:6px 12px;border:1px solid var(--green);border-radius:8px;transition:background .2s}
+  .back:hover{background:var(--green-l)}
+  .hero{background:linear-gradient(135deg,var(--green),var(--green-d));color:#fff;border-radius:16px;padding:36px 40px;margin-bottom:32px}
+  .tag{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.8;margin-bottom:8px;display:block}
+  .hero h1{font-size:28px;font-weight:800;margin-bottom:10px}
+  .hero p{font-size:15px;opacity:.9;line-height:1.6;max-width:600px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .card{background:#fff;border:2px solid var(--border);border-radius:16px;padding:28px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;transition:border-color .2s,box-shadow .2s}
+  .card:hover:not(.soon){border-color:var(--green);box-shadow:0 4px 20px rgba(0,105,92,.12)}
+  .icon{font-size:36px;margin-bottom:14px}
+  .card h2{font-size:18px;font-weight:800;margin-bottom:8px;color:var(--green-d)}
+  .card p{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:18px;flex:1}
+  .badge{display:inline-flex;background:#dcfce7;color:#166534;border:1px solid #86efac;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:12px}
+  .badge.orange{background:#FFF3E0;color:#E65100;border-color:#FFCC80}
+  .badge.grey{background:#f3f4f6;color:#6b7280;border-color:#d1d5db}
+  .cta{display:flex;justify-content:space-between;align-items:center;margin-top:auto;font-weight:900;color:var(--green);font-size:14px}
+  .soon{opacity:.65;cursor:not-allowed}
+  .soon h2{color:#6b7280}
+  .soon .cta{color:#6b7280}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}.hero{padding:26px}.hero h1{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="../index.html">← Voltar ao Hub</a></div>
+  <section class="hero">
+    <span class="tag">⚗️ Hub MQCT · Química · SENAI Bahia</span>
+    <h1>Escolha a base de materiais</h1>
+    <p>Selecione se deseja gerar materiais pedagógicos a partir do Itinerário Nacional SENAI ou a partir do Plano de Curso oficial do SENAI DR-BA (2024_rev02).</p>
+  </section>
+  <div class="grid">
+    <div class="card soon">
+      <div class="icon">🇧🇷</div>
+      <span class="badge grey">Em Breve</span>
+      <h2>Materiais do Itinerário Nacional</h2>
+      <p>Base nacional padronizada com CHAs oficiais do Itinerário Nacional SENAI para Química. Disponível em breve.</p>
+      <div class="cta"><span>Itinerário Nacional</span><span>🔒</span></div>
+    </div>
+    <a class="card" href="quimica-drba.html">
+      <div class="icon">🏛️</div>
+      <span class="badge orange">Disponível</span>
+      <h2>Materiais baseados no Plano de Curso DR-BA</h2>
+      <p>Matriz curricular oficial do SENAI Bahia: 4 módulos, 22 UCs, 1.200h — com capacidades, conhecimentos, ambientes pedagógicos e recursos do Plano de Curso 2024_rev02.</p>
+      <div class="cta"><span>Acessar Plano DR-BA</span><span>→</span></div>
+    </a>
+  </div>
+</div>
+</body>
+</html>
