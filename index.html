@@ -380,7 +380,7 @@ const AREAS=[
   {id:"petroleo",emoji:"🛢️",title:"Petróleo e Gás",desc:"Técnico em Petróleo e Gás e Perfuração de Petróleo.",cursos:2,cor:"#37474F",bg:"#E8ECED",file:"areas/petroleo.html",status:"soon"},
   {id:"quimica",emoji:"🧪",title:"Química",desc:"Técnico em Química e Controle Ambiental.",cursos:2,cor:"#00695C",bg:"#E5F5F3",file:"areas/quimica.html",status:"soon"},
   {id:"refrig",emoji:"❄️",title:"Refrigeração e Climatização",desc:"Técnico em Refrigeração e Climatização.",cursos:1,cor:"#0288D1",bg:"#E8F5FF",file:"areas/refrigeracao.html",status:"soon"},
-  {id:"seguranca",emoji:"🦺",title:"Segurança do Trabalho",desc:"Técnico em Segurança do Trabalho.",cursos:1,cor:"#E65100",bg:"#FFF3EB",file:"areas/seguranca.html",status:"ready"},
+  {id:"seguranca",emoji:"🦺",title:"Segurança do Trabalho",desc:"Técnico em Segurança do Trabalho.",cursos:1,cor:"#E65100",bg:"#FFF3EB",file:"areas/seletor-seguranca.html",status:"ready"},
   {id:"telecom",emoji:"📡",title:"Telecomunicações",desc:"Técnico em Telecomunicações e Redes de Telecomunicações.",cursos:2,cor:"#283593",bg:"#EAEDFF",file:"areas/telecom.html",status:"soon"},
   {id:"vestuario",emoji:"👗",title:"Vestuário",desc:"Técnico em Vestuário, Modelagem e Produção de Moda.",cursos:3,cor:"#880E4F",bg:"#FCEAF4",file:"areas/vestuario.html",status:"soon"},
 ];
@@ -535,7 +535,7 @@ function renderAreas(lista){
     const pronto = a.status === "ready";
     const href = pronto ? a.file : "javascript:void(0)";
     const click = pronto ? "" : " onclick=\"alert('🚧 Área em construção. Em breve os geradores desta área estarão disponíveis com base oficial do Itinerário Nacional SENAI.');return false;\"";
-    const tag = pronto ? "MSEP · Itinerário Nacional" : "🚧 Em construção";
+    const tag = pronto ? (a.id==="seguranca" ? "Itinerário Nacional + Plano DR-BA" : "MSEP · Itinerário Nacional") : "🚧 Em construção";
     const cta = pronto ? "Acessar →" : "EM BREVE";
     return `
     <a class="area-card ${pronto?'ready':'disabled'}" href="${href}"${click} aria-label="${a.title} ${pronto?'disponível':'em construção'}">

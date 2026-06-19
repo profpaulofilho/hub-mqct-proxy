@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Segurança do Trabalho DR-BA — Hub MQCT · SENAI Bahia</title>
+<style>
+  :root {
+    --cor:#E65100; --cor-dark:#B45309; --cor-light:#FFF3EB; --cor-muted:#FED7AA;
+    --bg:#FAFAF8; --bg-card:#FFFFFF; --text:#1F1308; --text-2:#7C2D12;
+    --text-3:#9A3412; --border:#FDBA74; --shadow:0 2px 12px rgba(230,81,0,.12);
+    --radius:12px; --radius-sm:8px;
+    --font-head:'Georgia','Times New Roman',serif;
+    --font-body:'Segoe UI',system-ui,sans-serif;
+    --tr:.2s ease;
+  }
+  [data-theme="dark"] {
+    --bg:#131008; --bg-card:#1E1A0F; --text:#F5EDD5; --text-2:#C8A84A;
+    --text-3:#8A7840; --border:#3A2E18; --cor-light:#2A1E08; --cor-muted:#332210;
+    --shadow:0 2px 12px rgba(0,0,0,.4);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;transition:background var(--tr),color var(--tr)}
+  button{cursor:pointer;font-family:inherit}
+
+  /* TOPBAR */
+  .topbar{position:sticky;top:0;z-index:100;background:var(--bg-card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;box-shadow:var(--shadow)}
+  .topbar-left{display:flex;align-items:center;gap:12px}
+  .back-btn{display:flex;align-items:center;gap:6px;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 12px;color:var(--text-2);font-size:13px;transition:all var(--tr)}
+  .back-btn:hover{background:var(--cor-light);border-color:var(--cor);color:var(--cor)}
+  .topbar-title{font-size:14px;font-weight:600;color:var(--text-2)}
+  .theme-btn{background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;font-size:16px;color:var(--text-2);transition:all var(--tr)}
+  .theme-btn:hover{background:var(--cor-light);border-color:var(--cor)}
+
+  /* HERO */
+  .hero{background:linear-gradient(135deg,var(--cor) 0%,var(--cor-dark) 60%,#7A4A08 100%);color:#fff;padding:48px 32px 40px;position:relative;overflow:hidden}
+  .hero::before{content:'🦺';position:absolute;right:40px;top:20px;font-size:120px;opacity:.12;line-height:1;pointer-events:none;user-select:none}
+  .hero-tag{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600;letter-spacing:.05em;margin-bottom:16px;text-transform:uppercase}
+  .hero h1{font-family:var(--font-head);font-size:clamp(28px,5vw,48px);font-weight:700;line-height:1.1;margin-bottom:10px}
+  .hero-sub{font-size:15px;opacity:.85;margin-bottom:24px;max-width:560px}
+  .hero-badges{display:flex;flex-wrap:wrap;gap:8px}
+  .badge{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600}
+  .badge.ch{background:rgba(0,0,0,.25)}
+
+  /* LAYOUT */
+  .layout{display:grid;grid-template-columns:280px 1fr;gap:0;min-height:calc(100vh - 56px - 148px)}
+
+  /* SIDEBAR */
+  .sidebar{background:var(--bg-card);border-right:1px solid var(--border);padding:20px 0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+  .sidebar-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);padding:0 18px 10px}
+  .uc-group-header{display:flex;align-items:center;justify-content:space-between;padding:9px 18px;cursor:pointer;color:var(--text-2);font-size:12px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;border-left:3px solid transparent;transition:all var(--tr)}
+  .uc-group-header:hover{background:var(--cor-light);border-left-color:var(--cor);color:var(--cor-dark)}
+  .uc-item{padding:7px 18px 7px 26px;font-size:12px;color:var(--text-2);cursor:pointer;border-left:3px solid transparent;transition:all var(--tr);display:flex;justify-content:space-between;align-items:center}
+  .uc-item:hover{background:var(--cor-light);color:var(--cor-dark);border-left-color:var(--cor)}
+  .uc-item .ch-tag{font-size:10px;background:var(--cor-muted);color:var(--cor-dark);border-radius:10px;padding:1px 6px;white-space:nowrap;font-weight:600}
+  .sidebar-divider{height:1px;background:var(--border);margin:12px 18px}
+
+  /* MAIN */
+  .main{padding:28px 32px}
+  .uc-header{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px;border-left:4px solid var(--cor)}
+  .uc-header h2{font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px}
+  .uc-header p{font-size:13px;color:var(--text-2);line-height:1.5}
+  .uc-meta{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .uc-meta span{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600;background:var(--cor-muted);color:var(--cor-dark)}
+  .uc-meta span.ch-t{background:#dbeafe;color:#1e40af}
+  .uc-meta span.ch-p{background:#dcfce7;color:#166534}
+  .uc-meta span.ch-total{background:var(--cor);color:#fff}
+
+  /* COMPETÊNCIAS */
+  .comp-section{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px}
+  .comp-section h3{font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px}
+  .comp-tags{display:flex;flex-wrap:wrap;gap:8px}
+  .comp-tag{font-size:11px;padding:4px 12px;border-radius:12px;font-weight:600;background:var(--cor-muted);color:var(--cor-dark);border:1px solid var(--cor)}
+  .comp-tag.socio{background:#e8f4fd;color:#1565c0;border-color:#90caf9}
+  .comp-tag.ia{background:#f3e8ff;color:#6a0dad;border-color:#ce93d8}
+
+  /* MATERIALS */
+  .section-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  .materials-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:32px}
+  .material-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;transition:all var(--tr);display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+  .material-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--cor);transform:scaleX(0);transform-origin:left;transition:transform var(--tr)}
+  .material-card:hover{border-color:var(--cor);box-shadow:var(--shadow);transform:translateY(-2px)}
+  .material-card:hover::before{transform:scaleX(1)}
+  .mat-icon{width:40px;height:40px;border-radius:10px;background:var(--cor-light);display:flex;align-items:center;justify-content:center;font-size:20px}
+  .mat-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.3}
+  .mat-desc{font-size:11px;color:var(--text-3);line-height:1.4}
+  .mat-btn{margin-top:auto;padding:8px 14px;background:var(--cor);color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px;justify-content:center;transition:background var(--tr)}
+  .mat-btn:hover{background:var(--cor-dark)}
+
+  /* MODAL */
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:center;justify-content:center;padding:20px}
+  .modal-overlay.open{display:flex}
+  .modal{background:var(--bg-card);border-radius:var(--radius);width:100%;max-width:760px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:slideUp .25s ease}
+  @keyframes slideUp{from{transform:translateY(30px);opacity:0}}
+  .modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg-card);z-index:1}
+  .modal-header h3{font-size:17px;font-weight:700;color:var(--text)}
+  .modal-close{background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px;font-size:18px;color:var(--text-3);transition:all var(--tr)}
+  .modal-close:hover{background:#fee2e2;border-color:#ef4444;color:#ef4444}
+  .modal-body{padding:20px 24px}
+
+  /* FORM */
+  .form-group{margin-bottom:16px}
+  .form-group label{display:block;font-size:12px;font-weight:700;color:var(--text-2);margin-bottom:6px}
+  .form-group select,.form-group input,.form-group textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;transition:border-color var(--tr);outline:none}
+  .form-group select:focus,.form-group input:focus,.form-group textarea:focus{border-color:var(--cor);box-shadow:0 0 0 3px rgba(244,160,32,.15)}
+  .form-group textarea{resize:vertical;min-height:80px}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .ch-info-box{background:var(--cor-light);border:1px solid var(--cor);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--cor-dark);margin-bottom:16px;display:none}
+  .ch-info-box.visible{display:block}
+  .ch-info-box strong{display:block;margin-bottom:4px;font-size:13px}
+
+  /* OUTPUT */
+  .output-area{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;font-size:13px;line-height:1.7;color:var(--text);min-height:120px;white-space:pre-wrap;display:none}
+  .output-area.visible{display:block}
+
+  /* BOTÕES */
+  .btn-primary{width:100%;padding:12px;background:var(--cor);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;transition:background var(--tr);margin-bottom:10px}
+  .btn-primary:hover{background:var(--cor-dark)}
+  .btn-primary:disabled{opacity:.6;cursor:not-allowed}
+  .btn-secondary{flex:1;padding:10px;background:none;color:var(--cor-dark);border:1px solid var(--cor);border-radius:var(--radius-sm);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:all var(--tr)}
+  .btn-secondary:hover{background:var(--cor-light)}
+  .btn-row{display:flex;gap:10px;margin-top:12px}
+
+  /* LOADING */
+  .loading{display:none;align-items:center;gap:10px;padding:14px;font-size:13px;color:var(--text-2)}
+  .loading.visible{display:flex}
+  .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--cor);border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* TOAST */
+  .toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--bg-card);border:1px solid var(--border);border-left:4px solid var(--cor);border-radius:var(--radius-sm);padding:12px 18px;font-size:13px;color:var(--text);box-shadow:var(--shadow);animation:toastIn .3s ease;display:none}
+  .toast.visible{display:block}
+  .toast.error{border-left-color:#ef4444}
+  @keyframes toastIn{from{transform:translateX(30px);opacity:0}}
+
+  /* RESPONSIVE */
+  @media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{position:relative;height:auto;border-right:none;border-bottom:1px solid var(--border)}.main{padding:20px 16px}.form-row,.form-row-3{grid-template-columns:1fr}.materials-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:480px){.materials-grid{grid-template-columns:1fr}.hero{padding:32px 20px 28px}}
+</style>
+</head>
+<body data-theme="light">
+
+<div class="topbar">
+  <div class="topbar-left">
+    <button class="back-btn" onclick="voltarHub()">← Hub Principal</button>
+    <span class="topbar-title">🦺 Segurança do Trabalho</span>
+  </div>
+  <button class="theme-btn" onclick="toggleTheme()" title="Alternar tema">🌙</button>
+</div>
+
+<div class="hero">
+  <div class="hero-tag">🦺 MQCT · SENAI Bahia</div>
+  <h1>Segurança do Trabalho</h1>
+  <p class="hero-sub">Materiais didáticos alinhados ao Itinerário Nacional · Versão 2025.1 · Emissão 18/06/2026</p>
+  <div class="hero-badges">
+    <span class="badge">Técnico em Segurança do Trabalho</span>
+    <span class="badge ch">⏱ 1200h</span>
+    <span class="badge">CBO 3516-05</span>
+    <span class="badge">Nível 3 · Tático</span>
+  </div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-title">Módulos e UCs</div>
+
+    <div class="uc-group-header">📦 Módulo Básico <span class="ch-tag">112h</span></div>
+    <div class="uc-item" onclick="setUC('MB_UC1','Sustentabilidade nos Processos Industriais','Reconhecer os princípios da economia circular nos processos industriais',3,5,'Módulo Básico')"><span>UC1 — Sustentabilidade nos Processos Industriais</span><span class="ch-tag">8h</span></div>
+    <div class="uc-item" onclick="setUC('MB_UC2','Introdução à Indústria 4.0','Reconhecer os marcos que alavancaram as revoluções industriais e seus impactos nas atividades de produção e no desenvolvimento do indivíduo.',10,14,'Módulo Básico')"><span>UC2 — Introdução à Indústria 4.0</span><span class="ch-tag">24h</span></div>
+    <div class="uc-item" onclick="setUC('MB_UC3','Introdução à Qualidade e Produtividade','Identificar as ferramentas da qualidade aplicadas nos processos industriais.',6,10,'Módulo Básico')"><span>UC3 — Introdução à Qualidade e Produtividade</span><span class="ch-tag">16h</span></div>
+    <div class="uc-item" onclick="setUC('MB_UC4','Saúde e Segurança no Trabalho','Reconhecer os conceitos, classificação e impactos de acidentes e doenças ocupacionais na indústria.',5,7,'Módulo Básico')"><span>UC4 — Saúde e Segurança no Trabalho</span><span class="ch-tag">12h</span></div>
+    <div class="uc-item" onclick="setUC('MB_UC5','Introdução à Tecnologia da Informação e Comunicação','Interpretar dados, informações técnicas e terminologias de textos técnicos relacionados aos processos industriais.',16,24,'Módulo Básico')"><span>UC5 — Introdução à Tecnologia da Informação e Comunicação</span><span class="ch-tag">40h</span></div>
+    <div class="uc-item" onclick="setUC('MB_UC6','Introdução ao Desenvolvimento de Projetos','Reconhecer diferentes métodos aplicados ao desenvolvimento do projeto.',5,7,'Módulo Básico')"><span>UC6 — Introdução ao Desenvolvimento de Projetos</span><span class="ch-tag">12h</span></div>
+    <div class="sidebar-divider"></div>
+    <div class="uc-group-header">📦 Módulo Introdutório <span class="ch-tag">260h</span></div>
+    <div class="uc-item" onclick="setUC('MI_UC1','Fundamentos de Segurança e Saúde do Trabalho','Interpretar dados estatísticos de acidentes, incidentes e doenças ocupacionais',48,72,'Módulo Introdutório')"><span>UC1 — Fundamentos de Segurança e Saúde do Trabalho</span><span class="ch-tag">120h</span></div>
+    <div class="uc-item" onclick="setUC('MI_UC2','Ciências Aplicadas à Segurança e Saúde do Trabalho','Reconhecer propriedades físico-químicas dos agentes de riscos',24,36,'Módulo Introdutório')"><span>UC2 — Ciências Aplicadas à Segurança e Saúde do Trabalho</span><span class="ch-tag">60h</span></div>
+    <div class="uc-item" onclick="setUC('MI_UC3','Comunicação e Informação Aplicadas à Segurança e Saúde do Trabalho','Interpretar dados e informações de textos técnicos, inclusive em outros idiomas (normas, procedimentos, manuais, planilhas, relatórios, catálogos e desenho técnicos) relacionados à Saúde e Segurança do Trabalho',16,24,'Módulo Introdutório')"><span>UC3 — Comunicação e Informação Aplicadas à Segurança e Saúde do Trabalho</span><span class="ch-tag">40h</span></div>
+    <div class="uc-item" onclick="setUC('MI_UC4','Gestão de Pessoas Aplicada à Segurança e Saúde do Trabalho','Reconhecer as técnicas de liderança de equipe',16,24,'Módulo Introdutório')"><span>UC4 — Gestão de Pessoas Aplicada à Segurança e Saúde do Trabalho</span><span class="ch-tag">40h</span></div>
+    <div class="sidebar-divider"></div>
+    <div class="uc-group-header">📦 Módulo Específico I <span class="ch-tag">336h</span></div>
+    <div class="uc-item" onclick="setUC('ME1_UC1','Rotinas de Segurança e Saúde do Trabalho','Identificar, normas e notas técnicas aplicáveis ao ramo de atuação e ou atividade do local a ser inspecionado',80,120,'Módulo Específico I')"><span>UC1 — Rotinas de Segurança e Saúde do Trabalho</span><span class="ch-tag">200h</span></div>
+    <div class="uc-item" onclick="setUC('ME1_UC2','Higiene Ocupacional','Identificar os indicadores de saúde com base no PGR e relatório analítico do PCMSO e demais programas relacionados à saúde',48,72,'Módulo Específico I')"><span>UC2 — Higiene Ocupacional</span><span class="ch-tag">120h</span></div>
+    <div class="uc-item" onclick="setUC('ME1_UC3','Criatividade e Ideação em Projetos de Inovação','Elaborar o plano de gerenciamento do projeto a partir das necessidades dos interessados (stakeholders), considerando cronograma, escopo, aquisições e recursos',6,10,'Módulo Específico I')"><span>UC3 — Criatividade e Ideação em Projetos de Inovação</span><span class="ch-tag">16h</span></div>
+    <div class="sidebar-divider"></div>
+    <div class="uc-group-header">📦 Módulo Específico II <span class="ch-tag">292h</span></div>
+    <div class="uc-item" onclick="setUC('ME2_UC1','Coordenação de Programas e Procedimentos de Saúde e Segurança do Trabalho','Identificar as medidas propostas nos relatórios para realizar o planejamento de implantação das mesmas',83,125,'Módulo Específico II')"><span>UC1 — Coordenação de Programas e Procedimentos de Saúde e Segurança do Trabalho</span><span class="ch-tag">208h</span></div>
+    <div class="uc-item" onclick="setUC('ME2_UC2','Planejamento e Execução de Ações Educativas','Identificar legislação, normas e notas técnicas aplicáveis ao ambiente laboral',16,24,'Módulo Específico II')"><span>UC2 — Planejamento e Execução de Ações Educativas</span><span class="ch-tag">40h</span></div>
+    <div class="uc-item" onclick="setUC('ME2_UC3','Modelagem de Projetos de Inovação','Elaborar, de forma clara e objetiva, os documentos demandados pela proposta de valor e pelo modelo de negócio do projeto a ser desenvolvido.',8,12,'Módulo Específico II')"><span>UC3 — Modelagem de Projetos de Inovação</span><span class="ch-tag">20h</span></div>
+    <div class="uc-item" onclick="setUC('ME2_UC4','Prototipagem de Negócios Inovadores','Selecionar as ferramentas que melhor se adaptam ou atendem as necessidades de sistematização de dados e a estruturação da documentação referente ao processo de prototipagem',10,14,'Módulo Específico II')"><span>UC4 — Prototipagem de Negócios Inovadores</span><span class="ch-tag">24h</span></div>
+    <div class="sidebar-divider"></div>
+    <div class="uc-group-header">📦 Módulo Específico III <span class="ch-tag">80h</span></div>
+    <div class="uc-item" onclick="setUC('ME3_UC1','Assessoria e Consultoria em Saúde, Segurança e Meio Ambiente do Trabalho','Correlacionar as diretrizes de segurança do trabalho descritas nos procedimentos com as atividades desenvolvidas no ambiente laboral',24,36,'Módulo Específico III')"><span>UC1 — Assessoria e Consultoria em Saúde, Segurança e Meio Ambiente do Trabalho</span><span class="ch-tag">60h</span></div>
+    <div class="uc-item" onclick="setUC('ME3_UC2','Implementação de Negócios Inovadores','Selecionar as ferramentas de gestão que melhor atendem o monitoramento e o controle dos indicadores que se aplicam ao planejamento, à produção e à comercialização do produto/serviço.',8,12,'Módulo Específico III')"><span>UC2 — Implementação de Negócios Inovadores</span><span class="ch-tag">20h</span></div>
+    <div class="sidebar-divider"></div>
+    <div class="uc-group-header">📦 Módulo Específico IV <span class="ch-tag">120h</span></div>
+    <div class="uc-item" onclick="setUC('ME4_UC1','Gestão de Auditorias em Segurança e Saúde do Trabalho','Identificar legislação, normas e notas técnicas aplicáveis ao processo de trabalho',24,36,'Módulo Específico IV')"><span>UC1 — Gestão de Auditorias em Segurança e Saúde do Trabalho</span><span class="ch-tag">60h</span></div>
+    <div class="uc-item" onclick="setUC('ME4_UC2','Monitoramento dos Programas e Documentos de Segurança e Saúde do Trabalho','Cumprir normas e procedimentos de segurança estabelecidos pela empresa para avaliação de processo de trabalho e ou novo projeto, a fim de garantir a saúde e integridade física',24,36,'Módulo Específico IV')"><span>UC2 — Monitoramento dos Programas e Documentos de Segurança e Saúde do Trabalho</span><span class="ch-tag">60h</span></div>
+    <div class="sidebar-divider"></div>
+    <div class="uc-group-header" onclick="setUC('SOCIO','Competências Socioemocionais','Competências socioemocionais oficiais do curso Técnico em Segurança do Trabalho.',0,0,'Transversal')">🤝 Socioemocionais</div>
+    <div class="uc-group-header" onclick="setUC('IA','Competências de IA','Competências de Inteligência Artificial contextualizadas para Segurança do Trabalho.',0,0,'Transversal')">🤖 Competências de IA</div>
+  </aside>
+
+  <main class="main">
+    <div class="uc-header" id="uc-header">
+      <h2 id="uc-nome">Selecione uma UC na barra lateral</h2>
+      <p id="uc-desc">Escolha um módulo ou unidade curricular ao lado para gerar materiais didáticos específicos, alinhados ao Plano de Curso SENAI DR-BA — Técnico em Segurança do Trabalho (1200h).</p>
+      <div class="uc-meta" id="uc-meta"></div>
+    </div>
+
+    <div class="comp-section">
+      <h3>📋 Perfil de Competências — Técnico em Segurança do Trabalho</h3>
+      <div class="comp-tags">
+        <span class="comp-tag">Industrializar Segurança do Trabalho</span>
+        <span class="comp-tag">Realizar Análises</span>
+        <span class="comp-tag">Coordenar Produção</span>
+        <span class="comp-tag">BPF / APPCC / POP / PPHO</span>
+        <span class="comp-tag">Controle de Qualidade</span>
+        <span class="comp-tag">Segurança dos Segurança do Trabalho</span>
+        <span class="comp-tag">ESG · IoT</span>
+        <span class="comp-tag socio">Aprendizagem Ativa</span>
+        <span class="comp-tag socio">Empreendedorismo</span>
+        <span class="comp-tag socio">Inteligência Emocional</span>
+        <span class="comp-tag socio">Liderança</span>
+        <span class="comp-tag socio">Pensamento Crítico</span>
+        <span class="comp-tag socio">Resolução de Problemas</span>
+        <span class="comp-tag ia">Alfabetização em IA</span>
+        <span class="comp-tag ia">IA Generativa</span>
+        <span class="comp-tag ia">Análise com IA</span>
+      </div>
+    </div>
+
+    <div class="section-title">Gerar Material Didático</div>
+    <div class="materials-grid">
+      <div class="material-card" onclick="openModal('plano')">
+        <div class="mat-icon">📋</div>
+        <div class="mat-name">Plano de Aula</div>
+        <div class="mat-desc">Plano completo no padrão SENAI com tabela de aulas calculada pela CH da UC.</div>
+        <button class="mat-btn">✨ Gerar → .doc</button>
+      </div>
+      <div class="material-card" onclick="openModal('sa')">
+        <div class="mat-icon">🎯</div>
+        <div class="mat-name">Situação de Aprendizagem</div>
+        <div class="mat-desc">SA contextualizada com desafio real da segurança e saúde do trabalho.</div>
+        <button class="mat-btn">✨ Gerar → .doc</button>
+      </div>
+      <div class="material-card" onclick="openModal('pratica')">
+        <div class="mat-icon">🧪</div>
+        <div class="mat-name">Roteiro de Práticas</div>
+        <div class="mat-desc">Procedimento laboratorial ou de produção com EPI, materiais e etapas.</div>
+        <button class="mat-btn">✨ Gerar → .doc</button>
+      </div>
+      <div class="material-card" onclick="openModal('oa')">
+        <div class="mat-icon">📚</div>
+        <div class="mat-name">Objeto de Aprendizagem</div>
+        <div class="mat-desc">Material teórico com conceitos, exemplos e referências técnicas.</div>
+        <button class="mat-btn">✨ Gerar → .doc</button>
+      </div>
+      <div class="material-card" onclick="openModal('mapa')">
+        <div class="mat-icon">🗺️</div>
+        <div class="mat-name">Mapa Mental</div>
+        <div class="mat-desc">Visualização dos conceitos e conexões da UC em SVG interativo.</div>
+        <button class="mat-btn">✨ Gerar → SVG</button>
+      </div>
+      <div class="material-card" onclick="openModal('caca')">
+        <div class="mat-icon">🔤</div>
+        <div class="mat-name">Caça-Palavras</div>
+        <div class="mat-desc">Atividade lúdica com termos técnicos da área de Segurança do Trabalho.</div>
+        <button class="mat-btn">✨ Gerar → PNG</button>
+      </div>
+      <div class="material-card" onclick="openModal('avaliacao')">
+        <div class="mat-icon">📝</div>
+        <div class="mat-name">Avaliação / Prova</div>
+        <div class="mat-desc">Instrumento avaliativo com questões objetivas e discursivas por UC.</div>
+        <button class="mat-btn">✨ Gerar → .doc</button>
+      </div>
+      <div class="material-card" onclick="openModal('slides')">
+        <div class="mat-icon">🖥️</div>
+        <div class="mat-name">Slides</div>
+        <div class="mat-desc">Apresentação HTML com estrutura didática e tópicos-chave.</div>
+        <button class="mat-btn">✨ Gerar → HTML</button>
+      </div>
+      <div class="material-card" onclick="openModal('custom')">
+        <div class="mat-icon">⚙️</div>
+        <div class="mat-name">Material Personalizado</div>
+        <div class="mat-desc">Descreva o que precisa e a IA gera um material sob medida.</div>
+        <button class="mat-btn">✨ Gerar → .doc</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ═══════════════════════════════ MODAIS ═══════════════════════════════ -->
+
+<!-- MODAL PLANO DE AULA -->
+<div class="modal-overlay" id="modal-plano">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>📋 Plano de Aula — Padrão SENAI</h3>
+      <button class="modal-close" onclick="closeModal('plano')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Docente</label>
+          <input type="text" id="pa-docente" placeholder="Nome completo do docente" />
+        </div>
+        <div class="form-group">
+          <label>Data</label>
+          <input type="date" id="pa-data" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Unidade Curricular</label>
+        <input type="text" id="pa-uc" placeholder="Ex: UC 1.4 — Processar Pães, Massas e Biscoitos" />
+      </div>
+      <div class="form-group">
+        <label>Turma / Período</label>
+        <input type="text" id="pa-turma" placeholder="Ex: Técnico em Segurança do Trabalho — 2025.1" />
+      </div>
+      <div class="ch-info-box" id="pa-ch-info"></div>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label>CH Teórica da UC (h)</label>
+          <input type="number" id="pa-cht" value="16" min="0" max="200" oninput="calcAulas()" />
+        </div>
+        <div class="form-group">
+          <label>CH Prática da UC (h)</label>
+          <input type="number" id="pa-chp" value="24" min="0" max="200" oninput="calcAulas()" />
+        </div>
+        <div class="form-group">
+          <label>CH por Aula (h)</label>
+          <select id="pa-chpordia" onchange="calcAulas()">
+            <option value="4">4h (presencial padrão)</option>
+            <option value="3">3h (presencial reduzido)</option>
+            <option value="2">2h (remoto)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Modelo do plano</label>
+          <select id="pa-modelo">
+            <option value="exemplo" selected>Modelo SENAI simples — igual ao exemplo enviado</option>
+            <option value="detalhado">Modelo detalhado — com maior aprofundamento por aula</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Quantidade de aulas/encontros</label>
+          <input type="number" id="pa-aulas-custom" placeholder="Automático pela CH" min="1" max="60" oninput="calcAulas()" />
+        </div>
+      </div>
+      <div class="ch-info-box visible" id="pa-aulas-info">
+        <strong id="pa-aulas-txt">Calculando...</strong>
+        <span id="pa-aulas-sub"></span>
+      </div>
+      <div class="form-group">
+        <label>Observações adicionais (opcional)</label>
+        <textarea id="pa-obs" placeholder="Recursos disponíveis, necessidades especiais, ênfases..."></textarea>
+      </div>
+      <button class="btn-primary" id="pa-btn" onclick="gerarPlano()">✨ Gerar Plano de Aula</button>
+      <div class="loading" id="pa-loading"><div class="spinner"></div> Gerando com IA Gemini...</div>
+      <div class="output-area" id="pa-output"></div>
+      <div class="btn-row" id="pa-actions" style="display:none">
+        <button class="btn-secondary" onclick="downloadDoc('pa-output','Plano_de_Aula')">⬇ Baixar .doc</button>
+        <button class="btn-secondary" onclick="copiarTexto('pa-output')">📋 Copiar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SA -->
+<div class="modal-overlay" id="modal-sa">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>🎯 Situação de Aprendizagem</h3>
+      <button class="modal-close" onclick="closeModal('sa')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Unidade Curricular</label>
+        <input type="text" id="sa-uc" placeholder="Ex: UC 2.1 — Análises Físico-Químicas" />
+      </div>
+      <div class="form-group">
+        <label>Contexto / Cenário (opcional)</label>
+        <textarea id="sa-ctx" placeholder="Ex: Indústria de laticínios recebe lote suspeito de leite..."></textarea>
+      </div>
+      <button class="btn-primary" id="sa-btn" onclick="gerarSA()">✨ Gerar Situação de Aprendizagem</button>
+      <div class="loading" id="sa-loading"><div class="spinner"></div> Gerando com IA...</div>
+      <div class="output-area" id="sa-output"></div>
+      <div class="btn-row" id="sa-actions" style="display:none">
+        <button class="btn-secondary" onclick="downloadDoc('sa-output','Situacao_de_Aprendizagem')">⬇ Baixar .doc</button>
+        <button class="btn-secondary" onclick="copiarTexto('sa-output')">📋 Copiar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PRÁTICA -->
+<div class="modal-overlay" id="modal-pratica">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>🧪 Roteiro de Práticas</h3>
+      <button class="modal-close" onclick="closeModal('pratica')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Unidade Curricular / Atividade Prática</label>
+        <input type="text" id="pr-uc" placeholder="Ex: UC 2.3 — Análises Microbiológicas" />
+      </div>
+      <div class="form-group">
+        <label>Tipo de Prática</label>
+        <select id="pr-tipo">
+          <option>Laboratório de análises</option>
+          <option>Planta piloto / produção</option>
+          <option>Visita técnica</option>
+          <option>Simulação / estudo de caso</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Recursos disponíveis</label>
+        <textarea id="pr-recursos" placeholder="Ex: Microscópio, meios de cultura, vidraria..."></textarea>
+      </div>
+      <button class="btn-primary" id="pr-btn" onclick="gerarPratica()">✨ Gerar Roteiro</button>
+      <div class="loading" id="pr-loading"><div class="spinner"></div> Gerando com IA...</div>
+      <div class="output-area" id="pr-output"></div>
+      <div class="btn-row" id="pr-actions" style="display:none">
+        <button class="btn-secondary" onclick="downloadDoc('pr-output','Roteiro_de_Praticas')">⬇ Baixar .doc</button>
+        <button class="btn-secondary" onclick="copiarTexto('pr-output')">📋 Copiar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL OA -->
+<div class="modal-overlay" id="modal-oa">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>📚 Objeto de Aprendizagem</h3>
+      <button class="modal-close" onclick="closeModal('oa')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Unidade Curricular / Tema</label>
+        <input type="text" id="oa-uc" placeholder="Ex: UC 3.4 — Controlar a Segurança dos Segurança do Trabalho" />
+      </div>
+      <div class="form-group">
+        <label>Nível de aprofundamento</label>
+        <select id="oa-nivel">
+          <option>Introdutório</option>
+          <option>Intermediário</option>
+          <option>Avançado</option>
+        </select>
+      </div>
+      <button class="btn-primary" id="oa-btn" onclick="gerarOA()">✨ Gerar Objeto de Aprendizagem</button>
+      <div class="loading" id="oa-loading"><div class="spinner"></div> Gerando com IA...</div>
+      <div class="output-area" id="oa-output"></div>
+      <div class="btn-row" id="oa-actions" style="display:none">
+        <button class="btn-secondary" onclick="downloadDoc('oa-output','Objeto_de_Aprendizagem')">⬇ Baixar .doc</button>
+        <button class="btn-secondary" onclick="copiarTexto('oa-output')">📋 Copiar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MAPA MENTAL -->
+<div class="modal-overlay" id="modal-mapa">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>🗺️ Mapa Mental</h3>
+      <button class="modal-close" onclick="closeModal('mapa')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Unidade Curricular / Tema Central</label>
+        <input type="text" id="mm-uc" placeholder="Ex: APPCC — Análise de Perigos e Pontos Críticos" />
+      </div>
+      <button class="btn-primary" id="mm-btn" onclick="gerarMapa()">✨ Gerar Mapa Mental</button>
+      <div class="loading" id="mm-loading"><div class="spinner"></div> Gerando com IA...</div>
+      <div id="mm-svg-container" style="display:none;margin-top:16px;overflow:auto"></div>
+      <div class="btn-row" id="mm-actions" style="display:none">
+        <button class="btn-secondary" onclick="downloadSVG()">⬇ Baixar SVG</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CAÇA-PALAVRAS -->
+<div class="modal-overlay" id="modal-caca">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>🔤 Caça-Palavras</h3>
+      <button class="modal-close" onclick="closeModal('caca')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Unidade Curricular / Tema</label>
+        <input type="text" id="cw-uc" placeholder="Ex: UC 1.1 — Processar Carnes e Derivados" />
+      </div>
+      <div class="form-group">
+        <label>Número de palavras</label>
+        <select id="cw-num">
+          <option value="10">10 palavras</option>
+          <option value="15" selected>15 palavras</option>
+          <option value="20">20 palavras</option>
+        </select>
+      </div>
+      <button class="btn-primary" id="cw-btn" onclick="gerarCaca()">✨ Gerar Caça-Palavras</button>
+      <div class="loading" id="cw-loading"><div class="spinner"></div> Gerando com IA...</div>
+      <canvas id="cw-canvas" style="display:none;max-width:100%;margin-top:16px;border:1px solid var(--border);border-radius:8px"></canvas>
+      <div class="btn-row" id="cw-actions" style="display:none">
+        <button class="btn-secondary" onclick="downloadCacaPNG()">⬇ Baixar PNG</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AVALIAÇÃO -->
+<div class="modal-overlay" id="modal-avaliacao">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>📝 Avaliação / Prova</h3>
+      <button class="modal-close" onclick="closeModal('avaliacao')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Unidade Curricular</label>
+        <input type="text" id="av-uc" placeholder="Ex: UC 3.2 — Controlar a Produção de Segurança do Trabalho" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Questões Objetivas</label>
+          <input type="number" id="av-obj" value="5" min="0" max="20" />
+        </div>
+        <div class="form-group">
+          <label>Questões Discursivas</label>
+          <input type="number" id="av-disc" value="3" min="0" max="10" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Nível de dificuldade</label>
+        <select id="av-nivel">
+          <option>Básico</option>
+          <option selected>Intermediário</option>
+          <option>Avançado</option>
+        </select>
+      </div>
+      <button class="btn-primary" id="av-btn" onclick="gerarAvaliacao()">✨ Gerar Avaliação</button>
+      <div class="loading" id="av-loading"><div class="spinner"></div> Gerando com IA...</div>
+      <div class="output-area" id="av-output"></div>
+      <div class="btn-row" id="av-actions" style="display:none">
+        <button class="btn-secondary" onclick="downloadDoc('av-output','Avaliacao')">⬇ Baixar .doc</button>
+        <button class="btn-secondary" onclick="copiarTexto('av-output')">📋 Copiar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SLIDES -->
+<div class="modal-overlay" id="modal-slides">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>🖥️ Slides</h3>
+      <button class="modal-close" onclick="closeModal('slides')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Unidade Curricular / Tema</label>
+        <input type="text" id="sl-uc" placeholder="Ex: UC 3.4 — APPCC e Segurança dos Segurança do Trabalho" />
+      </div>
+      <div class="form-group">
+        <label>Número de slides</label>
+        <select id="sl-num">
+          <option value="8">8 slides</option>
+          <option value="12" selected>12 slides</option>
+          <option value="16">16 slides</option>
+        </select>
+      </div>
+      <button class="btn-primary" id="sl-btn" onclick="gerarSlides()">✨ Gerar Slides</button>
+      <div class="loading" id="sl-loading"><div class="spinner"></div> Gerando com IA...</div>
+      <div class="output-area" id="sl-output"></div>
+      <div class="btn-row" id="sl-actions" style="display:none">
+        <button class="btn-secondary" onclick="downloadSlides()">⬇ Baixar HTML</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CUSTOM -->
+<div class="modal-overlay" id="modal-custom">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>⚙️ Material Personalizado</h3>
+      <button class="modal-close" onclick="closeModal('custom')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Descreva o material que você precisa</label>
+        <textarea id="cu-desc" rows="5" placeholder="Ex: Ficha de acompanhamento de estágio para alunos do Técnico em Segurança do Trabalho..."></textarea>
+      </div>
+      <button class="btn-primary" id="cu-btn" onclick="gerarCustom()">✨ Gerar Material</button>
+      <div class="loading" id="cu-loading"><div class="spinner"></div> Gerando com IA...</div>
+      <div class="output-area" id="cu-output"></div>
+      <div class="btn-row" id="cu-actions" style="display:none">
+        <button class="btn-secondary" onclick="downloadDoc('cu-output','Material_Personalizado')">⬇ Baixar .doc</button>
+        <button class="btn-secondary" onclick="copiarTexto('cu-output')">📋 Copiar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ═══════════════════════════════ SCRIPTS ═══════════════════════════════ -->
+<script src="data/seguranca-drba.js"></script>
+<script>
+const PROXY_URL    = 'https://hub-mqct-proxy.vercel.app/api/gemini';
+const SUPABASE_URL = 'https://afvdrtmmxgvuyipsnatq.supabase.co';
+const AREA_NOME    = 'Segurança do Trabalho · Plano DR-BA';
+const CURSO        = 'Técnico em Segurança do Trabalho — Plano de Curso SENAI DR-BA — 1200h';
+
+let ucAtual = {id:'',nome:'',desc:'',cht:0,chp:0,modulo:''};
+
+// ── TEMA ─────────────────────────────────────────────────────
+function toggleTheme(){
+  const dark = document.body.dataset.theme==='dark';
+  document.body.dataset.theme = dark?'light':'dark';
+  document.querySelector('.theme-btn').textContent = dark?'🌙':'☀️';
+}
+
+function voltarHub(){ window.location.href='seletor-seguranca.html'; }
+
+// ── CALCULAR AULAS ────────────────────────────────────────────
+function calcAulas(){
+  const cht    = parseInt(document.getElementById('pa-cht').value)||0;
+  const chp    = parseInt(document.getElementById('pa-chp').value)||0;
+  const chDia  = parseInt(document.getElementById('pa-chpordia').value)||4;
+  const total  = cht + chp;
+  const customAulas = parseInt(document.getElementById('pa-aulas-custom')?.value)||0;
+  const isTransversal = (total === 0);
+  // Transversais: exibe 1 aula no placeholder; docente ajusta a CH acima
+  const totalEfetivo = isTransversal ? chDia : total;
+  const nAulasAuto = Math.max(1, Math.ceil(totalEfetivo / chDia));
+  const nAulas = customAulas > 0 ? customAulas : nAulasAuto;
+  const box = document.getElementById('pa-aulas-info');
+  if(!isTransversal){
+    document.getElementById('pa-aulas-txt').textContent =
+      `📊 Total da UC: ${cht}h teórica + ${chp}h prática = ${total}h`;
+    document.getElementById('pa-aulas-sub').textContent =
+      customAulas > 0
+        ? `→ Serão geradas ${nAulas} aula${nAulas>1?"s":""} conforme informado no formulário`
+        : `→ Serão geradas ${nAulas} aula${nAulas>1?"s":""} de ${chDia}h cada`;
+  } else {
+    document.getElementById('pa-aulas-txt').textContent =
+      `📊 Competência Transversal — CH definida pela instituição`;
+    document.getElementById('pa-aulas-sub').textContent =
+      `→ Ajuste a CH acima para calcular o número de aulas automaticamente`;
+  }
+  box.classList.add('visible');
+  return {cht, chp, total: totalEfetivo, chDia, nAulas, isTransversal};
+}
+
+// ── SELECIONAR UC ─────────────────────────────────────────────
+function setUC(id, nome, desc, cht, chp, modulo){
+  ucAtual = {id, nome, desc, cht, chp, modulo};
+  document.getElementById('uc-nome').textContent = nome;
+  document.getElementById('uc-desc').textContent = desc;
+  const total = cht + chp;
+  const meta  = document.getElementById('uc-meta');
+  if(total > 0){
+    meta.innerHTML = `
+      <span>${modulo}</span>
+      <span class="ch-t">📖 Teórica: ${cht}h</span>
+      <span class="ch-p">🧪 Prática: ${chp}h</span>
+      <span class="ch-total">⏱ Total: ${total}h</span>`;
+  } else {
+    meta.innerHTML = `<span>${modulo}</span>`;
+  }
+  // preenche campos dos modais
+  const ucStr = id.startsWith('F')||id==='SOCIO'||id==='IA' ? nome : `${id} — ${nome}`;
+  ['pa-uc','sa-uc','pr-uc','oa-uc','mm-uc','cw-uc','av-uc','sl-uc'].forEach(fid => {
+    const el = document.getElementById(fid);
+    if(el && !el.value) el.value = ucStr;
+  });
+  // preenche CH nos campos do plano
+  if(total > 0){
+    const chtEl = document.getElementById('pa-cht');
+    const chpEl = document.getElementById('pa-chp');
+    if(chtEl) chtEl.value = cht;
+    if(chpEl) chpEl.value = chp;
+    calcAulas();
+  }
+  document.querySelector('.main').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── MODAIS ────────────────────────────────────────────────────
+function openModal(id){
+  document.getElementById('modal-'+id).classList.add('open');
+  document.body.style.overflow='hidden';
+  if(id==='plano') calcAulas();
+}
+function closeModal(id){
+  document.getElementById('modal-'+id).classList.remove('open');
+  document.body.style.overflow='';
+}
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',e=>{ if(e.target===m) closeModal(m.id.replace('modal-','')); });
+});
+
+// ── TOKEN SUPABASE ────────────────────────────────────────────
+function getToken(){
+  try{
+    for(let k of Object.keys(localStorage)){
+      if(k.includes('auth-token')){
+        const p = JSON.parse(localStorage.getItem(k));
+        if(p?.access_token) return p.access_token;
+      }
+    }
+  }catch{}
+  return null;
+}
+
+// ── GEMINI ────────────────────────────────────────────────────
+async function callGemini(prompt){
+  const token   = getToken();
+  const headers = {'Content-Type':'application/json'};
+  if(token) headers['Authorization'] = `Bearer ${token}`;
+  const res = await fetch(PROXY_URL,{method:'POST',headers,body:JSON.stringify({prompt})});
+  if(res.status===401){
+    showToast('Sessão expirada. Redirecionando...','error');
+    setTimeout(()=>window.location.href='../index.html',2000);
+    throw new Error('Unauthorized');
+  }
+  if(!res.ok) throw new Error(`Erro ${res.status}`);
+  const data = await res.json();
+  return data.text || data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+}
+
+// ── TOAST ─────────────────────────────────────────────────────
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast visible'+(type?' '+type:'');
+  setTimeout(()=>t.classList.remove('visible'),3500);
+}
+
+// ── UI HELPERS ────────────────────────────────────────────────
+function setLoading(p,on){
+  document.getElementById(p+'-loading').classList.toggle('visible',on);
+  const btn=document.getElementById(p+'-btn');
+  if(btn) btn.disabled=on;
+}
+function showOutput(p,text){
+  const el=document.getElementById(p+'-output');
+  if(el){el.textContent=text;el.classList.add('visible');}
+  const ac=document.getElementById(p+'-actions');
+  if(ac) ac.style.display='flex';
+}
+
+// ── DOWNLOAD DOC ──────────────────────────────────────────────
+function escapeHTML(str){
+  return String(str||'').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+}
+function inlineFormat(str){
+  return escapeHTML(str)
+    .replace(/&lt;br\s*\/?&gt;/gi,'<br>')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>');
+}
+function normalizeTableCells(cells, expected){
+  // Se a IA usar pipes dentro da célula Recursos (ex.: Slides | Quadro branco),
+  // preserva as 6 colunas oficiais e junta os excedentes na última coluna.
+  if(expected && cells.length > expected){
+    const fixed = cells.slice(0, expected - 1);
+    fixed.push(cells.slice(expected - 1).join('<br>'));
+    return fixed;
+  }
+  while(expected && cells.length < expected) cells.push('');
+  return cells;
+}
+function markdownTableToHtml(rows){
+  const raw = rows.map(r => r.trim()).filter(Boolean);
+  if(raw.length === 0) return '';
+  const parsed = raw.map(r => r.replace(/^\|/,'').replace(/\|$/,'').split('|').map(c => c.trim()));
+  let header = parsed[0];
+  const expected = header.length;
+  const isPlanoAulas = header.map(h=>h.toLowerCase()).join('|').includes('capacidade') && header.map(h=>h.toLowerCase()).join('|').includes('estratégias');
+  let body = parsed.slice(1)
+    .filter(cells => !cells.every(c => /^:?-{2,}:?$/.test(c)))
+    .map(cells => normalizeTableCells(cells, expected));
+  header = normalizeTableCells(header, expected);
+  let cls = isPlanoAulas ? ' class="tabela-aulas"' : '';
+  let html = `<table${cls}><thead><tr>` + header.map(c => `<th>${inlineFormat(c)}</th>`).join('') + '</tr></thead><tbody>';
+  html += body.map(cells => '<tr>' + cells.map(c => `<td>${inlineFormat(c)}</td>`).join('') + '</tr>').join('');
+  html += '</tbody></table>';
+  return html;
+}
+function markdownToHtml(text){
+  const lines = String(text||'').replace(/\r\n/g,'\n').split('\n');
+  const out = [];
+  let table = [];
+  let list = [];
+  const flushList = () => { if(list.length){ out.push('<ul>'+list.map(i=>`<li>${inlineFormat(i)}</li>`).join('')+'</ul>'); list=[]; } };
+  const flushTable = () => { if(table.length){ out.push(markdownTableToHtml(table)); table=[]; } };
+
+  for(const line of lines){
+    const t=line.trim();
+    if(t.startsWith('|') && t.endsWith('|')){ flushList(); table.push(line); continue; }
+    flushTable();
+    if(!t){ flushList(); out.push('<br>'); continue; }
+    if(t.startsWith('• ')){ list.push(t.slice(2)); continue; }
+    if(t.startsWith('- ')){ list.push(t.slice(2)); continue; }
+    flushList();
+    if(/^#{1,3}\s+/.test(t)){
+      const level = (t.match(/^#+/)||['#'])[0].length;
+      out.push(`<h${level}>${inlineFormat(t.replace(/^#{1,3}\s+/,''))}</h${level}>`);
+    } else if(/^(PLANO DE AULA|OBJETIVO|CAPACIDADES|HABILIDADES|TABELA DE AULAS|AVALIAÇÕES|REFERÊNCIAS)$/i.test(t)){
+      out.push(`<h2>${inlineFormat(t)}</h2>`);
+    } else {
+      out.push(`<p>${inlineFormat(t)}</p>`);
+    }
+  }
+  flushTable(); flushList();
+  return out.join('\n');
+}
+function downloadDoc(outputId, nomeArq){
+  const text = document.getElementById(outputId).textContent;
+  const html = markdownToHtml(text);
+  const docHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<!--[if gte mso 9]><xml>
+<w:WordDocument xmlns:w="urn:schemas-microsoft-com:office:word"><w:View>Print</w:View></w:WordDocument>
+</xml><![endif]-->
+<style>
+  @page WordSection1{size:841.9pt 595.3pt;mso-page-orientation:landscape;margin:1.4cm 1.2cm 1.4cm 1.2cm;mso-header-margin:0.7cm;mso-footer-margin:0.7cm}
+  div.WordSection1{page:WordSection1}
+  body{font-family:Arial,sans-serif;font-size:10.5pt;line-height:1.35;color:#1F1308}
+  h1{font-size:16pt;color:#B45309;border-bottom:2px solid #E65100;padding-bottom:6px;margin:14px 0 8px}
+  h2{font-size:12.5pt;color:#7C2D12;margin:12px 0 6px;border-bottom:1px solid #FDBA74;padding-bottom:3px}
+  h3{font-size:11pt;color:#9A3412;margin:9px 0 4px}
+  p{margin:3px 0 7px}
+  table{border-collapse:collapse;width:100%;margin:8px 0 12px;font-size:8.8pt;table-layout:fixed}
+  td,th{border:1px solid #D9C8A8;padding:5px 6px;vertical-align:top;word-wrap:break-word}
+  th{background:#E65100;color:#fff;font-weight:bold;text-align:center}
+  tr:nth-child(even) td{background:#FFFBF2}
+  ul{margin:5px 0 10px 18px;padding:0}
+  li{margin:3px 0}
+  .header-box{background:#E65100;color:#fff;padding:10px 14px;margin-bottom:12px;font-size:11pt;font-weight:bold}
+  .tabela-aulas th:nth-child(1),.tabela-aulas td:nth-child(1){width:7%;text-align:center}
+  .tabela-aulas th:nth-child(2),.tabela-aulas td:nth-child(2){width:10%;text-align:center}
+  .tabela-aulas th:nth-child(3),.tabela-aulas td:nth-child(3){width:8%;text-align:center}
+  .tabela-aulas th:nth-child(4),.tabela-aulas td:nth-child(4){width:27%}
+  .tabela-aulas th:nth-child(5),.tabela-aulas td:nth-child(5){width:33%}
+  .tabela-aulas th:nth-child(6),.tabela-aulas td:nth-child(6){width:15%}
+</style></head><body>
+<div class="WordSection1">
+<div class="header-box">SENAI BAHIA · MQCT · ${AREA_NOME} — ${CURSO}</div>
+${html}
+</div>
+</body></html>`;
+  const blob = new Blob(['\ufeff'+docHtml],{type:'application/msword'});
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = `${nomeArq}_${new Date().toISOString().slice(0,10)}.doc`;
+  a.click();
+  showToast('Download iniciado!');
+}
+
+function copiarTexto(id){
+  navigator.clipboard.writeText(document.getElementById(id).textContent)
+    .then(()=>showToast('Copiado!'))
+    .catch(()=>showToast('Erro ao copiar','error'));
+}
+
+// ── PROMPT BASE MSEP ──────────────────────────────────────────
+const MSEP_BASE = `Você é especialista em educação profissional técnica, alinhado à Metodologia SENAI de Educação Profissional (MSEP) e ao Plano de Curso SENAI DR-BA — Área: Segurança do Trabalho.
+Curso: ${CURSO} | CBO: 3252-05
+Perfil Profissional: Industrializar segurança do trabalho, realizar análises físico-químicas/sensoriais/microbiológicas e coordenar a produção de segurança do trabalho, conforme normas de qualidade, segurança dos segurança do trabalho, SST e sustentabilidade.
+Funções: F1-Industrializar (UCs 1.1 a 1.6, 40h cada) | F2-Analisar (UCs 2.1-40h, 2.2-24h, 2.3-40h) | F3-Coordenar (UCs 3.1 a 3.5, 32h cada)
+Competências Socioemocionais: Aprendizagem Ativa, Empreendedorismo, Inteligência Emocional, Liderança, Pensamento Crítico, Resolução de Problemas.
+Competências de IA: Alfabetização em IA, uso ético de GenAI, análise de dados com IA.
+REGRAS MSEP: Capacidades no gerúndio (C1 — Identificando...) | Habilidades associadas às capacidades | Conhecimentos técnicos específicos | Referências técnicas reais (Normas Regulamentadoras — NRs, ABNT NBR, FUNDACENTRO/NHO, legislação trabalhista e previdenciária) | Contexto da segurança e saúde do trabalho brasileira.`;
+
+// ── CONTEXTO OFICIAL DO ITINERÁRIO (data/seguranca-drba.js) ──────
+function normalizeTxt(v){
+  return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+}
+function getAllOfficialUCs(){
+  try{
+    if(typeof SEGURANCA === 'undefined' || !SEGURANCA.modulos) return [];
+    return SEGURANCA.modulos.flatMap(m => (m.ucs||[]).map(uc => ({...uc, modulo:m.nome, moduloId:m.id})));
+  }catch(e){ return []; }
+}
+function findOfficialUC(input){
+  const alvo = normalizeTxt(input + ' ' + (ucAtual?.nome||'') + ' ' + (ucAtual?.id||''));
+  const ucs = getAllOfficialUCs();
+  if(!ucs.length) return null;
+  let found = ucs.find(uc => alvo.includes(normalizeTxt(uc.nome)) || normalizeTxt(uc.nome).includes(alvo));
+  if(found) return found;
+  found = ucs.find(uc => alvo.includes(normalizeTxt(uc.id)) || alvo.includes(normalizeTxt(uc.codigo)));
+  if(found) return found;
+  const words = alvo.split(/\s+/).filter(w => w.length > 4);
+  return ucs.map(uc => ({uc,score:words.filter(w => normalizeTxt(uc.nome).includes(w)).length}))
+    .sort((a,b)=>b.score-a.score)[0]?.score > 0 ? ucs.map(uc => ({uc,score:words.filter(w => normalizeTxt(uc.nome).includes(w)).length})).sort((a,b)=>b.score-a.score)[0].uc : null;
+}
+function buildOfficialContext(ucInput){
+  const uc = findOfficialUC(ucInput);
+  if(!uc) return '\nBASE OFICIAL: Não foi localizada uma UC correspondente em data/seguranca-drba.js. Use somente as informações selecionadas no formulário e não invente CHAs.';
+  const capacidades = (uc.capacidades||[]).map((c,i)=>{
+    const conhecimentos = (c.conhecimentos||[]).map(k=>`      - ${k}`).join('\n');
+    return `C${i+1} — ${c.texto}\n    Tipo: ${c.tipo} | Domínio: ${c.dominio}\n    Conhecimentos oficiais:\n${conhecimentos}`;
+  }).join('\n\n');
+  const padroes = (uc.padroes||[]).map(p=>`- ${p}`).join('\n') || '- Não há padrões de desempenho específicos para esta UC.';
+  return `\nBASE OFICIAL FECHADA DR-BA — USE EXCLUSIVAMENTE ESTES CHAs\nMódulo: ${uc.modulo}\nUC oficial: ${uc.codigo || uc.id} — ${uc.nome}\nCH oficial: ${uc.ch}h (Teórica: ${uc.cht}h | Prática: ${uc.chp}h)\n\nPadrões de desempenho oficiais:\n${padroes}\n\nCapacidades e conhecimentos oficiais:\n${capacidades}\n\nREGRA CRÍTICA: não crie capacidades, conhecimentos ou padrões fora desta base. Você pode apenas reorganizar didaticamente os CHAs oficiais no plano de aula.`;
+}
+
+
+// ── CONTEXTO TRANSVERSAL (helper compartilhado) ─────────────────
+function getCtxTransversal(ucId){
+  if(ucId === 'SOCIO'){
+    return `\nALERT: Esta é uma COMPETÊNCIA SOCIOEMOCIONAL transversal ao curso de Técnico em Segurança do Trabalho.
+Contextualize TODOS os conteúdos, exemplos e atividades com situações reais da segurança e saúde do trabalho
+(trabalho em equipe na linha de produção, liderança em turnos, resolução de conflitos em laboratório, etc.).
+Competências a desenvolver: Aprendizagem Ativa, Empreendedorismo, Inteligência Emocional (autoconsciência, autogestão, consciência social), Liderança, Pensamento Crítico, Resolução de Problemas.`;
+  }
+  if(ucId === 'IA'){
+    return `\nALERT: Esta é uma COMPETÊNCIA DE INTELIGÊNCIA ARTIFICIAL transversal ao curso de Técnico em Segurança do Trabalho.
+Contextualize TODOS os conteúdos com aplicações reais de IA na segurança e saúde do trabalho
+(visão computacional para inspeção de qualidade, análise preditiva de shelf-life, chatbots para BPF,
+rastreabilidade por IoT, agentes de IA para controle de processo, GenAI para laudos técnicos).
+Competências a desenvolver: Alfabetização em IA (conceitos, ética, limitações), uso de GenAI com prompts eficazes, Análise de Dados com IA.`;
+  }
+  return '';
+}
+
+// ── GERAR PLANO ───────────────────────────────────────────────
+async function gerarPlano(){
+  const {cht, chp, total, chDia, nAulas, isTransversal} = calcAulas();
+  const uc      = document.getElementById('pa-uc').value || ucAtual.nome || 'UC não informada';
+  const docente = document.getElementById('pa-docente').value || '______________________';
+  const data    = document.getElementById('pa-data').value || '___/___/______';
+  const turma   = document.getElementById('pa-turma').value || 'Técnico em Segurança do Trabalho';
+  const obs     = document.getElementById('pa-obs').value;
+  const modelo  = document.getElementById('pa-modelo')?.value || 'exemplo';
+  const contextoOficial = buildOfficialContext(uc);
+
+  // Contexto extra para competências transversais
+  const contextoTransversal = isTransversal ? `
+ATENÇÃO: Esta é uma COMPETÊNCIA TRANSVERSAL integrada ao curso. Não tem UC exclusiva — é desenvolvida ao longo de todas as UCs.
+Gere capacidades, habilidades e conteúdos contextualizados para a área de Segurança do Trabalho.
+A tabela de aulas deve ter ${nAulas} aula(s) de ${chDia}h, com exemplos práticos da segurança e saúde do trabalho.` : '';
+
+  setLoading('pa',true);
+  try{
+    const prompt = `${MSEP_BASE}${contextoOficial}
+
+Gere um PLANO DE AULA COMPLETO seguindo o MODELO SENAI SIMPLES do arquivo de exemplo enviado pelo usuário.
+
+DADOS DO FORMULÁRIO:
+- Curso: Segurança do Trabalho
+- UC: ${uc}
+- Docente: ${docente}
+- Data: ${data}
+- Turma/Período: ${turma}
+- CH Teórica: ${cht}h | CH Prática: ${chp}h | Total: ${total}h
+- Quantidade de aulas/encontros: ${nAulas}
+- Modelo selecionado: ${modelo === 'exemplo' ? 'Modelo SENAI simples igual ao exemplo' : 'Modelo detalhado'}
+- Observações: ${obs||'Nenhuma'}${contextoTransversal}
+
+REGRAS DE SAÍDA — MUITO IMPORTANTE:
+1. Siga a aparência textual do exemplo “Produção de Biscoito”: cabeçalho simples, seções OBJETIVO, CAPACIDADES, HABILIDADES, TABELA DE AULAS, AVALIAÇÕES e REFERÊNCIAS.
+2. Use Markdown com tabelas reais. Toda tabela deve ter pipes APENAS para separar colunas, cabeçalho e linha separadora.
+3. Não junte colunas. Não escreva “NºCapacidadeHab.Conteúdo...”. Cada coluna deve estar separada por “ | ”. Dentro das células, especialmente em Recursos, use ponto e vírgula, nunca pipes.
+4. Não use HTML, exceto <br> dentro da célula Conteúdo para quebrar linhas. Não use blocos de código. Não use comentários explicativos fora do plano.
+5. Distribua a CH em ${nAulas} aulas/encontros, mantendo progressão didática.
+6. Use capacidades, padrões e conhecimentos oficiais da BASE OFICIAL FECHADA. Não invente CHAs.
+
+FORMATO EXATO:
+
+PLANO DE AULA — SENAI BAHIA · MQCT
+
+| CURSO | DOCENTE | DATA |
+|---|---|---|
+| Segurança do Trabalho | ${docente} | ${data} |
+
+| UC | CH T | CH P | TOTAL |
+|---|---:|---:|---:|
+| ${uc} | ${cht}h | ${chp}h | ${total}h |
+
+OBJETIVO
+[Escreva 1 parágrafo claro e direto, igual ao exemplo, contextualizando a UC e a indústria de segurança do trabalho.]
+
+CAPACIDADES
+• C1 — [usar capacidade oficial, podendo ajustar apenas para ficar no gerúndio quando necessário]
+• C2 — [usar capacidade oficial]
+• C3 — [usar capacidade oficial, se houver]
+
+HABILIDADES
+• H1 — [derivar dos padrões de desempenho oficiais]
+• H2 — [derivar dos padrões de desempenho oficiais]
+• H3 — [derivar dos padrões de desempenho oficiais]
+
+TABELA DE AULAS
+
+| Nº | Capacidade | Hab. | Conteúdo | Estratégias | Recursos |
+|---|---|---|---|---|---|
+| Aula 1 | C? | H? | 1. Tema da aula<br>1.1 Subtema<br>1.2 Subtema<br>1.3 Subtema | Abertura (30min): ... Desenvolvimento: ... Fechamento (30min): ... | Slides; quadro branco; materiais didáticos |
+
+[GERAR TODAS AS ${nAulas} AULAS. Use a mesma linguagem do exemplo. Conteúdo com numeração 1, 1.1, 1.2 etc. Estratégias com Abertura, Desenvolvimento e Fechamento.]
+
+AVALIAÇÕES
+
+| Instrumento | Descrição | Pontuação |
+|---|---|---|
+| Avaliação Teórica | Prova escrita individual com questões relacionadas aos conhecimentos oficiais da UC. | 4,0 pts |
+| Avaliação Prática | Atividade prática avaliando a aplicação das capacidades oficiais da UC, BPF, controle de processo e qualidade. | 6,0 pts |
+
+REFERÊNCIAS
+• SENAI. Itinerário Nacional Segurança do Trabalho. Brasília: SENAI/DN, 2025.
+• BRASIL. Ministério do Trabalho e Emprego. Normas Regulamentadoras de Segurança e Saúde no Trabalho.
+• FUNDACENTRO. Normas de Higiene Ocupacional (NHO).
+• ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. Normas técnicas aplicáveis à segurança e saúde no trabalho.
+• [Incluir referências técnicas coerentes com a UC, sem inventar norma específica se não tiver certeza.]`;
+    const text = await callGemini(prompt);
+    showOutput('pa',text);
+  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar. Tente novamente.','error'); }
+  setLoading('pa',false);
+}
+
+async function gerarSA(){
+  const uc  = document.getElementById('sa-uc').value || ucAtual.nome;
+  const ctx = document.getElementById('sa-ctx').value;
+  setLoading('sa',true);
+  try{
+    const prompt = `${MSEP_BASE}
+Gere uma SITUAÇÃO DE APRENDIZAGEM completa no padrão MSEP SENAI para:
+- UC/Competência: ${uc}
+- Contexto: ${ctx||'Indústria alimentícia brasileira'}${getCtxTransversal(ucAtual.id)}
+
+Estrutura obrigatória:
+1. Título da SA
+2. Contexto / Situação-Problema (narrativa realista da indústria)
+3. Desafio proposto ao aluno
+4. Competências desenvolvidas (no gerúndio)
+5. Etapas de desenvolvimento (pesquisa → análise → proposição → implementação → avaliação)
+6. Produtos/Evidências esperados
+7. Critérios de avaliação (rubrica)
+8. Referências técnicas e legislações aplicáveis (NRs, ABNT NBR, FUNDACENTRO/NHO, legislação trabalhista e previdenciária)`;
+    const text = await callGemini(prompt);
+    showOutput('sa',text);
+  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar.','error'); }
+  setLoading('sa',false);
+}
+
+async function gerarPratica(){
+  const uc      = document.getElementById('pr-uc').value || ucAtual.nome;
+  const tipo    = document.getElementById('pr-tipo').value;
+  const recursos = document.getElementById('pr-recursos').value;
+  setLoading('pr',true);
+  try{
+    const prompt = `${MSEP_BASE}
+Gere um ROTEIRO DE PRÁTICAS detalhado para:
+- UC/Competência: ${uc} | Tipo: ${tipo}${getCtxTransversal(ucAtual.id)}
+- Recursos: ${recursos||'Laboratório de segurança do trabalho padrão SENAI'}
+
+Estrutura:
+1. Título e objetivos
+2. Fundamentação teórica (resumida)
+3. Materiais e equipamentos
+4. EPIs obrigatórios
+5. Procedimentos (passo a passo numerado)
+6. Pontos de controle / PCCs
+7. Resultados esperados
+8. Descarte de resíduos (conforme legislação ambiental)
+9. Relatório de prática (campos para o aluno)
+10. Referências (NRs, ABNT NBR, FUNDACENTRO/NHO e legislação aplicável)`;
+    const text = await callGemini(prompt);
+    showOutput('pr',text);
+  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar.','error'); }
+  setLoading('pr',false);
+}
+
+async function gerarOA(){
+  const uc    = document.getElementById('oa-uc').value || ucAtual.nome;
+  const nivel = document.getElementById('oa-nivel').value;
+  setLoading('oa',true);
+  try{
+    const prompt = `${MSEP_BASE}
+Gere um OBJETO DE APRENDIZAGEM para: ${uc} | Nível: ${nivel}${getCtxTransversal(ucAtual.id)}
+
+Estrutura:
+1. Apresentação do tema
+2. Objetivos de aprendizagem
+3. Conteúdo principal (seções com subtítulos, conceitos, exemplos da indústria)
+4. Saiba mais (IoT, IA, tendências quando pertinente)
+5. Atividades de fixação (3 questões)
+6. Glossário técnico
+7. Referências (NRs, ABNT NBR, NHO/FUNDACENTRO e literatura técnica)`;
+    const text = await callGemini(prompt);
+    showOutput('oa',text);
+  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar.','error'); }
+  setLoading('oa',false);
+}
+
+async function gerarMapa(){
+  const uc = document.getElementById('mm-uc').value || ucAtual.nome || 'Técnico em Segurança do Trabalho';
+  setLoading('mm',true);
+  try{
+    const prompt = `${MSEP_BASE}
+Gere um MAPA MENTAL em SVG (viewBox="0 0 900 620") sobre: "${uc}"${getCtxTransversal(ucAtual.id)}
+- Tema central no meio em retângulo arredondado laranja (#E65100), texto branco bold
+- 5 a 7 ramos principais com elipses coloridas (paleta: #E65100, #B45309, #7C2D12, #8B6914, #2E7D32, #1565C0, #7B1FA2)
+- Linhas curvas conectando ao centro
+- Sub-ramos com texto em retângulos brancos com borda colorida
+- Fundo branco #FFFFFF
+- Fonte sans-serif, tamanhos: 16px centro, 13px ramos, 11px sub-ramos
+- Retorne APENAS o SVG completo começando com <svg, sem markdown, sem explicação.`;
+    const svg = await callGemini(prompt);
+    const container = document.getElementById('mm-svg-container');
+    const clean = svg.replace(/```svg|```xml|```/gi,'').trim();
+    container.innerHTML = clean;
+    container.style.display='block';
+    document.getElementById('mm-actions').style.display='flex';
+    window._lastSVG = clean;
+  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar mapa.','error'); }
+  setLoading('mm',false);
+}
+
+function downloadSVG(){
+  if(!window._lastSVG) return;
+  const blob = new Blob([window._lastSVG],{type:'image/svg+xml'});
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = `Mapa_Mental_${new Date().toISOString().slice(0,10)}.svg`;
+  a.click();
+  showToast('SVG baixado!');
+}
+
+// ── CAÇA-PALAVRAS — ALGORITMO REAL DE POSICIONAMENTO ────────
+// A IA só escolhe as palavras; o JS posiciona tudo corretamente.
+
+// Normaliza palavra: remove acentos, espaços, deixa só A-Z
+function normalizarPalavra(p){
+  return p.normalize('NFD').replace(/[̀-ͯ]/g,'')
+          .replace(/[^A-Za-z]/g,'').toUpperCase();
+}
+
+// Tenta posicionar uma palavra na grade; retorna true se conseguiu
+function posicionarPalavra(grade, palavra, ROWS, COLS){
+  // direções: [deltaRow, deltaCol]
+  const direcoes = [
+    [0,1],   // horizontal →
+    [1,0],   // vertical ↓
+    [1,1],   // diagonal ↘
+    [0,-1],  // horizontal ←
+    [-1,0],  // vertical ↑
+    [1,-1],  // diagonal ↙
+    [-1,1],  // diagonal ↗
+    [-1,-1], // diagonal ↖
+  ];
+  // embaralha direções para variedade
+  for(let i=direcoes.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [direcoes[i],direcoes[j]]=[direcoes[j],direcoes[i]];
+  }
+  // tenta posições aleatórias (máx 200 tentativas)
+  for(let tentativa=0;tentativa<200;tentativa++){
+    const [dr,dc] = direcoes[tentativa % direcoes.length];
+    const startR  = Math.floor(Math.random()*ROWS);
+    const startC  = Math.floor(Math.random()*COLS);
+    // verifica se cabe
+    const endR = startR + dr*(palavra.length-1);
+    const endC = startC + dc*(palavra.length-1);
+    if(endR<0||endR>=ROWS||endC<0||endC>=COLS) continue;
+    // verifica conflito de letras
+    let ok = true;
+    for(let i=0;i<palavra.length;i++){
+      const r=startR+dr*i, c=startC+dc*i;
+      if(grade[r][c]!=='' && grade[r][c]!==palavra[i]){ ok=false; break; }
+    }
+    if(!ok) continue;
+    // posiciona
+    for(let i=0;i<palavra.length;i++){
+      grade[startR+dr*i][startC+dc*i]=palavra[i];
+    }
+    return true;
+  }
+  return false; // não conseguiu posicionar
+}
+
+// Monta a grade completa com algoritmo
+function montarGrade(palavrasRaw, ROWS, COLS){
+  // normaliza e ordena do maior para o menor (mais fácil posicionar grandes primeiro)
+  const palavras = palavrasRaw
+    .map(p=>normalizarPalavra(p))
+    .filter(p=>p.length>=3 && p.length<=Math.max(ROWS,COLS))
+    .sort((a,b)=>b.length-a.length);
+
+  // grade vazia
+  const grade = Array.from({length:ROWS},()=>Array(COLS).fill(''));
+
+  const posicionadas = [];
+  const falhas = [];
+
+  for(const p of palavras){
+    if(posicionarPalavra(grade,p,ROWS,COLS)) posicionadas.push(p);
+    else falhas.push(p);
+  }
+
+  // preenche espaços vazios com letras aleatórias variadas
+  const LETRAS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for(let r=0;r<ROWS;r++)
+    for(let c=0;c<COLS;c++)
+      if(grade[r][c]==='')
+        grade[r][c]=LETRAS[Math.floor(Math.random()*LETRAS.length)];
+
+  if(falhas.length>0) console.warn('Palavras não posicionadas:',falhas);
+  return {grade, posicionadas, falhas};
+}
+
+async function gerarCaca(){
+  const uc  = document.getElementById('cw-uc').value || ucAtual.nome || 'Técnico em Segurança do Trabalho';
+  const num = parseInt(document.getElementById('cw-num').value)||15;
+  setLoading('cw',true);
+  try{
+    // IA só escolhe as palavras — sem grade, sem posicionamento
+    const prompt = `${MSEP_BASE}
+Selecione exatamente ${num} termos técnicos relacionados a: "${uc}"${getCtxTransversal(ucAtual.id)}
+
+REGRAS OBRIGATÓRIAS:
+- Apenas termos técnicos reais da área de Segurança do Trabalho / SENAI
+- Sem acentos, sem espaços, sem hífens — só letras A-Z
+- Mínimo 4 letras, máximo 12 letras cada
+- Todos em MAIÚSCULAS
+- Retorne APENAS JSON puro sem markdown, sem explicação:
+{"titulo":"Caça-Palavras: [tema resumido]","palavras":["PALAVRA1","PALAVRA2",...]}`;
+
+    const json = await callGemini(prompt);
+    const clean = json.replace(/```json|```/gi,'').trim();
+    const data  = JSON.parse(clean);
+
+    // Algoritmo JS monta a grade — IA não participa disso
+    const ROWS=15, COLS=15;
+    const {grade, posicionadas} = montarGrade(data.palavras, ROWS, COLS);
+
+    renderCacaCanvas({
+      titulo:   data.titulo || 'Caça-Palavras',
+      palavras: posicionadas,
+      grade:    grade
+    });
+  }catch(e){
+    console.error(e);
+    if(e.message!=='Unauthorized') showToast('Erro ao gerar caça-palavras. Tente novamente.','error');
+  }
+  setLoading('cw',false);
+}
+
+function renderCacaCanvas(data){
+  const canvas = document.getElementById('cw-canvas');
+  const ROWS   = data.grade.length;
+  const COLS   = data.grade[0].length;
+  const CELL   = 34;
+  const PAD    = 18;
+  const nCols  = Math.min(4, data.palavras.length);
+  const nRows  = Math.ceil(data.palavras.length / nCols);
+  const FOOTER = 50 + nRows * 22;
+
+  canvas.width  = COLS * CELL + PAD * 2;
+  canvas.height = 58 + ROWS * CELL + 14 + FOOTER + 28;
+  const ctx = canvas.getContext('2d');
+
+  // ── fundo geral
+  ctx.fillStyle = '#FFFFFF';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // ── cabeçalho laranja
+  ctx.fillStyle = '#E65100';
+  ctx.fillRect(0,0,canvas.width,54);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.font      = 'bold 15px Arial';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('SENAI BAHIA · MQCT — Segurança do Trabalho', canvas.width/2, 18);
+  ctx.font = 'bold 12px Arial';
+  ctx.fillText(data.titulo, canvas.width/2, 40);
+
+  // ── grade
+  const gx = PAD;
+  const gy = 62;
+
+  data.grade.forEach((row, r) => {
+    row.forEach((letra, c) => {
+      const x = gx + c * CELL;
+      const y = gy + r * CELL;
+
+      // fundo célula alternado suave
+      ctx.fillStyle = (r+c)%2===0 ? '#FFFFFF' : '#FFFBF2';
+      ctx.fillRect(x, y, CELL, CELL);
+
+      // borda célula
+      ctx.strokeStyle = '#FDBA74';
+      ctx.lineWidth   = 0.8;
+      ctx.strokeRect(x, y, CELL, CELL);
+
+      // letra
+      ctx.fillStyle    = '#1F1308';
+      ctx.font         = 'bold 14px Arial';
+      ctx.textAlign    = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(letra, x + CELL/2, y + CELL/2);
+    });
+  });
+
+  // ── borda externa da grade
+  ctx.strokeStyle = '#E65100';
+  ctx.lineWidth   = 2;
+  ctx.strokeRect(gx, gy, COLS*CELL, ROWS*CELL);
+
+  // ── separador
+  const sepY = gy + ROWS * CELL + 14;
+  ctx.strokeStyle = '#E65100';
+  ctx.lineWidth   = 1.5;
+  ctx.beginPath(); ctx.moveTo(PAD, sepY); ctx.lineTo(canvas.width-PAD, sepY); ctx.stroke();
+
+  // ── "Encontre as palavras:"
+  ctx.fillStyle    = '#B45309';
+  ctx.font         = 'bold 12px Arial';
+  ctx.textAlign    = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText('Encontre as palavras:', PAD, sepY + 16);
+
+  // ── lista de palavras em colunas
+  ctx.fillStyle = '#7C2D12';
+  ctx.font      = '11px Arial';
+  const colW    = Math.floor((canvas.width - PAD*2) / nCols);
+  data.palavras.forEach((p, i) => {
+    const col = i % nCols;
+    const row = Math.floor(i / nCols);
+    ctx.fillText('• ' + p, PAD + col*colW, sepY + 34 + row*22);
+  });
+
+  // ── rodapé
+  ctx.fillStyle    = '#C8A84A';
+  ctx.font         = '9px Arial';
+  ctx.textAlign    = 'center';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText(
+    'Hub MQCT · SENAI Bahia · ' + new Date().toLocaleDateString('pt-BR'),
+    canvas.width/2, canvas.height - 8
+  );
+
+  canvas.style.display = 'block';
+  document.getElementById('cw-actions').style.display = 'flex';
+  window._cacaCanvas = canvas;
+}
+
+function downloadCacaPNG(){
+  const canvas = window._cacaCanvas;
+  if(!canvas){ showToast('Gere o caça-palavras primeiro.','error'); return; }
+  canvas.toBlob(blob => {
+    const a    = document.createElement('a');
+    a.href     = URL.createObjectURL(blob);
+    a.download = `Caca_Palavras_${new Date().toISOString().slice(0,10)}.png`;
+    a.click();
+    showToast('PNG baixado com sucesso!');
+  },'image/png');
+}
+
+async function gerarAvaliacao(){
+  const uc    = document.getElementById('av-uc').value || ucAtual.nome;
+  const obj   = document.getElementById('av-obj').value;
+  const disc  = document.getElementById('av-disc').value;
+  const nivel = document.getElementById('av-nivel').value;
+  setLoading('av',true);
+  try{
+    const prompt = `${MSEP_BASE}
+Gere uma AVALIAÇÃO/PROVA para:
+- UC/Competência: ${uc} | ${obj} questões objetivas (A/B/C/D) | ${disc} questões discursivas | Nível: ${nivel}${getCtxTransversal(ucAtual.id)} | Total: 10 pontos
+
+Inclua:
+- Cabeçalho (Curso, UC, Nome, Data, Turma, Assinatura, Nota)
+- Instruções gerais
+- Questões objetivas (A)(B)(C)(D) com gabarito destacado ao final
+- Questões discursivas com espaço para resposta e valor
+- Gabarito completo ao final
+- Baseie nas normas: Normas Regulamentadoras (NRs), ABNT NBR, FUNDACENTRO/NHO, legislação previdenciária e trabalhista`;
+    const text = await callGemini(prompt);
+    showOutput('av',text);
+  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar.','error'); }
+  setLoading('av',false);
+}
+
+async function gerarSlides(){
+  const uc  = document.getElementById('sl-uc').value || ucAtual.nome;
+  const num = document.getElementById('sl-num').value;
+  setLoading('sl',true);
+  try{
+    const prompt = `${MSEP_BASE}
+Gere roteiro de ${num} SLIDES para: "${uc}"${getCtxTransversal(ucAtual.id)}
+Para cada slide:
+SLIDE N: [Título]
+Conteúdo: [máximo 5 tópicos objetivos]
+Nota docente: [orientação de fala, 1-2 frases]
+
+Inclua: abertura, conteúdos progressivos, atividade/reflexão, referências técnicas reais.`;
+    const text = await callGemini(prompt);
+    showOutput('sl',text);
+    window._slidesContent=text;
+  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar.','error'); }
+  setLoading('sl',false);
+}
+
+function downloadSlides(){
+  const content = window._slidesContent || document.getElementById('sl-output').textContent;
+  const blocks  = content.split(/SLIDE \d+:/i).filter(s=>s.trim());
+  let slidesHtml = '';
+  blocks.forEach((s,i) => {
+    const lines  = s.trim().split('\n');
+    const titulo = lines[0].trim();
+    const corpo  = lines.slice(1).join('\n').replace(/^Conteúdo:/im,'').replace(/^Nota docente:/im,'<hr style="border:none;border-top:1px solid rgba(255,255,255,.3);margin:16px 0"><em style="font-size:11px;opacity:.75">📝 ').replace(/\n/g,'<br>');
+    slidesHtml += `<section class="slide${i===0?' cover':''}"><h${i===0?'1':'2'}>${titulo}</h${i===0?'1':'2'}><div class="corpo">${corpo}</div></section>`;
+  });
+  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+<title>Slides — ${AREA_NOME}</title>
+<style>
+  body{margin:0;background:#1A0C00;font-family:Arial,sans-serif;padding:20px}
+  .slide{width:900px;min-height:506px;margin:16px auto;padding:50px 60px;background:#fff;border-radius:10px;
+    display:flex;flex-direction:column;justify-content:center;box-shadow:0 4px 24px rgba(0,0,0,.4);page-break-after:always}
+  .cover{background:linear-gradient(135deg,#E65100,#7A4A08);color:#fff}
+  .cover h1{font-size:34px;margin:0 0 12px;font-family:Georgia,serif}
+  h2{font-size:24px;color:#B45309;margin:0 0 18px;border-left:4px solid #E65100;padding-left:12px}
+  .corpo{font-size:15px;line-height:1.7;color:#2A1A00}
+  .cover .corpo{color:rgba(255,255,255,.9)}
+  @media print{body{background:#fff}.slide{box-shadow:none;margin:0;border-radius:0}}
+</style></head><body>${slidesHtml}</body></html>`;
+  const blob = new Blob([html],{type:'text/html'});
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = `Slides_${new Date().toISOString().slice(0,10)}.html`;
+  a.click();
+  showToast('Slides baixados!');
+}
+
+async function gerarCustom(){
+  const desc = document.getElementById('cu-desc').value;
+  if(!desc.trim()){ showToast('Descreva o material desejado.','error'); return; }
+  setLoading('cu',true);
+  try{
+    const prompt = `${MSEP_BASE}
+Gere o seguinte MATERIAL DIDÁTICO personalizado para docentes do SENAI Bahia — Segurança do Trabalho:
+${desc}
+Mantenha alinhamento com o Itinerário Nacional, MSEP e normas técnicas da área de segurança do trabalho.
+Formate de forma clara, profissional e pronto para uso em sala de aula ou laboratório.`;
+    const text = await callGemini(prompt);
+    showOutput('cu',text);
+  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar.','error'); }
+  setLoading('cu',false);
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+document.getElementById('pa-data').value = new Date().toISOString().slice(0,10);
+calcAulas();
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    document.querySelectorAll('.modal-overlay.open').forEach(m=>{
+      closeModal(m.id.replace('modal-',''));
+    });
+  }
+});
+</script>
+</body>
+</html>
