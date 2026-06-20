@@ -4,6 +4,8 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Segurança do Trabalho DR-BA — Hub MQCT · SENAI Bahia</title>
+<link rel="stylesheet" href="../assets/mindmap.css">
+<script src="../assets/mindmap.js" defer></script>
 <style>
   :root {
     --cor:#E65100; --cor-dark:#B45309; --cor-light:#FFF3EB; --cor-muted:#FED7AA;
@@ -92,6 +94,8 @@
   .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:center;justify-content:center;padding:20px}
   .modal-overlay.open{display:flex}
   .modal{background:var(--bg-card);border-radius:var(--radius);width:100%;max-width:760px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:slideUp .25s ease}
+  .modal.modal-mapa-wide{max-width:980px;width:95vw}
+  .modal.modal-mapa-wide .modal-body{max-height:82vh;overflow:auto}
   @keyframes slideUp{from{transform:translateY(30px);opacity:0}}
   .modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg-card);z-index:1}
   .modal-header h3{font-size:17px;font-weight:700;color:var(--text)}
@@ -464,7 +468,7 @@
 
 <!-- MODAL MAPA MENTAL -->
 <div class="modal-overlay" id="modal-mapa">
-  <div class="modal">
+  <div class="modal modal-mapa-wide">
     <div class="modal-header">
       <h3>🗺️ Mapa Mental</h3>
       <button class="modal-close" onclick="closeModal('mapa')">✕</button>
@@ -475,11 +479,8 @@
         <input type="text" id="mm-uc" placeholder="Ex: NR 17 — Ergonomia" />
       </div>
       <button class="btn-primary" id="mm-btn" onclick="gerarMapa()">✨ Gerar Mapa Mental</button>
-      <div class="loading" id="mm-loading"><div class="spinner"></div> Gerando com IA...</div>
-      <div id="mm-svg-container" style="display:none;margin-top:16px;overflow:auto"></div>
-      <div class="btn-row" id="mm-actions" style="display:none">
-        <button class="btn-secondary" onclick="downloadSVG()">⬇ Baixar SVG</button>
-      </div>
+      <p style="font-size:11px;color:var(--text-3);margin-top:6px">Montado a partir da base oficial da UC — instantâneo, sem chamada à IA.</p>
+      <div id="mm-mount" style="display:none;margin-top:14px;height:62vh;min-height:420px"></div>
     </div>
   </div>
 </div>
@@ -1101,37 +1102,17 @@ Estrutura:
 }
 
 async function gerarMapa(){
-  const uc = document.getElementById('mm-uc').value || ucAtual.nome || 'Técnico em Segurança do Trabalho';
-  setLoading('mm',true);
-  try{
-    const prompt = `${MSEP_BASE}
-Gere um MAPA MENTAL em SVG (viewBox="0 0 900 620") sobre: "${uc}"${getCtxTransversal(ucAtual.id)}
-- Tema central no meio em retângulo arredondado laranja (#E65100), texto branco bold
-- 5 a 7 ramos principais com elipses coloridas (paleta: #E65100, #B45309, #7C2D12, #8B6914, #2E7D32, #1565C0, #7B1FA2)
-- Linhas curvas conectando ao centro
-- Sub-ramos com texto em retângulos brancos com borda colorida
-- Fundo branco #FFFFFF
-- Fonte sans-serif, tamanhos: 16px centro, 13px ramos, 11px sub-ramos
-- Retorne APENAS o SVG completo começando com <svg, sem markdown, sem explicação.`;
-    const svg = await callGemini(prompt);
-    const container = document.getElementById('mm-svg-container');
-    const clean = svg.replace(/```svg|```xml|```/gi,'').trim();
-    container.innerHTML = clean;
-    container.style.display='block';
-    document.getElementById('mm-actions').style.display='flex';
-    window._lastSVG = clean;
-  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar mapa.','error'); }
-  setLoading('mm',false);
-}
-
-function downloadSVG(){
-  if(!window._lastSVG) return;
-  const blob = new Blob([window._lastSVG],{type:'image/svg+xml'});
-  const a    = document.createElement('a');
-  a.href     = URL.createObjectURL(blob);
-  a.download = `Mapa_Mental_${new Date().toISOString().slice(0,10)}.svg`;
-  a.click();
-  showToast('SVG baixado!');
+  const ucInput = document.getElementById('mm-uc').value || ucAtual.nome || CURSO;
+  const oficial = findOfficialUC(ucInput);
+  const mount   = document.getElementById('mm-mount');
+  if(!oficial){
+    showToast('UC não localizada na base oficial. Selecione uma UC na barra lateral ou digite o nome exato.','error');
+    return;
+  }
+  const data   = MindMap.fromOfficialUC(oficial);
+  const accent = getComputedStyle(document.documentElement).getPropertyValue('--cor').trim() || '#ffd278';
+  mount.style.display = 'block';
+  MindMap.render('mm-mount', data, { accent, subtitle: oficial.modulo || '' });
 }
 
 // ── CAÇA-PALAVRAS — ALGORITMO REAL DE POSICIONAMENTO ────────
