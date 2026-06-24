@@ -245,7 +245,7 @@
       // UC única (caso real do Hub): abre direto mostrando as categorias.
       // Várias UCs (mapa de curso completo, uso futuro): começa recolhida.
       var ucNode = { id: 'n' + (this.idSeq++), label: uc.nome, type: 'uc', color: color, parent: root, expanded: ucs.length === 1, children: [] };
-      var cats = [['Subfunções', uc.subfuncoes], ['Conhecimentos', uc.conhecimentos], ['Habilidades', uc.habilidades], ['Atitudes', uc.atitudes]];
+      var cats = [['Capacidades', uc.subfuncoes], ['Conhecimentos', uc.conhecimentos], ['Padrões de Desempenho', uc.habilidades], ['Capacidades Socioemocionais', uc.atitudes]];
       cats.forEach((pair) => {
         var label = pair[0], items = pair[1];
         if (!items || !items.length) return;
@@ -268,10 +268,10 @@
       case 'competencias': return '🎯';
       case 'uc': return '📘';
       case 'subcategory':
-        if (n.label.indexOf('Subfun') === 0) return '🔧';
+        if (n.label.indexOf('Capacidades') === 0) return '🔧';
         if (n.label.indexOf('Conhec') === 0) return '💡';
-        if (n.label.indexOf('Habil') === 0) return '🛠️';
-        if (n.label.indexOf('Atitu') === 0) return '⭐';
+        if (n.label.indexOf('Padr') === 0) return '🛠️';
+        if (n.label.indexOf('Capacidades Socioemocionais') === 0) return '⭐';
         return '📂';
       default: return '';
     }
@@ -450,39 +450,116 @@
       return inst;
     },
 
+    /*
+     * Normalização pedagógica para mapas mentais.
+     *
+     * Regra de produto:
+     * - O mapa NUNCA deve renderizar textos administrativos de fallback
+     *   como "Conteúdos formativos conforme organização interna...".
+     * - Cada ramo só aparece quando houver itens reais.
+     * - A mesma lógica vale para TODAS as áreas atuais e futuras.
+     */
+    _isGenericPlaceholder: function (value) {
+      var s = String(value || '').trim();
+      if (!s) return true;
+      var normalized = s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      var bad = [
+        'conteudos formativos conforme organizacao interna',
+        'conforme organizacao interna da uc',
+        'plano de curso dr-ba',
+        'conteudo conforme plano',
+        'nao informado',
+        'nao cadastrado',
+        'sem informacao',
+        'a definir',
+        'n/a',
+        'na'
+      ];
+      if (/^\d+[\.)]?$/.test(normalized)) return true;
+      return bad.some(function (p) { return normalized.indexOf(p) >= 0; });
+    },
+
+    _cleanCurricularList: function (input) {
+      var arr = [];
+      function push(v) {
+        if (v == null) return;
+        if (Array.isArray(v)) { v.forEach(push); return; }
+        if (typeof v === 'object') {
+          push(v.texto || v.nome || v.descricao || v.titulo || '');
+          return;
+        }
+        String(v).split(/\n|\r|•|·|\u2022/g).forEach(function (part) {
+          var item = part
+            .replace(/\s+/g, ' ')
+            .replace(/^[-–—]\s*/, '')
+            .replace(/^\d+(?:\.\d+)*[\.)]?\s*/, '')
+            .trim();
+          if (!item || window.MindMap._isGenericPlaceholder(item)) return;
+          if (item.length < 3) return;
+          arr.push(item);
+        });
+      }
+      push(input);
+      var seen = {};
+      return arr.filter(function (item) {
+        var key = item.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+        if (seen[key]) return false;
+        seen[key] = true;
+        return true;
+      });
+    },
+
+    _deriveConhecimentos: function (uc, capArr) {
+      var conhecimentos = [];
+      capArr.forEach(function (c) {
+        if (c && c.conhecimentos) conhecimentos = conhecimentos.concat(c.conhecimentos);
+      });
+      if (uc && uc.conhecimentos) conhecimentos = conhecimentos.concat(uc.conhecimentos);
+      return window.MindMap._cleanCurricularList(conhecimentos);
+    },
+
+    _deriveCapacidades: function (uc, capArr) {
+      var capacidades = [];
+      capArr.forEach(function (c) {
+        capacidades.push(typeof c === 'string' ? c : (c && (c.texto || c.nome || c.descricao)) || '');
+      });
+      if (uc && uc.capacidadesBasicas) capacidades = capacidades.concat(uc.capacidadesBasicas);
+      if (uc && uc.capacidadesTecnicas) capacidades = capacidades.concat(uc.capacidadesTecnicas);
+      return window.MindMap._cleanCurricularList(capacidades);
+    },
+
     fromOfficialUC: function (uc) {
       if (!uc) return null;
       var capArr = Array.isArray(uc.capacidades) ? uc.capacidades : [];
 
-      var subfuncoes = capArr
-        .map((c) => (typeof c === 'string' ? c : (c && c.texto) || ''))
-        .filter(Boolean);
-
-      var conhecimentos = [];
-      if (capArr.length && capArr.some((c) => c && c.conhecimentos && c.conhecimentos.length)) {
-        capArr.forEach((c) => { if (c && c.conhecimentos) conhecimentos = conhecimentos.concat(c.conhecimentos); });
-      } else if (Array.isArray(uc.conhecimentos)) {
-        conhecimentos = uc.conhecimentos.slice();
-      }
-
-      var habilidades = Array.isArray(uc.padroes) ? uc.padroes.filter(Boolean) : [];
-      var atitudes = Array.isArray(uc.socioemocionais) ? uc.socioemocionais.filter(Boolean) : [];
+      var capacidades = window.MindMap._deriveCapacidades(uc, capArr);
+      var conhecimentos = window.MindMap._deriveConhecimentos(uc, capArr);
+      var habilidades = window.MindMap._cleanCurricularList(uc.padroes || uc.padroesDesempenho || []);
+      var atitudes = window.MindMap._cleanCurricularList(uc.socioemocionais || uc.capacidadesSocioemocionais || []);
 
       var titulo = (uc.codigo || uc.id || '') + (uc.nome ? ' — ' + uc.nome : '');
       titulo = titulo.replace(/^—\s*/, '').trim() || (uc.nome || 'Unidade Curricular');
 
-      return {
+      var out = {
         curso: titulo,
         perfilProfissional: [],
         competenciasGerais: [],
         unidadesCurriculares: [{
           nome: uc.nome || titulo,
-          subfuncoes: subfuncoes.slice(0, 8),
-          conhecimentos: conhecimentos.slice(0, 10),
-          habilidades: habilidades.slice(0, 8),
-          atitudes: atitudes.slice(0, 8)
+          subfuncoes: capacidades.slice(0, 12),
+          conhecimentos: conhecimentos.slice(0, 18),
+          habilidades: habilidades.slice(0, 10),
+          atitudes: atitudes.slice(0, 10)
         }]
       };
+
+      if (!out.unidadesCurriculares[0].subfuncoes.length || !out.unidadesCurriculares[0].conhecimentos.length) {
+        console.warn('[MindMap] UC com base curricular incompleta. Verifique capacidades/conhecimentos:', uc.id || uc.nome, {
+          capacidades: out.unidadesCurriculares[0].subfuncoes.length,
+          conhecimentos: out.unidadesCurriculares[0].conhecimentos.length
+        });
+      }
+      return out;
     }
   };
 })();
