@@ -476,7 +476,91 @@
         'na'
       ];
       if (/^\d+[\.)]?$/.test(normalized)) return true;
-      return bad.some(function (p) { return normalized.indexOf(p) >= 0; });
+      return bad.some(function (p) {
+        if (p === 'na' || p === 'n/a') return normalized === p;
+        return normalized.indexOf(p) >= 0;
+      });
+    },
+
+    _normalizeItemText: function (value) {
+      return String(value || '')
+        .replace(/\s+/g, ' ')
+        .replace(/^[-–—•·\u2022]\s*/, '')
+        .replace(/^\d+(?:\.\d+)*[\.)]?\s*/, '')
+        .trim();
+    },
+
+    _splitLongCurricularText: function (text) {
+      var raw = String(text || '').replace(/\r/g, '\n').trim();
+      if (!raw) return [];
+
+      // 1) Mantém itens explícitos do plano: linhas, bullets e ponto-e-vírgula.
+      var coarse = raw.split(/\n|•|·|\u2022/g).map(function (x) { return x.trim(); }).filter(Boolean);
+      if (coarse.length > 1) return coarse;
+
+      // 2) Conteúdos do SENAI geralmente vêm como "1 TEMA 1.1 Subtema 2 TEMA".
+      //    A divisão abaixo preserva os temas principais e evita um único nó gigante.
+      var numbered = raw
+        .replace(/\s+(\d+(?:\.\d+)*\s+[A-ZÁÉÍÓÚÂÊÔÃÕÇ][A-ZÁÉÍÓÚÂÊÔÃÕÇ0-9\s\-–:\/().,]{3,})/g, '\n$1')
+        .split(/\n+/)
+        .map(function (x) { return x.trim(); })
+        .filter(Boolean);
+      if (numbered.length > 1) return numbered;
+
+      // 3) Quando a extração perdeu os números, tenta cortar por macrotemas
+      //    comuns nos planos de curso. Isso é genérico o suficiente para áreas
+      //    técnicas diferentes e evita placeholders ou frases administrativas.
+      var markers = [
+        'INTRODUÇÃO', 'COMUNICAÇÃO', 'SEGURANÇA DA INFORMAÇÃO', 'INTERNET',
+        'SOFTWARE', 'INFORMÁTICA', 'TEXTOS TÉCNICOS', 'EVENTOS TÉCNICOS',
+        'PESQUISA', 'INGLÊS TÉCNICO', 'PLANEJAMENTO', 'ETIQUETA',
+        'DESENVOLVIMENTO', 'LIDERANÇA', 'SISTEMA INTERNACIONAL', 'CÁLCULOS',
+        'CONCEITOS GERAIS', 'AUTOGESTÃO', 'LEITURA E INTERPRETAÇÃO',
+        'ACIDENTES DO TRABALHO', 'PRINCÍPIOS PREVENTIVOS', 'GESTÃO DE RISCOS',
+        'MEDIDAS DE CONTROLE', 'RISCOS OCUPACIONAIS', 'RISCO FÍSICO',
+        'RISCOS QUÍMICOS', 'RISCOS BIOLÓGICOS', 'ERGONOMIA', 'HIGIENE OCUPACIONAL',
+        'LEGISLAÇÃO', 'CONTROLE EMOCIONAL', 'INSPEÇÕES', 'ANÁLISE DE RISCOS',
+        'QUALIDADE', 'PRODUTIVIDADE', 'PROJETO', 'PROTOTIPAGEM',
+        'EMERGÊNCIAS', 'PROGRAMAS', 'PROCEDIMENTOS', 'AUDITORIA',
+        'MONITORAMENTO', 'ASSESSORIA', 'CONSULTORIA', 'INDÚSTRIA 4.0'
+      ];
+      var hits = [];
+      markers.forEach(function (m) {
+        var re = new RegExp('\\b' + m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g');
+        var match;
+        while ((match = re.exec(raw)) !== null) {
+          hits.push({ pos: match.index, marker: m });
+        }
+      });
+      hits.sort(function (a, b) {
+        if (a.pos !== b.pos) return a.pos - b.pos;
+        return b.marker.length - a.marker.length;
+      });
+
+      // Remove cortes quase colados. Ex.: "LEGISLAÇÃO APLICADA A HIGIENE..."
+      // não deve virar "LEGISLAÇÃO APLICADA A" + "HIGIENE".
+      var filtered = [];
+      hits.forEach(function (h) {
+        if (!filtered.length || h.pos - filtered[filtered.length - 1].pos > 40) {
+          filtered.push(h);
+        }
+      });
+
+      if (filtered.length > 1) {
+        var slices = [];
+        for (var i = 0; i < filtered.length; i++) {
+          var a = filtered[i].pos;
+          var b = (i + 1 < filtered.length) ? filtered[i + 1].pos : raw.length;
+          var piece = raw.slice(a, b).trim();
+          if (piece) slices.push(piece);
+        }
+        if (slices.length > 1) return slices;
+      }
+
+      // 4) Último recurso: separa frases por ponto e vírgula.
+      if (raw.indexOf(';') >= 0) return raw.split(';').map(function (x) { return x.trim(); }).filter(Boolean);
+
+      return [raw];
     },
 
     _cleanCurricularList: function (input) {
@@ -485,15 +569,11 @@
         if (v == null) return;
         if (Array.isArray(v)) { v.forEach(push); return; }
         if (typeof v === 'object') {
-          push(v.texto || v.nome || v.descricao || v.titulo || '');
+          push(v.texto || v.nome || v.descricao || v.titulo || v.padrao || '');
           return;
         }
-        String(v).split(/\n|\r|•|·|\u2022/g).forEach(function (part) {
-          var item = part
-            .replace(/\s+/g, ' ')
-            .replace(/^[-–—]\s*/, '')
-            .replace(/^\d+(?:\.\d+)*[\.)]?\s*/, '')
-            .trim();
+        window.MindMap._splitLongCurricularText(v).forEach(function (part) {
+          var item = window.MindMap._normalizeItemText(part);
           if (!item || window.MindMap._isGenericPlaceholder(item)) return;
           if (item.length < 3) return;
           arr.push(item);
@@ -510,11 +590,15 @@
     },
 
     _deriveConhecimentos: function (uc, capArr) {
+      // Prioriza o campo oficial da UC. Só usa conhecimentos aninhados dentro
+      // de capacidades quando a UC não tem bloco próprio de conhecimentos.
+      var direct = window.MindMap._cleanCurricularList((uc && uc.conhecimentos) || []);
+      if (direct.length) return direct;
+
       var conhecimentos = [];
       capArr.forEach(function (c) {
         if (c && c.conhecimentos) conhecimentos = conhecimentos.concat(c.conhecimentos);
       });
-      if (uc && uc.conhecimentos) conhecimentos = conhecimentos.concat(uc.conhecimentos);
       return window.MindMap._cleanCurricularList(conhecimentos);
     },
 
@@ -528,35 +612,55 @@
       return window.MindMap._cleanCurricularList(capacidades);
     },
 
+    _derivePadroes: function (uc, capArr) {
+      var padroes = [];
+      if (uc && uc.padroes) padroes = padroes.concat(uc.padroes);
+      if (uc && uc.padroesDesempenho) padroes = padroes.concat(uc.padroesDesempenho);
+      capArr.forEach(function (c) {
+        if (!c || typeof c !== 'object') return;
+        if (c.padroes) padroes = padroes.concat(c.padroes);
+        if (c.padroesDesempenho) padroes = padroes.concat(c.padroesDesempenho);
+        if (c.padraoDesempenho) padroes = padroes.concat(c.padraoDesempenho);
+      });
+      return window.MindMap._cleanCurricularList(padroes);
+    },
+
     fromOfficialUC: function (uc) {
       if (!uc) return null;
       var capArr = Array.isArray(uc.capacidades) ? uc.capacidades : [];
 
       var capacidades = window.MindMap._deriveCapacidades(uc, capArr);
       var conhecimentos = window.MindMap._deriveConhecimentos(uc, capArr);
-      var habilidades = window.MindMap._cleanCurricularList(uc.padroes || uc.padroesDesempenho || []);
+      var habilidades = window.MindMap._derivePadroes(uc, capArr);
       var atitudes = window.MindMap._cleanCurricularList(uc.socioemocionais || uc.capacidadesSocioemocionais || []);
 
       var titulo = (uc.codigo || uc.id || '') + (uc.nome ? ' — ' + uc.nome : '');
       titulo = titulo.replace(/^—\s*/, '').trim() || (uc.nome || 'Unidade Curricular');
 
+      // Regra permanente do produto:
+      // 1. Nenhum ramo administrativo/fallback entra no mapa.
+      // 2. Capacidades, Conhecimentos, Padrões e Socioemocionais são derivados
+      //    da mesma estrutura oficial para qualquer área futura.
+      // 3. Não inventa padrões: se a UC básica não tiver padrões no plano, o ramo
+      //    não aparece; se tiver, aparece automaticamente.
       var out = {
         curso: titulo,
         perfilProfissional: [],
         competenciasGerais: [],
         unidadesCurriculares: [{
           nome: uc.nome || titulo,
-          subfuncoes: capacidades.slice(0, 12),
-          conhecimentos: conhecimentos.slice(0, 18),
-          habilidades: habilidades.slice(0, 10),
-          atitudes: atitudes.slice(0, 10)
+          subfuncoes: capacidades.slice(0, 24),
+          conhecimentos: conhecimentos.slice(0, 36),
+          habilidades: habilidades.slice(0, 24),
+          atitudes: atitudes.slice(0, 16)
         }]
       };
 
       if (!out.unidadesCurriculares[0].subfuncoes.length || !out.unidadesCurriculares[0].conhecimentos.length) {
         console.warn('[MindMap] UC com base curricular incompleta. Verifique capacidades/conhecimentos:', uc.id || uc.nome, {
           capacidades: out.unidadesCurriculares[0].subfuncoes.length,
-          conhecimentos: out.unidadesCurriculares[0].conhecimentos.length
+          conhecimentos: out.unidadesCurriculares[0].conhecimentos.length,
+          padroes: out.unidadesCurriculares[0].habilidades.length
         });
       }
       return out;
