@@ -1,97 +1,174 @@
-// api/gemini.js — Proxy Vercel · Hub MQCT SENAI Bahia · 2026
-// Valida token Supabase + domínio + rate limit → chama Gemini
+// api/gemini.js — Proxy Vercel · Hub MQCT SENAI Bahia
+// Corrigido: CommonJS compatível com Vercel, resposta padronizada { text },
+// validação segura de Supabase, tratamento de erros Gemini e CORS.
 
 const GEMINI_KEY = process.env.GOOGLE_GEMINI_API_KEY;
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SECRET = process.env.SUPABASE_SECRET_KEY;
 const ALLOWED_DOMAIN = process.env.ALLOWED_DOMAIN || "ba.docente.senai.br";
-const RATE_LIMIT = parseInt(process.env.RATE_LIMIT_PER_HOUR || "30");
-const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+const RATE_LIMIT = Number.parseInt(process.env.RATE_LIMIT_PER_HOUR || "30", 10);
+const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
-// Rate limiting em memória
+// Rate limiting simples em memória.
+// Observação: em serverless pode reiniciar entre execuções, mas ajuda a reduzir abuso.
 const rateMap = new Map();
+
 function checkRate(uid) {
-  const now = Date.now(), win = 3600000;
-  const e = rateMap.get(uid);
-  if (!e || now - e.start > win) { rateMap.set(uid, { count: 1, start: now }); return true; }
-  if (e.count >= RATE_LIMIT) return false;
-  e.count++; return true;
+  const now = Date.now();
+  const windowMs = 60 * 60 * 1000;
+  const current = rateMap.get(uid);
+
+  if (!current || now - current.start > windowMs) {
+    rateMap.set(uid, { count: 1, start: now });
+    return true;
+  }
+
+  if (current.count >= RATE_LIMIT) return false;
+  current.count += 1;
+  return true;
 }
 
-// Valida token JWT do Supabase
+function send(res, status, payload) {
+  return res.status(status).json(payload);
+}
+
+function getBody(req) {
+  if (!req.body) return {};
+  if (typeof req.body === "string") {
+    try {
+      return JSON.parse(req.body);
+    } catch {
+      return {};
+    }
+  }
+  return req.body;
+}
+
 async function validarToken(authHeader) {
-  if (!authHeader?.startsWith("Bearer ")) return null;
-  const token = authHeader.slice(7);
-  try {
-    const res = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "apikey": SUPABASE_SECRET
-      }
-    });
-    if (!res.ok) return null;
-    const user = await res.json();
-    return user?.email ? user : null;
-  } catch { return null; }
+  if (!authHeader || !authHeader.startsWith("Bearer ")) return null;
+  if (!SUPABASE_URL || !SUPABASE_SECRET) {
+    throw new Error("Supabase não configurado: defina SUPABASE_URL e SUPABASE_SECRET_KEY no Vercel.");
+  }
+
+  const token = authHeader.slice(7).trim();
+  if (!token) return null;
+
+  const response = await fetch(`${SUPABASE_URL.replace(/\/$/, "")}/auth/v1/user`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      apikey: SUPABASE_SECRET
+    }
+  });
+
+  if (!response.ok) return null;
+
+  const user = await response.json();
+  return user && user.email ? user : null;
 }
 
-export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+function extractGeminiText(data) {
+  const parts = data?.candidates?.[0]?.content?.parts || [];
+  return parts.map(part => part?.text || "").join("").trim();
+}
+
+async function handler(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", process.env.CORS_ORIGIN || "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Cache-Control", "no-store");
+
   if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Método não permitido" });
+  if (req.method !== "POST") return send(res, 405, { error: "Método não permitido" });
 
-  if (!GEMINI_KEY) return res.status(500).json({ error: "GOOGLE_GEMINI_API_KEY não configurada" });
-  if (!SUPABASE_URL || !SUPABASE_SECRET) return res.status(500).json({ error: "Supabase não configurado" });
-
-  // Valida token Supabase
-  const user = await validarToken(req.headers["authorization"]);
-  if (!user) return res.status(401).json({ error: "Token inválido ou expirado. Faça login novamente." });
-
-  // Valida domínio
-  const email = user.email?.toLowerCase() || "";
-  if (!email.endsWith(`@${ALLOWED_DOMAIN}`)) {
-    return res.status(403).json({ error: `Acesso restrito a docentes @${ALLOWED_DOMAIN}` });
+  if (!GEMINI_KEY) {
+    return send(res, 500, { error: "GOOGLE_GEMINI_API_KEY não configurada no Vercel." });
   }
 
-  // Rate limiting por usuário
-  if (!checkRate(user.id)) {
-    return res.status(429).json({ error: `Limite de ${RATE_LIMIT} gerações/hora atingido.` });
-  }
-
-  // Valida body
-  const { prompt, forceJSON = false } = req.body || {};
-  if (!prompt || typeof prompt !== "string") return res.status(400).json({ error: "Campo 'prompt' obrigatório" });
-  if (prompt.length > 32000) return res.status(400).json({ error: "Prompt muito longo" });
-
-  // Chama Gemini
+  let user;
   try {
-    const genConfig = { maxOutputTokens: 16000, temperature: 0.7 };
-    if (forceJSON) genConfig.responseMimeType = "application/json";
+    user = await validarToken(req.headers.authorization || req.headers.Authorization);
+  } catch (err) {
+    console.error("[MQCT Proxy] Auth config:", err.message);
+    return send(res, 500, { error: err.message });
+  }
 
-    const geminiRes = await fetch(`${GEMINI_URL}?key=${GEMINI_KEY}`, {
+  if (!user) {
+    return send(res, 401, { error: "Token inválido ou expirado. Faça login novamente." });
+  }
+
+  const email = String(user.email || "").toLowerCase();
+  if (!email.endsWith(`@${ALLOWED_DOMAIN}`)) {
+    return send(res, 403, { error: `Acesso restrito a docentes @${ALLOWED_DOMAIN}.` });
+  }
+
+  if (!checkRate(user.id || email)) {
+    return send(res, 429, { error: `Limite de ${RATE_LIMIT} gerações/hora atingido.` });
+  }
+
+  const { prompt, forceJSON = false } = getBody(req);
+
+  if (!prompt || typeof prompt !== "string") {
+    return send(res, 400, { error: "Campo 'prompt' obrigatório." });
+  }
+
+  // Slides e planos podem ter contexto oficial grande. Mantém proteção sem bloquear UCs longas.
+  if (prompt.length > 60000) {
+    return send(res, 400, {
+      error: "Prompt muito longo. Reduza o contexto ou a quantidade de slides/aulas.",
+      length: prompt.length
+    });
+  }
+
+  try {
+    const generationConfig = {
+      maxOutputTokens: 20000,
+      temperature: 0.65
+    };
+
+    if (forceJSON) {
+      generationConfig.responseMimeType = "application/json";
+    }
+
+    const geminiResponse = await fetch(`${GEMINI_URL}?key=${GEMINI_KEY}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: genConfig
+        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        generationConfig
       })
     });
 
-    if (!geminiRes.ok) {
-      const err = await geminiRes.json().catch(() => ({}));
-      return res.status(geminiRes.status).json({ error: err?.error?.message || `Gemini HTTP ${geminiRes.status}` });
+    const geminiData = await geminiResponse.json().catch(() => ({}));
+
+    if (!geminiResponse.ok) {
+      const message =
+        geminiData?.error?.message ||
+        geminiData?.message ||
+        `Gemini HTTP ${geminiResponse.status}`;
+
+      console.error("[MQCT Proxy] Gemini:", geminiResponse.status, message);
+      return send(res, 502, {
+        error: "Falha ao consultar o Gemini.",
+        detail: message,
+        status: geminiResponse.status
+      });
     }
 
-    const data = await geminiRes.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-    if (!text) return res.status(500).json({ error: "Resposta vazia do Gemini" });
+    const text = extractGeminiText(geminiData);
 
-    return res.status(200).json({ text, user: email });
+    if (!text) {
+      console.error("[MQCT Proxy] Gemini sem texto:", JSON.stringify(geminiData).slice(0, 1000));
+      return send(res, 502, { error: "Resposta vazia do Gemini." });
+    }
 
+    // Mantém compatibilidade com telas antigas: elas podem ler data.text.
+    return send(res, 200, { text, user: email, model: GEMINI_MODEL });
   } catch (err) {
-    console.error("[MQCT Proxy]", err.message);
-    return res.status(500).json({ error: "Erro interno: " + err.message });
+    console.error("[MQCT Proxy] Erro interno:", err);
+    return send(res, 500, { error: "Erro interno no proxy.", detail: err.message });
   }
 }
+
+module.exports = handler;

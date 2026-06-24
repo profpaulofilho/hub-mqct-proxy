@@ -91,10 +91,11 @@ async function gerarSlides() {
     const _headers = { 'Content-Type': 'application/json' };
     if (_token) _headers['Authorization'] = `Bearer ${_token}`;
 
-    const res = await fetch('https://hub-mqct-proxy.vercel.app/api/gemini', {
+    const proxyUrl = window.MQCT_PROXY_URL || '/api/gemini';
+    const res = await fetch(proxyUrl, {
       method: 'POST',
       headers: _headers,
-      body: JSON.stringify({ prompt })
+      body: JSON.stringify({ prompt, forceJSON: true })
     });
 
     if (res.status === 401) {
@@ -102,15 +103,26 @@ async function gerarSlides() {
       setTimeout(() => window.location.href = '../index.html', 2000);
       throw new Error('Proxy retornou 401');
     }
-    if (!res.ok) throw new Error(`Proxy retornou ${res.status}`);
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      const msg = data?.detail || data?.error || `Proxy retornou ${res.status}`;
+      throw new Error(msg);
+    }
 
-    /* Extrai texto da resposta Gemini */
-    const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    /* Extrai texto da resposta do proxy.
+       O proxy novo retorna { text }, mas mantemos compatibilidade com resposta bruta do Gemini. */
+    const raw = data?.text || data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+    if (!raw) throw new Error('Resposta vazia do proxy/Gemini.');
 
     /* Parse JSON (remove eventuais blocos ```json) */
     const clean = raw.replace(/```json|```/gi, '').trim();
-    _slidesData = JSON.parse(clean);
+    try {
+      _slidesData = JSON.parse(clean);
+    } catch (jsonErr) {
+      console.error('[slides-v2] JSON inválido recebido:', clean);
+      throw new Error('O Gemini retornou um JSON inválido. Tente gerar novamente com menos slides.');
+    }
 
     if (!Array.isArray(_slidesData) || _slidesData.length === 0)
       throw new Error('Resposta não é um array de slides.');
