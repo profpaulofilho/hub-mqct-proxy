@@ -1,8 +1,7 @@
 /**
  * SENAI BAHIA · Hub MQCT
  * data/seguranca-drba.js — Segurança do Trabalho · Plano de Curso DR-BA
- * Fonte: Plano do Curso Técnico em Segurança do Trabalho — SENAI/DR-BA (Setembro/2022, atualização 2023).
- * Base estruturada para uso fechado nos prompts da API Gemini.
+ * Base revisada para mapa mental: capacidades, conhecimentos e padrões separados por UC.
  */
 
 const SEGURANCA = {
@@ -2148,9 +2147,11 @@ const SEGURANCA = {
             }
           ],
           "conhecimentos": [
-            "SISTEMA INTERNACIONAL DE UNIDADES DE MEDIDAS Unidades de medidas e suas conversões CÁLCULOS Razões decimais Tipos de frações: próprias ou impróprias, frações mistas Aplicação Simplificação Proporções Termos Propriedade fundamental Aplicação Porcentagem Taxa percentual Juros Aplicação Regra de três Composta Simples Formas geométricas Tipos Medidas de perímetro, área e volume Média Aritmética Harmônica Estatística Amostra População Probabilidade Coleta de dados e dados brutos Variáveis. Apresentação gráfica de dados Tabelas Gráficos Histogramas. CONCEITOS GERAIS DE FÍSICO-QUÍMICA Tabela Periódica Pressão Temperatura Ponto de Fulgor Fenômenos ondulatórios Pneumática Hidráulica Conceito de ácido x base Conceitos de química orgânica Oxidação AUTOGESTÃO Definição Pilares Organização Disciplina Responsabilidade Concentração Organização",
-            "4.",
-            "8 Gestão do tempo"
+            "Sistema Internacional de Unidades de Medidas: unidades de medidas e conversões",
+            "Cálculos: razões decimais, frações, proporções, porcentagem, regra de três, formas geométricas, média e estatística",
+            "Apresentação gráfica de dados: tabelas, gráficos e histogramas",
+            "Conceitos gerais de físico-química: tabela periódica, pressão, temperatura, ponto de fulgor, fenômenos ondulatórios, pneumática, hidráulica, ácido e base, química orgânica e oxidação",
+            "Autogestão: organização, disciplina, responsabilidade, concentração e gestão do tempo"
           ],
           "socioemocionais": [
             "Acolher novos fatos, ideias e opiniões diferentes como oportunidades e possibilidades de mudanças positivas e inovadoras nas atividades de sua responsabilidade. Constatar o valor da ética nas relações humanas. Demonstrar postura profissional flexível e aberta a novos aprendizados e experiências, orientados à melhoria e inovação dos processos de trabalho em que atua."
@@ -2189,7 +2190,18 @@ const SEGURANCA = {
             }
           ],
           "conhecimentos": [
-            "INTRODUÇÃO À SEGURANÇA E SAÚDE NO TRABALHO E MEIO AMBIENTE Histórico Desenvolvimento Industrial Evolução das Normas de Proteção aos trabalhadores no Brasil e no mundo Princípios de Segurança e Saúde no trabalho e Meio Ambiente Definição de Segurança e Saúde no Trabalho Relação da Segurança do Trabalho com outras áreas Responsabilidade Socioambiental Terminologia técnica Desvio Incidente Perigo Risco Acidente Riscos Ocupacionais Químicos Físicos Biológicos Ergonômicos Acidente/Mecânicos INTRODUÇÃO A LEGISLAÇÃO Hierarquia das leis Constituição Federal Consolidação das Leis Trabalhistas – CLT Legislação Previdenciária Normas Regulamentadoras do Ministério do Trabalho Hierarquia de Aplicação Tipos: Geral, Especial e Setorial ACIDENTES DO TRABALHO Definição Tipos Causas Análise e Investigação de Acidente Aspectos sociais, ambientais e financeiros Comunicação de Acidente do Trabalho - CAT Responsabilidade civil e criminal Reabilitação profissional Estatística de acidentes Taxa de frequência de acidentes Taxa de gravidade de acidentes Relatórios PRINCÍPIOS PREVENTIVOS Teoria de Frank Bird, “pirâmide” Estudos de J. Reason, “Queijo Suíço” GESTÃO DE RISCOS Conceitos gerais NR1 Considerações Gerais Gestão de Riscos Ocupacionais MEDIDAS DE CONTROLE DE RISCOS Hierarquia das medidas de controle Proteção Coletiva Administrativa e Organizacional Proteção Individual – NR6 Sinalização e Cores de Segurança NR4- SESMT Dimensionamento Atribuições NR5 - CIPA Dimensionamento Atribuições Processo Eleitoral COMPORTAMENTO INOVADOR Postura Investigativa Mentalidade de Crescimento (Growth Mindset) Curiosidade Motivação Pessoal"
+            "Introdução à Segurança e Saúde no Trabalho e Meio Ambiente: histórico, desenvolvimento industrial e evolução das normas de proteção",
+            "Princípios de Segurança e Saúde no Trabalho e Meio Ambiente: definição, relação com outras áreas e responsabilidade socioambiental",
+            "Terminologia técnica: desvio, incidente, perigo, risco e acidente",
+            "Riscos ocupacionais: químicos, físicos, biológicos, ergonômicos e acidentes/mecânicos",
+            "Introdução à legislação: hierarquia das leis, Constituição Federal, CLT, legislação previdenciária e Normas Regulamentadoras",
+            "Acidentes do trabalho: definição, tipos, causas, CAT, responsabilidades, reabilitação e estatísticas",
+            "Princípios preventivos: Teoria de Frank Bird e modelo do Queijo Suíço de James Reason",
+            "Gestão de riscos: conceitos gerais, NR-1 e Gerenciamento de Riscos Ocupacionais",
+            "Medidas de controle de riscos: proteção coletiva, medidas administrativas, proteção individual, sinalização e cores de segurança",
+            "NR-4 SESMT: dimensionamento e atribuições",
+            "NR-5 CIPA: dimensionamento, atribuições e processo eleitoral",
+            "Comportamento inovador: postura investigativa, mentalidade de crescimento, curiosidade e motivação pessoal"
           ],
           "socioemocionais": [
             "Acolher novos fatos, ideias e opiniões diferentes como oportunidades e possibilidades de mudanças positivas e inovadoras nas atividades de sua responsabilidade. Demonstrar postura profissional flexível e aberta a novos aprendizados e experiências, orientados à melhoria e inovação dos processos de trabalho em que atua. Constatar o valor da ética nas relações humanas."
@@ -2228,7 +2240,9 @@ const SEGURANCA = {
             }
           ],
           "conhecimentos": [
-            "1 LEITURA E INTERPRETAÇÃO DE DESENHO TÉCNICO Legenda Escalas Plantas e leiautes Cotagem Simbologias aplicadas à saúde e segurança (proteção contra incêndio – símbolos gráficos para projetos, rotas de fuga, mapeamento de riscos, entre outros) COMPORTAMENTO INOVADOR Postura Investigativa Mentalidade de Crescimento (Growth Mindset) Curiosidade Motivação Pessoal"
+            "Leitura e interpretação de desenho técnico: legenda, escalas, plantas, leiautes e cotagem",
+            "Simbologias aplicadas à saúde e segurança: proteção contra incêndio, rotas de fuga e mapeamento de riscos",
+            "Comportamento inovador: postura investigativa, mentalidade de crescimento, curiosidade e motivação pessoal"
           ],
           "socioemocionais": [
             "Acolher novos fatos, ideias e opiniões diferentes como oportunidades e possibilidades de mudanças positivas e inovadoras nas atividades de sua responsabilidade. Demonstrar postura profissional flexível e aberta a novos aprendizados e experiências, orientados à melhoria e inovação dos processos de trabalho em que atua. Constatar o valor da ética nas relações humanas."
@@ -2260,22 +2274,57 @@ const SEGURANCA = {
           "ch": 12,
           "cht": 0,
           "chp": 12,
-          "objetivo": "",
+          "objetivo": "Desenvolver as capacidades básicas e socioemocionais necessárias à compreensão dos fundamentos da saúde e segurança do trabalho adequadas às diferentes situações profissionais.",
           "padroes": [],
           "capacidades": [
             {
-              "tipo": "Capacidade do Plano DR-BA",
-              "dominio": "Cognitivo/Psicomotor",
-              "texto": "Reconhecer conceitos, impactos, normas e medidas de controle em saúde e segurança no trabalho.",
-              "conhecimentos": [
-                "Conteúdos formativos conforme organização interna da UC no Plano de Curso DR-BA."
-              ]
+              "tipo": "Capacidade Básica",
+              "dominio": "Cognitivo",
+              "texto": "Reconhecer os conceitos, classificação e impactos de acidentes e doenças ocupacionais na indústria."
+            },
+            {
+              "tipo": "Capacidade Básica",
+              "dominio": "Cognitivo",
+              "texto": "Reconhecer o papel do trabalhador no cumprimento das normas de saúde e segurança."
+            },
+            {
+              "tipo": "Capacidade Básica",
+              "dominio": "Cognitivo",
+              "texto": "Reconhecer as medidas preventivas e corretivas nas atividades laborais."
+            },
+            {
+              "tipo": "Capacidade Básica",
+              "dominio": "Cognitivo",
+              "texto": "Reconhecer os princípios, normas, legislação e procedimentos de saúde e segurança nos processos industriais."
+            },
+            {
+              "tipo": "Capacidade Básica",
+              "dominio": "Cognitivo",
+              "texto": "Reconhecer os tipos de riscos inerentes às atividades laborais nos processos industriais."
             }
           ],
           "conhecimentos": [
-            "Conteúdos formativos conforme organização interna da UC no Plano de Curso DR-BA."
+            "O impacto da falta de ética nos ambientes de trabalho",
+            "Código de ética profissional",
+            "Acidentes do trabalho e doenças ocupacionais: definição, tipos e causas",
+            "Imprudência, imperícia e negligência",
+            "Fator humano e pessoal na prevenção de acidentes",
+            "Consequências dos acidentes do trabalho para trabalhador, família, empresa e país",
+            "CAT — Comunicação de Acidente do Trabalho",
+            "Medidas de controle",
+            "Importância dos Equipamentos de Proteção Individual e coletiva",
+            "Riscos ocupacionais: perigo e risco",
+            "Classificação de riscos ocupacionais: físico, químico, biológico, ergonômico e de acidentes",
+            "Mapa de riscos",
+            "Segurança do Trabalho: histórico no Brasil",
+            "Hierarquia das leis",
+            "Normas Regulamentadoras do Ministério do Trabalho",
+            "CIPA: definição e objetivo",
+            "SESMT: definição e objetivo"
           ],
-          "socioemocionais": [],
+          "socioemocionais": [
+            "Aceitar valores éticos estabelecidos pela instituição para o desenvolvimento de sua atividade profissional."
+          ],
           "ambientes": {},
           "fonte": "Plano de Curso Técnico em Segurança do Trabalho — SENAI DR-BA, 2022/2023"
         },
@@ -3373,14 +3422,18 @@ const SEGURANCA = {
             }
           ],
           "conhecimentos": [
-            "HIGIENE OCUPACIONAL Princípios Terminologia técnica Grupos de exposição similares (GES) LEGISLAÇÃO APLICADA A HIGIENE OCUPACIONAL Normas Regulamentadoras NR01 NR",
-            "09 NR",
-            "15 Notas Técnicas Normas Técnicas Legislação trabalhista e previdenciária RISCO FÍSICO – PRESSÃO SONORA Definição Tipos Fontes Efeitos da exposição Níveis de exposição Limites de tolerância e nível de ação Avaliação Tipos de Avaliação NHO",
-            "01 Instrumentos e acessórios de medição - Aplicação e Programação: Decibelímetro e Audiodosímetro Aferição e calibração do instrumento Dosimetria: Amostragem, Extração da informação, Leitura e Interpretação Cálculos aplicados Medidas preventivas e corretivas e de controle RISCO FÍSICO: EXPOSIÇÃO AO CALOR Definição Tipos Fontes Efeitos da exposição Níveis de exposição Limites de tolerância e nível de ação Avaliação Tipos de Avaliação NHO",
-            "06 Instrumentos e acessórios de medição Aplicação e Programação: Medidor de estresse térmico Aferição e calibração do instrumento Amostragem, Registro e análise de dados Cálculos aplicados: Índice IBUTG e taxa de metabolismo Medidas preventivas, corretivas e de controle Aclimatização e Aclimatação RISCO FÍSICO: EXPOSIÇÃO AO FRIO Definição Tipos Fontes Efeitos da exposição Avaliação Portaria SSST- 21 de 26/12/",
-            "1994 Instrumentos e acessórios de medição e controle- Aplicação e Registro de Dados: Termômetro Medidas preventivas, corretivas e de controle RISCO FÍSICO: RADIAÇÃO Definição Tipos Ionizante Não Ionizante Fontes Efeitos da exposição Níveis de exposição Limites de tolerância e nível de ação Avaliação Tipos de Avaliação Portaria CNEN",
-            "0705 Medidas preventivas, corretivas e de controle RISCO FÍSICO: VIBRAÇÃO Definição Tipos Tipos Mãos e braços De corpo inteiro Fontes Efeitos da exposição Níveis de exposição Limites de tolerância e nível de ação Avaliação Tipos de Avaliação NHO 09 e",
-            "10 Instrumentos e acessórios de medição – Aplicação e Programação: Acelerômetro Aferição e calibração do instrumento Medição: Amostragem, Extração da informação, Leitura e Interpretação Cálculos aplicados Medidas preventivas e corretivas e de controle CONDIÇÕES HIPERBÁRICAS Definição Tipos Fontes Efeitos da Exposição Avaliação Medidas de preventivas, corretivas e de controle UMIDADE Definição Tipos Fontes Efeitos da exposição Avaliação Medidas preventivas, corretivas e de controle RISCOS QUÍMICOS Definição Tipos Fontes Trajetória, meios de propagação e vias de absorção Ficha de identificação de segurança de produtos Químicos – FISPQ Efeitos da exposição Níveis de exposição Limites de tolerância nacionais e internacionais e nível de ação Avaliação OSHA, NIOSH, NHO 08 e ACGIH Técnicas de amostragem Instrumentos, acessórios e amostradores – Aplicação e Programação: Bombas de Amostragem Aferição e calibração do instrumento Amostragem, Envio do amostrador para análise laboratorial, Leitura e Interpretação do relatório analítico Cálculos aplicados Medidas preventivas e corretivas e de controle RISCOS BIOLÓGICOS Definição Tipos Fontes Efeitos da exposição Avaliação Instrumentos e acessórios de medição e controle – Aplicação e Registro de Dados: Bomba de Amostragem e Amostradores Passivos Medidas preventivas, corretivas e de controle CONTROLE EMOCIONAL NO TRABALHO Emoções no trabalho Perceber Avaliar Expressar Fatores internos e externos Autoconsciência"
+            "Higiene ocupacional: princípios, terminologia técnica e grupos de exposição similares (GES)",
+            "Legislação aplicada à higiene ocupacional: NR-01, NR-09, NR-15, notas técnicas, normas técnicas e legislação trabalhista/previdenciária",
+            "Risco físico — pressão sonora: fontes, efeitos, níveis de exposição, limites, NHO-01, dosimetria e medidas de controle",
+            "Risco físico — exposição ao calor: fontes, efeitos, limites, NHO-06, IBUTG, taxa de metabolismo, aclimatização e medidas de controle",
+            "Risco físico — exposição ao frio: fontes, efeitos, avaliação, Portaria SSST 21/1994, termômetro e medidas de controle",
+            "Risco físico — radiação: radiação ionizante e não ionizante, fontes, efeitos, avaliação, Portaria CNEN e medidas de controle",
+            "Risco físico — vibração: mãos e braços, corpo inteiro, fontes, efeitos, limites, NHO-09/NHO-10, acelerômetro e medidas de controle",
+            "Condições hiperbáricas: definição, tipos, fontes, efeitos, avaliação e medidas de controle",
+            "Umidade: definição, tipos, fontes, efeitos, avaliação e medidas de controle",
+            "Riscos químicos: fontes, trajetória, vias de absorção, FISPQ, limites de tolerância, OSHA, NIOSH, NHO-08, ACGIH e amostragem",
+            "Riscos biológicos: fontes, efeitos, avaliação, bomba de amostragem, amostradores passivos e medidas de controle",
+            "Controle emocional no trabalho: percepção, avaliação e expressão das emoções, fatores internos/externos e autoconsciência"
           ],
           "socioemocionais": [
             "Reconhecer o valor do diálogo, da empatia, da tolerância, do altruísmo, da humildade e da gratidão nas relações profissionais. Aceitar, com consciência, as atribuições de sua responsabilidade, contribuindo com o alcance de objetivos e metas estabelecidas."
@@ -4954,20 +5007,39 @@ const SEGURANCA = {
           "ch": 16,
           "cht": 0,
           "chp": 16,
-          "objetivo": "",
+          "objetivo": "Desenvolver capacidades básicas e socioemocionais relativas à qualidade nas diferentes situações profissionais, identificando ferramentas da qualidade aplicáveis a melhorias e solução de problemas.",
           "padroes": [],
           "capacidades": [
             {
-              "tipo": "Capacidade do Plano DR-BA",
-              "dominio": "Cognitivo/Psicomotor",
-              "texto": "Reconhecer fundamentos da qualidade, filosofia Lean e ferramentas para melhoria de processos.",
-              "conhecimentos": [
-                "Conteúdos formativos conforme organização interna da UC no Plano de Curso DR-BA."
-              ]
+              "tipo": "Capacidade Básica",
+              "dominio": "Cognitivo",
+              "texto": "Reconhecer os fundamentos da qualidade nos processos industriais."
+            },
+            {
+              "tipo": "Capacidade Básica",
+              "dominio": "Cognitivo",
+              "texto": "Identificar as ferramentas da qualidade aplicadas nos processos industriais."
+            },
+            {
+              "tipo": "Capacidade Básica",
+              "dominio": "Cognitivo",
+              "texto": "Reconhecer as etapas da filosofia Lean para otimização de custos e redução de tempo e desperdícios."
             }
           ],
           "conhecimentos": [
-            "Conteúdos formativos conforme organização interna da UC no Plano de Curso DR-BA."
+            "Estrutura organizacional: formal e informal",
+            "Funções, responsabilidades, organização de informações e recursos",
+            "Sistema de comunicação",
+            "Visão sistêmica",
+            "Pensamento sistêmico",
+            "Filosofia Lean: definição, importância, mindset e pilares",
+            "Etapas da filosofia Lean: preparação, coleta, intervenção, monitoramento e encerramento",
+            "Ferramentas Lean: diagrama espaguete, cronoanálise, takt-time, cadeia de valores e mapa de fluxo de valor",
+            "Métodos e ferramentas da qualidade",
+            "PDCA, MASP, histograma, brainstorming e fluxograma de processos",
+            "Diagrama de Pareto, Diagrama de Ishikawa, CEP, 5W2H, folha de verificação e diagrama de dispersão",
+            "Princípios da gestão da qualidade",
+            "Qualidade: definição e evolução"
           ],
           "socioemocionais": [],
           "ambientes": {},
@@ -5934,20 +6006,36 @@ const SEGURANCA = {
           "ch": 39,
           "cht": 0,
           "chp": 39,
-          "objetivo": "",
-          "padroes": [],
+          "objetivo": "Desenvolver capacidades técnicas e socioemocionais que permitam o planejamento e execução de projetos de ações educativas de Segurança e Saúde do ambiente de trabalho.",
+          "padroes": [
+            "Considerando as exigências de treinamento e capacitação estabelecidas na legislação, normas e notas técnicas aplicadas à segurança e saúde no ambiente do trabalho."
+          ],
           "capacidades": [
             {
-              "tipo": "Capacidade do Plano DR-BA",
+              "tipo": "Capacidade Técnica",
               "dominio": "Cognitivo/Psicomotor",
-              "texto": "Planejar e executar ações educativas, treinamentos, palestras e campanhas de SST.",
-              "conhecimentos": [
-                "Conteúdos formativos conforme organização interna da UC no Plano de Curso DR-BA."
-              ]
+              "texto": "Identificar legislação, normas e notas técnicas aplicáveis ao ambiente laboral."
+            },
+            {
+              "tipo": "Capacidade Técnica",
+              "dominio": "Cognitivo/Psicomotor",
+              "texto": "Planejar ações educativas, treinamentos, palestras e campanhas de SST."
+            },
+            {
+              "tipo": "Capacidade Técnica",
+              "dominio": "Cognitivo/Psicomotor",
+              "texto": "Organizar registros e divulgação de informações de saúde e segurança do trabalho."
             }
           ],
           "conhecimentos": [
-            "Conteúdos formativos conforme organização interna da UC no Plano de Curso DR-BA."
+            "Ações educativas em Segurança e Saúde no Trabalho",
+            "Tipos de ações educativas: SIPAT, palestras, treinamentos, DDS, seminários e campanhas",
+            "Treinamentos inicial, periódico e eventual",
+            "Programas de capacitação conforme NR 01",
+            "Requisitos e modalidades de capacitação: presencial, semipresencial e EAD",
+            "Aproveitamento de treinamentos",
+            "Divulgação de informações de saúde e segurança do trabalho",
+            "Registros de ações educativas"
           ],
           "socioemocionais": [],
           "ambientes": {},
@@ -9010,20 +9098,43 @@ const SEGURANCA = {
           "ch": 24,
           "cht": 0,
           "chp": 24,
-          "objetivo": "",
+          "objetivo": "Propiciar o desenvolvimento das capacidades básicas e socioemocionais requeridas para compreender as aplicações das tecnologias habilitadoras para a indústria 4.0 e inserir-se em um contexto de inovação.",
           "padroes": [],
           "capacidades": [
             {
-              "tipo": "Capacidade do Plano DR-BA",
-              "dominio": "Cognitivo/Psicomotor",
-              "texto": "Reconhecer tecnologias habilitadoras, inovação e impactos da Indústria 4.0.",
-              "conhecimentos": [
-                "Conteúdos formativos conforme organização interna da UC no Plano de Curso DR-BA."
-              ]
+              "tipo": "Capacidade Básica",
+              "dominio": "Cognitivo",
+              "texto": "Reconhecer os marcos que alavancaram as revoluções industriais e seus impactos nas atividades de produção e no desenvolvimento do indivíduo."
+            },
+            {
+              "tipo": "Capacidade Básica",
+              "dominio": "Cognitivo",
+              "texto": "Reconhecer as tecnologias habilitadoras para indústria 4.0."
+            },
+            {
+              "tipo": "Capacidade Básica",
+              "dominio": "Cognitivo",
+              "texto": "Correlacionar cada tecnologia habilitadora com impacto gerado em sua aplicação, em contexto real ou simulado."
+            },
+            {
+              "tipo": "Capacidade Básica",
+              "dominio": "Cognitivo",
+              "texto": "Compreender a inovação como ferramenta de melhoria nos processos de trabalho e resolução de problemas."
             }
           ],
           "conhecimentos": [
-            "Conteúdos formativos conforme organização interna da UC no Plano de Curso DR-BA."
+            "Visão sistêmica: elementos da organização",
+            "Articulação entre elementos da organização",
+            "Pensamento sistêmico",
+            "Comportamento inovador",
+            "Postura investigativa, mentalidade de crescimento, curiosidade e motivação pessoal",
+            "Raciocínio lógico: dedução, indução e abdução",
+            "Inovação: definição, características, importância, tipos e impactos",
+            "Inovação incremental e disruptiva",
+            "Tecnologias habilitadoras: definições e aplicações",
+            "Big Data",
+            "Robótica avançada",
+            "Segurança digital"
           ],
           "socioemocionais": [],
           "ambientes": {},
@@ -12596,5 +12707,3 @@ const SEGURANCA = {
     }
   ]
 };
-
-if (typeof window !== "undefined") { window.SEGURANCA = SEGURANCA; }
