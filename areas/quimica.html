@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Segurança do Trabalho DR-BA — Hub MQCT · SENAI Bahia</title>
+<title>Química — Itinerário Nacional — Hub MQCT · SENAI Bahia</title>
 <link rel="stylesheet" href="../assets/mindmap.css">
 <script src="../assets/mindmap.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script src="../assets/slides-v2.js"></script>
 <style>
   :root {
-    --cor:#E65100; --cor-dark:#B45309; --cor-light:#FFF3EB; --cor-muted:#FED7AA;
-    --bg:#FAFAF8; --bg-card:#FFFFFF; --text:#1F1308; --text-2:#7C2D12;
-    --text-3:#9A3412; --border:#FDBA74; --shadow:0 2px 12px rgba(230,81,0,.12);
+    --cor:#00695C; --cor-dark:#004D40; --cor-light:#E0F2F1; --cor-muted:#B2DFDB;
+    --bg:#F4FAF9; --bg-card:#FFFFFF; --text:#10201D; --text-2:#004D40;
+    --text-3:#00695C; --border:#80CBC4; --shadow:0 2px 12px rgba(0,105,92,.12);
     --radius:12px; --radius-sm:8px;
-    --font-head:'Georgia','Times New Roman',serif;
+    --font-head:'Segoe UI',Arial,sans-serif;
     --font-body:'Segoe UI',system-ui,sans-serif;
     --tr:.2s ease;
   }
@@ -34,8 +34,8 @@
   .topbar-title{font-size:14px;font-weight:600;color:var(--text-2)}
   .theme-btn{background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;font-size:16px;color:var(--text-2);transition:all var(--tr)}
   .theme-btn:hover{background:var(--cor-light);border-color:var(--cor)}
-  .hero{background:linear-gradient(135deg,var(--cor) 0%,var(--cor-dark) 60%,#7A4A08 100%);color:#fff;padding:48px 32px 40px;position:relative;overflow:hidden}
-  .hero::before{content:'🦺';position:absolute;right:40px;top:20px;font-size:120px;opacity:.12;line-height:1;pointer-events:none;user-select:none}
+  .hero{background:linear-gradient(135deg,var(--cor) 0%,var(--cor-dark) 60%,#00352B 100%);color:#fff;padding:48px 32px 40px;position:relative;overflow:hidden}
+  .hero::before{content:'⚗️';position:absolute;right:40px;top:20px;font-size:120px;opacity:.12;line-height:1;pointer-events:none;user-select:none}
   .hero-tag{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600;letter-spacing:.05em;margin-bottom:16px;text-transform:uppercase}
   .hero h1{font-family:var(--font-head);font-size:clamp(28px,5vw,48px);font-weight:700;line-height:1.1;margin-bottom:10px}
   .hero-sub{font-size:15px;opacity:.85;margin-bottom:24px;max-width:560px}
@@ -122,42 +122,47 @@
 <div class="topbar">
   <div class="topbar-left">
     <button class="back-btn" onclick="voltarHub()">← Hub Principal</button>
-    <span class="topbar-title">🦺 Segurança do Trabalho · DR-BA</span>
+    <span class="topbar-title">⚗️ Química — Itinerário Nacional</span>
   </div>
   <button class="theme-btn" onclick="toggleTheme()" title="Alternar tema">🌙</button>
 </div>
 
 <div class="hero">
-  <div class="hero-tag">🦺 MQCT · SENAI Bahia</div>
-  <h1>Segurança do Trabalho · Plano DR-BA</h1>
-  <p class="hero-sub">Materiais didáticos alinhados ao Plano de Curso SENAI DR-BA · 1200h · 3 Módulos</p>
-  <div class="hero-badges"><span class="badge">Técnico em Segurança do Trabalho</span><span class="badge ch">⏱ 1200h</span><span class="badge">CBO 3516-05</span><span class="badge">Plano DR-BA</span></div>
+  <div class="hero-tag">⚗️ MQCT · SENAI Bahia</div>
+  <h1>Química — Itinerário Nacional</h1>
+  <p class="hero-sub">Materiais didáticos alinhados ao Itinerário Nacional SENAI · Versão 2025.1</p>
+  <div class="hero-badges"><span class="badge">Técnico em Química</span><span class="badge ch">⏱ 1200h</span><span class="badge">CBO 3111-05</span><span class="badge">Itinerário Nacional</span></div>
 </div>
 
 <div class="layout">
   <aside class="sidebar">
-    <div class="sidebar-title">Módulos e UCs · Plano DR-BA</div>
+    <div class="sidebar-title">Módulos e UCs — Itinerário Nacional</div>
     
-    <div class="uc-group-header">📦 MÓDULO I <span class="ch-tag">300h</span></div>
-    <div class="uc-item" onclick="setUC('M1_UC1','Introdução a Tecnologia da Informação e Comunicação','Empregar os princípios, padrões e normas técnicas de comunicação e TIC no ambiente de trabalho.',0,40,'MÓDULO I')"><span>UC1 — Introdução a TIC</span><span class="ch-tag">40h</span></div>
-    <div class="uc-item" onclick="setUC('M1_UC2','Criatividade e Ideação em Projetos','Analisar oportunidades, gargalos e tendências para ideação de soluções inovadoras.',0,18,'MÓDULO I')"><span>UC2 — Criatividade e Ideação em Projetos</span><span class="ch-tag">18h</span></div>
-    <div class="uc-item" onclick="setUC('M1_UC3','Comunicação e Informação aplicadas à SST','Interpretar dados e informações de textos técnicos relacionados à Saúde e Segurança do Trabalho.',0,42,'MÓDULO I')"><span>UC3 — Comunicação e Informação em SST</span><span class="ch-tag">42h</span></div>
-    <div class="uc-item" onclick="setUC('M1_UC4','Identificar e Avaliar os Riscos Ocupacionais','Identificar e avaliar riscos físicos, químicos, biológicos, ergonômicos e de acidentes nos ambientes de trabalho.',48,72,'MÓDULO I')"><span>UC4 — Identificar e Avaliar Riscos Ocupacionais</span><span class="ch-tag">120h</span></div>
-    <div class="uc-item" onclick="setUC('M1_UC5','Higiene Ocupacional','Reconhecer os agentes de risco à saúde dos trabalhadores e propor medidas de controle.',0,80,'MÓDULO I')"><span>UC5 — Higiene Ocupacional</span><span class="ch-tag">80h</span></div>
+    <div class="uc-group-header">📦 Módulo Básico <span class="ch-tag">112h</span></div>
+    <div class="uc-item" onclick="setUC('MB_UC1','Sustentabilidade nos Processos Industriais','Reconhecer os princípios da economia circular nos processos industriais.',3,5,'Módulo Básico')"><span>UC1 — Sustentabilidade nos Processos Industriais</span><span class="ch-tag">8h</span></div>
+    <div class="uc-item" onclick="setUC('MB_UC2','Introdução à Indústria 4.0','Reconhecer os marcos das revoluções industriais e seus impactos nas atividades de produção.',10,14,'Módulo Básico')"><span>UC2 — Introdução à Indústria 4.0</span><span class="ch-tag">24h</span></div>
+    <div class="uc-item" onclick="setUC('MB_UC3','Introdução à Qualidade e Produtividade','Identificar ferramentas da qualidade aplicadas nos processos industriais.',6,10,'Módulo Básico')"><span>UC3 — Introdução à Qualidade e Produtividade</span><span class="ch-tag">16h</span></div>
+    <div class="uc-item" onclick="setUC('MB_UC4','Segurança Química e Ambiental','Reconhecer os riscos químicos e aplicar as normas de segurança em laboratórios e processos industriais.',14,22,'Módulo Básico')"><span>UC4 — Segurança Química e Ambiental</span><span class="ch-tag">36h</span></div>
+    <div class="uc-item" onclick="setUC('MB_UC5','Comunicação e Informação em Química','Empregar os princípios de comunicação técnica aplicados à área química.',10,18,'Módulo Básico')"><span>UC5 — Comunicação e Informação em Química</span><span class="ch-tag">28h</span></div>
     <div class="sidebar-divider"></div>
-    <div class="uc-group-header">📦 MÓDULO II <span class="ch-tag">300h</span></div>
-    <div class="uc-item" onclick="setUC('M2_UC1','Ergonomia e Saúde do Trabalhador','Aplicar os princípios de ergonomia nos ambientes de trabalho para prevenção de doenças ocupacionais.',32,48,'MÓDULO II')"><span>UC1 — Ergonomia e Saúde do Trabalhador</span><span class="ch-tag">80h</span></div>
-    <div class="uc-item" onclick="setUC('M2_UC2','Implementar e Monitorar Medidas de Controle','Implementar e monitorar as medidas de controle de riscos e elaborar o GRO/PGR.',60,90,'MÓDULO II')"><span>UC2 — Implementar e Monitorar Medidas de Controle</span><span class="ch-tag">150h</span></div>
-    <div class="uc-item" onclick="setUC('M2_UC3','Gestão de Emergências em SST','Gerenciar situações de emergência aplicando os procedimentos dos planos de emergência.',28,42,'MÓDULO II')"><span>UC3 — Gestão de Emergências em SST</span><span class="ch-tag">70h</span></div>
+    <div class="uc-group-header">📦 Módulo Específico I — Executar Análises <span class="ch-tag">400h</span></div>
+    <div class="uc-item" onclick="setUC('ME1_UC1','Técnicas Laboratoriais','Executar técnicas laboratoriais básicas para análises químicas, físicas e microbiológicas.',60,90,'Módulo Específico I')"><span>UC1 — Técnicas Laboratoriais</span><span class="ch-tag">150h</span></div>
+    <div class="uc-item" onclick="setUC('ME1_UC2','Análises Físico-Químicas e Instrumentais','Realizar análises físico-químicas e instrumentais seguindo normas técnicas e procedimentos de qualidade.',60,90,'Módulo Específico I')"><span>UC2 — Análises Físico-Químicas e Instrumentais</span><span class="ch-tag">150h</span></div>
+    <div class="uc-item" onclick="setUC('ME1_UC3','Análises Microbiológicas','Realizar análises microbiológicas seguindo procedimentos de qualidade e biossegurança.',40,60,'Módulo Específico I')"><span>UC3 — Análises Microbiológicas</span><span class="ch-tag">100h</span></div>
     <div class="sidebar-divider"></div>
-    <div class="uc-group-header">📦 MÓDULO III <span class="ch-tag">300h</span></div>
-    <div class="uc-item" onclick="setUC('M3_UC1','Programas e Documentos de SST','Elaborar e implementar os programas e documentos obrigatórios de SST: PGR, PCMSO, LTCAT, PPRA.',44,66,'MÓDULO III')"><span>UC1 — Programas e Documentos de SST</span><span class="ch-tag">110h</span></div>
-    <div class="uc-item" onclick="setUC('M3_UC2','Auditoria em SST','Planejar e executar auditorias em saúde e segurança do trabalho.',32,48,'MÓDULO III')"><span>UC2 — Auditoria em SST</span><span class="ch-tag">80h</span></div>
-    <div class="uc-item" onclick="setUC('M3_UC3','Gestão de SST','Implementar sistemas de gestão de SST com base nas normas OHSAS 18001 e ISO 45001.',44,66,'MÓDULO III')"><span>UC3 — Gestão de SST</span><span class="ch-tag">110h</span></div>
+    <div class="uc-group-header">📦 Módulo Específico II — Operar Processos <span class="ch-tag">380h</span></div>
+    <div class="uc-item" onclick="setUC('ME2_UC1','Processos Industriais Químicos','Operar processos industriais químicos seguindo procedimentos técnicos e de segurança.',60,90,'Módulo Específico II')"><span>UC1 — Processos Industriais Químicos</span><span class="ch-tag">150h</span></div>
+    <div class="uc-item" onclick="setUC('ME2_UC2','Controle de Qualidade em Processos Químicos','Aplicar ferramentas de controle de qualidade nos processos químicos industriais.',48,72,'Módulo Específico II')"><span>UC2 — Controle de Qualidade em Processos Químicos</span><span class="ch-tag">120h</span></div>
+    <div class="uc-item" onclick="setUC('ME2_UC3','Tratamento de Efluentes e Resíduos Químicos','Aplicar técnicas de tratamento de efluentes e gestão de resíduos químicos.',44,66,'Módulo Específico II')"><span>UC3 — Tratamento de Efluentes e Resíduos</span><span class="ch-tag">110h</span></div>
+    <div class="sidebar-divider"></div>
+    <div class="uc-group-header">📦 Módulo Específico III — Desenvolver Métodos <span class="ch-tag">308h</span></div>
+    <div class="uc-item" onclick="setUC('ME3_UC1','Desenvolvimento de Métodos Analíticos','Atuar no desenvolvimento e validação de métodos analíticos.',52,78,'Módulo Específico III')"><span>UC1 — Desenvolvimento de Métodos Analíticos</span><span class="ch-tag">130h</span></div>
+    <div class="uc-item" onclick="setUC('ME3_UC2','Desenvolvimento de Produtos e Processos Químicos','Atuar no desenvolvimento de produtos e processos químicos inovadores.',44,66,'Módulo Específico III')"><span>UC2 — Desenvolvimento de Produtos e Processos</span><span class="ch-tag">110h</span></div>
+    <div class="uc-item" onclick="setUC('ME3_UC3','Gestão da Qualidade em Química','Implementar sistemas de gestão da qualidade em laboratórios e processos químicos (ISO 17025, BPL).',28,40,'Módulo Específico III')"><span>UC3 — Gestão da Qualidade em Química</span><span class="ch-tag">68h</span></div>
     <div class="sidebar-divider"></div>
     <div class="uc-group-header">⚙️ Competências Transversais</div>
     <div class="uc-item" onclick="setUC('SOCIO','Competências Socioemocionais','Desenvolvimento de competências socioemocionais transversais ao curso.',0,0,'Transversal')"><span>Competências Socioemocionais</span><span class="ch-tag">Transv.</span></div>
-    <div class="uc-item" onclick="setUC('IA','IA Aplicada à SST','Utilizar ferramentas de inteligência artificial como apoio às atividades de segurança do trabalho.',0,0,'Transversal')"><span>IA Aplicada à SST</span><span class="ch-tag">Transv.</span></div>
+    <div class="uc-item" onclick="setUC('IA','IA Aplicada à Química','Utilizar ferramentas de inteligência artificial como apoio às atividades laboratoriais e de processos químicos.',0,0,'Transversal')"><span>IA Aplicada à Química</span><span class="ch-tag">Transv.</span></div>
 
   </aside>
 
@@ -168,8 +173,8 @@
       <div class="uc-meta" id="uc-meta"></div>
     </div>
     <div class="comp-section">
-      <h3>📋 Perfil de Competências — Técnico em Segurança do Trabalho (DR-BA)</h3>
-      <div class="comp-tags"><span class="comp-tag">Identificar Riscos Ocupacionais</span><span class="comp-tag">Higiene Ocupacional</span><span class="comp-tag">Ergonomia</span><span class="comp-tag">Medidas de Controle</span><span class="comp-tag">Gestão de Emergências</span><span class="comp-tag">Programas de SST</span><span class="comp-tag">Auditoria em SST</span><span class="comp-tag">Gestão de SST (ISO 45001)</span><span class="comp-tag socio">Liderança</span><span class="comp-tag socio">Ética</span><span class="comp-tag ia">IA na SST</span></div>
+      <h3>📋 Perfil de Competências — Técnico em Química (Itinerário Nacional)</h3>
+      <div class="comp-tags"><span class="comp-tag">Executar Análises Químicas</span><span class="comp-tag">Análises Físico-Químicas e Instrumentais</span><span class="comp-tag">Análises Microbiológicas</span><span class="comp-tag">Operar Processos Industriais</span><span class="comp-tag">Controle de Qualidade</span><span class="comp-tag">Tratamento de Efluentes</span><span class="comp-tag">Desenvolvimento de Métodos</span><span class="comp-tag">Segurança Química</span><span class="comp-tag socio">Ética</span><span class="comp-tag socio">Liderança</span><span class="comp-tag ia">IA na Química</span></div>
     </div>
     <div class="section-title">Gerar Material Didático</div>
     <div class="materials-grid">
@@ -187,7 +192,7 @@
 </div>
 
 <!-- MODAIS -->
-<div class="modal-overlay" id="modal-plano"><div class="modal"><div class="modal-header"><h3>📋 Plano de Aula — Padrão SENAI</h3><button class="modal-close" onclick="closeModal('plano')">✕</button></div><div class="modal-body"><div class="form-row"><div class="form-group"><label>Docente</label><input type="text" id="pa-docente" placeholder="Nome completo do docente" /></div><div class="form-group"><label>Data</label><input type="date" id="pa-data" /></div></div><div class="form-group"><label>Unidade Curricular</label><input type="text" id="pa-uc" placeholder="Ex: UC selecionada na sidebar" /></div><div class="form-group"><label>Turma / Período</label><input type="text" id="pa-turma" placeholder="Ex: Técnico em SST — 2025.1" /></div><div class="ch-info-box" id="pa-ch-info"></div><div class="form-row-3"><div class="form-group"><label>CH Teórica (h)</label><input type="number" id="pa-cht" value="16" min="0" max="200" oninput="calcAulas()" /></div><div class="form-group"><label>CH Prática (h)</label><input type="number" id="pa-chp" value="24" min="0" max="200" oninput="calcAulas()" /></div><div class="form-group"><label>CH por Aula</label><select id="pa-chpordia" onchange="calcAulas()"><option value="4">4h</option><option value="3">3h</option><option value="2">2h</option></select></div></div><div class="form-row"><div class="form-group"><label>Modelo</label><select id="pa-modelo"><option value="exemplo" selected>SENAI simples</option><option value="detalhado">Detalhado</option></select></div><div class="form-group"><label>Qtd aulas (opcional)</label><input type="number" id="pa-aulas-custom" placeholder="Auto" min="1" max="60" oninput="calcAulas()" /></div></div><div class="ch-info-box visible" id="pa-aulas-info"><strong id="pa-aulas-txt">Calculando...</strong><span id="pa-aulas-sub"></span></div><div class="form-group"><label>Observações</label><textarea id="pa-obs" placeholder="Recursos, necessidades especiais..."></textarea></div><button class="btn-primary" id="pa-btn" onclick="gerarPlano()">✨ Gerar Plano de Aula</button><div class="loading" id="pa-loading"><div class="spinner"></div> Gerando com IA Gemini...</div><div class="output-area" id="pa-output"></div><div class="btn-row" id="pa-actions" style="display:none"><button class="btn-secondary" onclick="downloadDoc('pa-output','Plano_de_Aula')">⬇ Baixar .doc</button><button class="btn-secondary" onclick="copiarTexto('pa-output')">📋 Copiar</button></div></div></div></div>
+<div class="modal-overlay" id="modal-plano"><div class="modal"><div class="modal-header"><h3>📋 Plano de Aula — Padrão SENAI</h3><button class="modal-close" onclick="closeModal('plano')">✕</button></div><div class="modal-body"><div class="form-row"><div class="form-group"><label>Docente</label><input type="text" id="pa-docente" placeholder="Nome completo do docente" /></div><div class="form-group"><label>Data</label><input type="date" id="pa-data" /></div></div><div class="form-group"><label>Unidade Curricular</label><input type="text" id="pa-uc" placeholder="Ex: UC selecionada na sidebar" /></div><div class="form-group"><label>Turma / Período</label><input type="text" id="pa-turma" placeholder="Ex: Técnico em Química — 2025.1" /></div><div class="ch-info-box" id="pa-ch-info"></div><div class="form-row-3"><div class="form-group"><label>CH Teórica (h)</label><input type="number" id="pa-cht" value="16" min="0" max="200" oninput="calcAulas()" /></div><div class="form-group"><label>CH Prática (h)</label><input type="number" id="pa-chp" value="24" min="0" max="200" oninput="calcAulas()" /></div><div class="form-group"><label>CH por Aula</label><select id="pa-chpordia" onchange="calcAulas()"><option value="4">4h</option><option value="3">3h</option><option value="2">2h</option></select></div></div><div class="form-row"><div class="form-group"><label>Modelo</label><select id="pa-modelo"><option value="exemplo" selected>SENAI simples</option><option value="detalhado">Detalhado</option></select></div><div class="form-group"><label>Qtd aulas (opcional)</label><input type="number" id="pa-aulas-custom" placeholder="Auto" min="1" max="60" oninput="calcAulas()" /></div></div><div class="ch-info-box visible" id="pa-aulas-info"><strong id="pa-aulas-txt">Calculando...</strong><span id="pa-aulas-sub"></span></div><div class="form-group"><label>Observações</label><textarea id="pa-obs" placeholder="Recursos, necessidades especiais..."></textarea></div><button class="btn-primary" id="pa-btn" onclick="gerarPlano()">✨ Gerar Plano de Aula</button><div class="loading" id="pa-loading"><div class="spinner"></div> Gerando com IA Gemini...</div><div class="output-area" id="pa-output"></div><div class="btn-row" id="pa-actions" style="display:none"><button class="btn-secondary" onclick="downloadDoc('pa-output','Plano_de_Aula')">⬇ Baixar .doc</button><button class="btn-secondary" onclick="copiarTexto('pa-output')">📋 Copiar</button></div></div></div></div>
 
 <div class="modal-overlay" id="modal-sa"><div class="modal"><div class="modal-header"><h3>🎯 Situação de Aprendizagem</h3><button class="modal-close" onclick="closeModal('sa')">✕</button></div><div class="modal-body"><div class="form-group"><label>Unidade Curricular</label><input type="text" id="sa-uc" placeholder="Ex: UC selecionada" /></div><div class="form-group"><label>Contexto / Cenário (opcional)</label><textarea id="sa-ctx" placeholder="Ex: Empresa recebe relatório de não-conformidade..."></textarea></div><button class="btn-primary" id="sa-btn" onclick="gerarSA()">✨ Gerar SA</button><div class="loading" id="sa-loading"><div class="spinner"></div> Gerando...</div><div class="output-area" id="sa-output"></div><div class="btn-row" id="sa-actions" style="display:none"><button class="btn-secondary" onclick="downloadDoc('sa-output','Situacao_de_Aprendizagem')">⬇ Baixar .doc</button><button class="btn-secondary" onclick="copiarTexto('sa-output')">📋 Copiar</button></div></div></div></div>
 
@@ -207,21 +212,21 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="../data/seguranca-drba.js"></script>
+<script src="../data/quimica-in.js"></script>
 <script>
 const PROXY_URL = 'https://hub-mqct-proxy.vercel.app/api/gemini';
-const AREA_NOME = 'Segurança do Trabalho · Plano DR-BA';
-const CURSO     = 'Técnico em Segurança do Trabalho — Plano de Curso SENAI DR-BA — 1200h';
+const AREA_NOME = 'Química — Itinerário Nacional';
+const CURSO     = 'Técnico em Química — Itinerário Nacional SENAI — 1200h';
 let ucAtual = {id:'',nome:'',desc:'',cht:0,chp:0,modulo:''};
 
-window.areaDados = { nome: 'Segurança do Trabalho', cor: '#E65100' };
+window.areaDados = { nome: 'Química', cor: '#00695C' };
 
 function toggleTheme(){
   const dark = document.body.dataset.theme==='dark';
   document.body.dataset.theme = dark?'light':'dark';
   document.querySelector('.theme-btn').textContent = dark?'🌙':'☀️';
 }
-function voltarHub(){ window.location.href='seletor-seguranca.html'; }
+function voltarHub(){ window.location.href='seletor-quimica.html'; }
 
 function calcAulas(){
   const cht=parseInt(document.getElementById('pa-cht').value)||0;
@@ -290,13 +295,13 @@ function showOutput(prefix,text){const o=document.getElementById(prefix+'-output
 function downloadDoc(outputId,filename){const content=document.getElementById(outputId)?.textContent||'';if(!content.trim()){showToast('Nenhum conteúdo.','error');return;}const blob=new Blob(['\ufeff'+content],{type:'application/msword'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${filename}_${new Date().toISOString().slice(0,10)}.doc`;a.click();showToast('Arquivo .doc baixado!');}
 function copiarTexto(outputId){const text=document.getElementById(outputId)?.textContent||'';navigator.clipboard.writeText(text).then(()=>showToast('Copiado!'));}
 
-const MSEP_BASE=`Você é especialista em educação profissional SENAI com amplo conhecimento do Plano de Curso SENAI DR-BA de Segurança do Trabalho e da MSEP. Curso: Técnico em Segurança do Trabalho — Plano de Curso SENAI DR-BA — 1200h. 3 módulos. REGRAS MSEP: use exclusivamente a base oficial fechada do Plano DR-BA; não invente CHAs; contextualize com situações reais de SST: NRs, FUNDACENTRO/NHO, PCMSO, PGR, LTCAT, inspeções, auditorias, ISO 45001.`;
+const MSEP_BASE=`Você é especialista em educação profissional SENAI com amplo conhecimento do Itinerário Nacional de Química (versão 2025.1) e da MSEP. Curso: Técnico em Química — Itinerário Nacional SENAI — 1200h. Funções: F1 — Executar análises; F2 — Operar processos; F3 — Desenvolver métodos e produtos. REGRAS MSEP: use exclusivamente a base oficial fechada; não invente CHAs; contextualize com situações reais de laboratórios industriais, controle de qualidade, segurança química, ABNT NBR, FDS/NBR 14725, INMETRO, ANVISA.`;
 
 
 function normalizeTxt(v){return String(v||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();}
 function getAllOfficialUCs(){
-  try{if(typeof SEGURANCA_DRBA==='undefined'||!SEGURANCA_DRBA.modulos)return[];
-  return SEGURANCA_DRBA.modulos.flatMap(m=>(m.ucs||[]).map(uc=>({...uc,modulo:m.nome,moduloId:m.id})));}catch(e){return[];}
+  try{if(typeof QUIMICA_IN==='undefined'||!QUIMICA_IN.modulos)return[];
+  return QUIMICA_IN.modulos.flatMap(m=>(m.ucs||[]).map(uc=>({...uc,modulo:m.nome,moduloId:m.id})));}catch(e){return[];}
 }
 function findOfficialUC(input){
   const alvo=normalizeTxt(input+' '+(ucAtual?.nome||'')+' '+(ucAtual?.id||''));
@@ -318,33 +323,29 @@ function listify(v){
 function buildOfficialContext(ucInput){
   const uc=findOfficialUC(ucInput||'');
   if(!uc)return '
-BASE OFICIAL: UC não localizada no Plano DR-BA. Use somente os dados do formulário.';
+BASE OFICIAL: UC não localizada no Itinerário Nacional de Química. Use somente os dados do formulário.';
   return `
-BASE OFICIAL FECHADA DR-BA — USE EXCLUSIVAMENTE ESTES DADOS
+BASE OFICIAL FECHADA (Itinerário Nacional Química) — USE EXCLUSIVAMENTE ESTES DADOS
 Módulo: ${uc.modulo}
 UC oficial: ${uc.codigo||uc.id} — ${uc.nome}
 CH oficial: ${uc.ch}h
-Objetivo: ${uc.objetivo||''}
 
 Capacidades oficiais:
 ${listify(uc.capacidades)}
 
-Conhecimentos oficiais:
+Conhecimentos vinculados:
 ${listify(uc.conhecimentos)}
 
-Capacidades socioemocionais:
-${listify(uc.socioemocionais||[])}
-
-Ambientes pedagógicos:
-${listify(uc.ambientes||[])}
+Padrões de desempenho:
+${listify(uc.padroes||[])}
 
 REGRA CRÍTICA: não invente CHAs fora desta base.`;
 }
 
 
 function getCtxTransversal(ucId){
-  if(ucId==='SOCIO')return `\nALERT: COMPETÊNCIA SOCIOEMOCIONAL transversal. Contextualize com situações reais de SST (DDS, inspeções, reuniões de SIPAT, brigadas, laudos técnicos). Competências: Aprendizagem Ativa, Empreendedorismo, Inteligência Emocional, Liderança, Pensamento Crítico, Resolução de Problemas.`;
-  if(ucId==='IA')return `\nALERT: COMPETÊNCIA DE IA transversal. Contextualize com aplicações reais de IA em SST: análise preditiva de acidentes, reconhecimento de EPIs por visão computacional, GenAI para relatórios de inspeção e auditorias, análise de dados de SESMT.`;
+  if(ucId==='SOCIO')return `\nALERT: COMPETÊNCIA SOCIOEMOCIONAL transversal. Contextualize com situações reais de laboratórios e processos químicos (trabalho em equipe, comunicação técnica, ética na manipulação de substâncias, responsabilidade socioambiental). Competências: Aprendizagem Ativa, Criatividade, Ética, Inteligência Emocional, Liderança, Pensamento Crítico.`;
+  if(ucId==='IA')return `\nALERT: COMPETÊNCIA DE IA transversal. Contextualize com aplicações reais de IA na química: análise de dados laboratoriais, apoio a relatórios técnicos, revisão de POPs, controle de qualidade com machine learning, otimização de processos, GenAI para laudos e fichas técnicas.`;
   return buildOfficialContext(ucId||'');
 }
 
@@ -411,7 +412,7 @@ async function gerarMapa(){
   const mount=document.getElementById('mm-mount');
   if(!oficial){showToast('UC não encontrada na base oficial.','error');return;}
   const data=MindMap.fromOfficialUC(oficial);
-  const accent=getComputedStyle(document.documentElement).getPropertyValue('--cor').trim()||'#E65100';
+  const accent=getComputedStyle(document.documentElement).getPropertyValue('--cor').trim()||'#00695C';
   mount.style.display='block';
   MindMap.render('mm-mount',data,{accent,subtitle:oficial.modulo||''});
 }
@@ -438,16 +439,16 @@ function renderCacaPNG(grade,colocadas,ucNome){
   const ROWS=grade.length,COLS=grade[0].length;
   canvas.width=COLS*CELL+PAD*2;canvas.height=HEADER+ROWS*CELL+PAD+FOOTER;
   const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle='#E65100';ctx.fillRect(0,0,canvas.width,HEADER);
+  ctx.fillStyle='#00695C';ctx.fillRect(0,0,canvas.width,HEADER);
   ctx.fillStyle='#fff';ctx.font='bold 15px Arial';ctx.textAlign='center';
-  ctx.fillText('🦺 SENAI BAHIA — Caça-Palavras: Segurança do Trabalho',canvas.width/2,22);
+  ctx.fillText('⚗️ SENAI BAHIA — Caça-Palavras: Química',canvas.width/2,22);
   ctx.font='12px Arial';ctx.fillText(ucNome.length>70?ucNome.slice(0,70)+'…':ucNome,canvas.width/2,44);
-  ctx.fillStyle='#1F1308';ctx.font='bold 14px Courier New';ctx.textAlign='center';
+  ctx.fillStyle='#10201D';ctx.font='bold 14px Courier New';ctx.textAlign='center';
   for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)ctx.fillText(grade[r][c],PAD+c*CELL+CELL/2,HEADER+r*CELL+CELL*0.72);
-  ctx.strokeStyle='#FED7AA';ctx.lineWidth=0.5;
+  ctx.strokeStyle='#B2DFDB';ctx.lineWidth=0.5;
   for(let r=0;r<=ROWS;r++){ctx.beginPath();ctx.moveTo(PAD,HEADER+r*CELL);ctx.lineTo(PAD+COLS*CELL,HEADER+r*CELL);ctx.stroke();}
   for(let c=0;c<=COLS;c++){ctx.beginPath();ctx.moveTo(PAD+c*CELL,HEADER);ctx.lineTo(PAD+c*CELL,HEADER+ROWS*CELL);ctx.stroke();}
-  const baseY=HEADER+ROWS*CELL+PAD;ctx.fillStyle='#1F1308';ctx.font='bold 11px Arial';ctx.textAlign='left';
+  const baseY=HEADER+ROWS*CELL+PAD;ctx.fillStyle='#10201D';ctx.font='bold 11px Arial';ctx.textAlign='left';
   ctx.fillText('Encontre as palavras:',PAD,baseY);ctx.font='10px Arial';
   colocadas.forEach((p,i)=>{const col=i%4,row=Math.floor(i/4);ctx.fillText('▸ '+p.toUpperCase(),PAD+col*(canvas.width-PAD*2)/4,baseY+16+row*22);});
   canvas.style.display='block';
@@ -480,7 +481,7 @@ async function gerarAvaliacao(){
   try{
     const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
 Gere AVALIAÇÃO/PROVA: UC: ${uc} | ${obj} objetivas (A/B/C/D) | ${disc} discursivas | Nível: ${nivel} | Total: 10 pts
-Inclua: cabeçalho, instruções, questões, gabarito. Baseie nas normas: NRs aplicáveis, ABNT NBR, FUNDACENTRO/NHO, legislação previdenciária e trabalhista.`;
+Inclua: cabeçalho, instruções, questões, gabarito. Baseie nas normas: ABNT NBR, FDS/NBR 14725, INMETRO, ANVISA e legislação ambiental aplicável à química.`;
     const text=await callGemini(prompt);showOutput('av',text);
   }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
   setLoading('av',false);
@@ -491,7 +492,7 @@ async function gerarCustom(){
   if(!desc.trim()){showToast('Descreva o material.','error');return;}
   setLoading('cu',true);
   try{
-    const prompt=`${MSEP_BASE}\nGere o seguinte MATERIAL DIDÁTICO personalizado: ${desc}\nMantenha alinhamento com o Plano de Curso SENAI DR-BA, MSEP e normas técnicas de SST.`;
+    const prompt=`${MSEP_BASE}\nGere o seguinte MATERIAL DIDÁTICO personalizado: ${desc}\nMantenha alinhamento com o Itinerário Nacional SENAI, MSEP e normas técnicas da área de Química.`;
     const text=await callGemini(prompt);showOutput('cu',text);
   }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
   setLoading('cu',false);

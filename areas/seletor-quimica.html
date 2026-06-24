@@ -18,17 +18,14 @@
   .hero p{font-size:15px;opacity:.9;line-height:1.6;max-width:600px}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
   .card{background:#fff;border:2px solid var(--border);border-radius:16px;padding:28px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;transition:border-color .2s,box-shadow .2s}
-  .card:hover:not(.soon){border-color:var(--green);box-shadow:0 4px 20px rgba(0,105,92,.12)}
+  .card:hover{border-color:var(--green);box-shadow:0 4px 20px rgba(0,105,92,.12)}
   .icon{font-size:36px;margin-bottom:14px}
   .card h2{font-size:18px;font-weight:800;margin-bottom:8px;color:var(--green-d)}
   .card p{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:18px;flex:1}
   .badge{display:inline-flex;background:#dcfce7;color:#166534;border:1px solid #86efac;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:12px}
   .badge.orange{background:#FFF3E0;color:#E65100;border-color:#FFCC80}
-  .badge.grey{background:#f3f4f6;color:#6b7280;border-color:#d1d5db}
+  .badge.blue{background:#EFF6FF;color:#1d4ed8;border-color:#93c5fd}
   .cta{display:flex;justify-content:space-between;align-items:center;margin-top:auto;font-weight:900;color:var(--green);font-size:14px}
-  .soon{opacity:.65;cursor:not-allowed}
-  .soon h2{color:#6b7280}
-  .soon .cta{color:#6b7280}
   @media(max-width:640px){.grid{grid-template-columns:1fr}.hero{padding:26px}.hero h1{font-size:22px}}
 </style>
 </head>
@@ -41,16 +38,16 @@
     <p>Selecione se deseja gerar materiais pedagógicos a partir do Itinerário Nacional SENAI ou a partir do Plano de Curso oficial do SENAI DR-BA (2024_rev02).</p>
   </section>
   <div class="grid">
-    <div class="card soon">
+    <a class="card" href="quimica.html">
       <div class="icon">🇧🇷</div>
-      <span class="badge grey">Em Breve</span>
+      <span class="badge blue">Itinerário Nacional</span>
       <h2>Materiais do Itinerário Nacional</h2>
-      <p>Base nacional padronizada com CHAs oficiais do Itinerário Nacional SENAI para Química. Disponível em breve.</p>
-      <div class="cta"><span>Itinerário Nacional</span><span>🔒</span></div>
-    </div>
+      <p>Base nacional padronizada com CHAs oficiais do Itinerário Nacional SENAI para Química — Versão 2025.1. Cobre F1, F2 e F3 (análises, processos e desenvolvimento de métodos).</p>
+      <div class="cta"><span>Acessar Itinerário Nacional</span><span>→</span></div>
+    </a>
     <a class="card" href="quimica-drba.html">
       <div class="icon">🏛️</div>
-      <span class="badge orange">Disponível</span>
+      <span class="badge orange">Plano DR-BA</span>
       <h2>Materiais baseados no Plano de Curso DR-BA</h2>
       <p>Matriz curricular oficial do SENAI Bahia: 4 módulos, 28 UCs, 1.200h — com capacidades, conhecimentos, ambientes pedagógicos e recursos do Plano de Curso 2024_rev02.</p>
       <div class="cta"><span>Acessar Plano DR-BA</span><span>→</span></div>
