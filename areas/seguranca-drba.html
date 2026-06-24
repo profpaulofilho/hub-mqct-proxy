@@ -321,13 +321,21 @@ const MSEP_BASE=`Você é especialista em educação profissional SENAI com ampl
 function normalizeTxt(v){return String(v||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();}
 function getAllOfficialUCs(){
   try{
-    if(typeof SEGURANCA_DRBA==='undefined'||!SEGURANCA_DRBA.modulos)return[];
-    return SEGURANCA_DRBA.modulos.flatMap(m=>{
-      // Suporta tanto {id,nome} quanto {"modulo":"MÓDULO I"}
-      const nomeModulo = m.nome || m.modulo || '';
-      const idModulo   = m.id   || nomeModulo;
-      return (m.ucs||[]).map(uc=>({...uc, modulo:nomeModulo, moduloId:idModulo}));
+    if(typeof SEGURANCA_DRBA==='undefined')return[];
+    // Combina modulos (com CHAs) + matrizCurricular (lista completa)
+    const fromModulos = (SEGURANCA_DRBA.modulos||[]).flatMap(m=>{
+      const nome = m.nome||m.modulo||'';
+      return (m.ucs||[]).map(uc=>({...uc,modulo:nome,moduloId:m.id||nome}));
     });
+    const fromMatriz = (SEGURANCA_DRBA.matrizCurricular||[]).flatMap(m=>{
+      const nome = m.nome||m.modulo||'';
+      return (m.ucs||[]).map(uc=>({...uc,modulo:nome,moduloId:nome}));
+    });
+    // Mescla: prefere a versão com capacidades (fromModulos) quando existir
+    const map = new Map();
+    fromMatriz.forEach(uc=>map.set(uc.id,uc));
+    fromModulos.forEach(uc=>map.set(uc.id,uc)); // sobrescreve com versão rica
+    return Array.from(map.values());
   }catch(e){return[];}
 }
 function findOfficialUC(input){
