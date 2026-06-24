@@ -359,9 +359,15 @@ const MSEP_BASE=`Você é especialista em educação profissional SENAI com ampl
 function normalizeTxt(v){return String(v||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();}
 function getAllOfficialUCs(){
   try{
-    const BASE_DRBA = window.SEGURANCA_DRBA || window.SEGURANCA;
-    if(!BASE_DRBA)return[];
-    // Combina modulos (com CHAs) + matrizCurricular (lista completa)
+    const BASE_DRBA = window.SEGURANCA_DRBA || window.SEGURANCA || window.HUB_CURRICULUM_SEGURANCA_DRBA;
+    if(!BASE_DRBA){
+      console.error('[Segurança DR-BA] Base curricular não carregada. Verifique ../data/seguranca-drba.js e se ele expõe window.SEGURANCA_DRBA.');
+      return[];
+    }
+
+    // Combina módulos ricos + matriz curricular.
+    // Regra: se a matriz tiver só nome/CH e o módulo tiver capacidades/conhecimentos,
+    // mantém a versão rica do módulo.
     const fromModulos = (BASE_DRBA.modulos||[]).flatMap(m=>{
       const nome = m.nome||m.modulo||'';
       return (m.ucs||[]).map(uc=>({...uc,modulo:nome,moduloId:m.id||nome}));
@@ -370,18 +376,42 @@ function getAllOfficialUCs(){
       const nome = m.nome||m.modulo||'';
       return (m.ucs||[]).map(uc=>({...uc,modulo:nome,moduloId:nome}));
     });
-    // Mescla: prefere a versão com capacidades (fromModulos) quando existir
+
     const map = new Map();
-    fromMatriz.forEach(uc=>map.set(uc.id,uc));
-    fromModulos.forEach(uc=>map.set(uc.id,uc)); // sobrescreve com versão rica
+    function keyOf(uc){ return String(uc.id || (uc.moduloId+'_'+uc.codigo) || uc.nome || '').toUpperCase(); }
+    fromMatriz.forEach(uc=>map.set(keyOf(uc),uc));
+    fromModulos.forEach(uc=>map.set(keyOf(uc),uc));
     return Array.from(map.values());
-  }catch(e){return[];}
+  }catch(e){
+    console.error('[Segurança DR-BA] Erro lendo base curricular:', e);
+    return[];
+  }
 }
 function findOfficialUC(input){
-  const alvo=normalizeTxt(input+' '+(ucAtual?.nome||'')+' '+(ucAtual?.id||''));
-  const ucs=getAllOfficialUCs();if(!ucs.length)return null;
-  let f=ucs.find(uc=>alvo.includes(normalizeTxt(uc.nome))||normalizeTxt(uc.nome).includes(alvo));if(f)return f;
-  f=ucs.find(uc=>alvo.includes(normalizeTxt(uc.id||''))||alvo.includes(normalizeTxt(uc.codigo||'')));if(f)return f;
+  const raw = String(input || '').trim();
+  const atualId = String(ucAtual?.id || '').trim();
+  const atualNome = String(ucAtual?.nome || '').trim();
+  const alvo = normalizeTxt(raw+' '+atualNome+' '+atualId);
+  const ucs=getAllOfficialUCs();
+  if(!ucs.length)return null;
+
+  // 1) ID exato primeiro: M1_UC6, M2_UC1 etc.
+  let f=ucs.find(uc=>normalizeTxt(uc.id||'')===normalizeTxt(raw) || normalizeTxt(uc.id||'')===normalizeTxt(atualId));
+  if(f)return f;
+
+  // 2) Nome exato/contido.
+  f=ucs.find(uc=>alvo.includes(normalizeTxt(uc.nome))||normalizeTxt(uc.nome).includes(normalizeTxt(raw)));
+  if(f)return f;
+
+  // 3) Código + módulo, evitando confundir UC1 do módulo I com UC1 do módulo II.
+  const modMatch = (raw.match(/M\s*(\d+)/i)||atualId.match(/M\s*(\d+)/i)||[])[1];
+  const ucMatch = (raw.match(/UC\s*(\d+)/i)||atualId.match(/UC\s*(\d+)/i)||[])[1];
+  if(modMatch && ucMatch){
+    f=ucs.find(uc=>normalizeTxt(uc.id||'')===normalizeTxt('M'+modMatch+'_UC'+ucMatch));
+    if(f)return f;
+  }
+
+  // 4) Score textual.
   const words=alvo.split(/\s+/).filter(w=>w.length>4);
   const s=ucs.map(uc=>({uc,score:words.filter(w=>normalizeTxt(uc.nome).includes(w)).length})).sort((a,b)=>b.score-a.score);
   return s[0]?.score>0?s[0].uc:null;
