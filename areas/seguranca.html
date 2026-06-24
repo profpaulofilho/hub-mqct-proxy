@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="alternate icon" type="image/x-icon" href="../assets/favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Segurança do Trabalho — Hub MQCT · SENAI Bahia</title>
 <link rel="stylesheet" href="../assets/mindmap.css">
@@ -141,27 +142,76 @@
 <div class="layout">
   <aside class="sidebar">
     <div class="sidebar-title">Módulos e UCs — Itinerário Nacional</div>
-    
     <div class="uc-group-header">📦 Módulo Básico <span class="ch-tag">112h</span></div>
-    <div class="uc-item" onclick="setUC('MB_UC1','Sustentabilidade nos Processos Industriais','Reconhecer os princípios da economia circular nos processos industriais.',3,5,'Módulo Básico')"><span>UC1 — Sustentabilidade nos Processos Industriais</span><span class="ch-tag">8h</span></div>
-    <div class="uc-item" onclick="setUC('MB_UC2','Introdução à Indústria 4.0','Reconhecer os marcos das revoluções industriais e seus impactos nas atividades de produção.',10,14,'Módulo Básico')"><span>UC2 — Introdução à Indústria 4.0</span><span class="ch-tag">24h</span></div>
-    <div class="uc-item" onclick="setUC('MB_UC3','Introdução à Qualidade e Produtividade','Identificar ferramentas da qualidade aplicadas nos processos industriais.',6,10,'Módulo Básico')"><span>UC3 — Introdução à Qualidade e Produtividade</span><span class="ch-tag">16h</span></div>
-    <div class="uc-item" onclick="setUC('MB_UC4','Saúde e Segurança no Trabalho','Reconhecer os conceitos, classificação e impactos de acidentes e doenças ocupacionais na indústria.',14,22,'Módulo Básico')"><span>UC4 — Saúde e Segurança no Trabalho</span><span class="ch-tag">36h</span></div>
-    <div class="uc-item" onclick="setUC('MB_UC5','Comunicação e Informação em SST','Empregar os princípios e padrões de comunicação aplicados à segurança e saúde do trabalho.',10,18,'Módulo Básico')"><span>UC5 — Comunicação e Informação em SST</span><span class="ch-tag">28h</span></div>
-    <div class="sidebar-divider"></div>
-    <div class="uc-group-header">📦 Módulo Específico I <span class="ch-tag">320h</span></div>
-    <div class="uc-item" onclick="setUC('ME1_UC1','Identificar e Avaliar os Riscos Ocupacionais','Identificar e avaliar os riscos físicos, químicos, biológicos, ergonômicos e de acidentes nos ambientes de trabalho.',48,72,'Módulo Específico I')"><span>UC1 — Identificar e Avaliar os Riscos Ocupacionais</span><span class="ch-tag">120h</span></div>
-    <div class="uc-item" onclick="setUC('ME1_UC2','Higiene Ocupacional','Reconhecer os agentes de risco à saúde e propor medidas de controle.',48,72,'Módulo Específico I')"><span>UC2 — Higiene Ocupacional</span><span class="ch-tag">120h</span></div>
-    <div class="uc-item" onclick="setUC('ME1_UC3','Ergonomia e Saúde do Trabalhador','Aplicar os princípios de ergonomia nos ambientes de trabalho.',32,48,'Módulo Específico I')"><span>UC3 — Ergonomia e Saúde do Trabalhador</span><span class="ch-tag">80h</span></div>
-    <div class="sidebar-divider"></div>
-    <div class="uc-group-header">📦 Módulo Específico II <span class="ch-tag">380h</span></div>
-    <div class="uc-item" onclick="setUC('ME2_UC1','Implementar e Monitorar as Medidas de Controle','Implementar e monitorar as medidas de controle de riscos nos ambientes de trabalho.',60,90,'Módulo Específico II')"><span>UC1 — Implementar e Monitorar Medidas de Controle</span><span class="ch-tag">150h</span></div>
-    <div class="uc-item" onclick="setUC('ME2_UC2','Gestão de Emergências em SST','Gerenciar situações de emergência aplicando os procedimentos estabelecidos nos planos de emergência.',48,72,'Módulo Específico II')"><span>UC2 — Gestão de Emergências em SST</span><span class="ch-tag">120h</span></div>
-    <div class="uc-item" onclick="setUC('ME2_UC3','Programas e Documentos de SST','Elaborar e implementar os programas e documentos obrigatórios de segurança e saúde do trabalho.',44,66,'Módulo Específico II')"><span>UC3 — Programas e Documentos de SST</span><span class="ch-tag">110h</span></div>
-    <div class="sidebar-divider"></div>
-    <div class="uc-group-header">⚙️ Competências Transversais</div>
-    <div class="uc-item" onclick="setUC('SOCIO','Competências Socioemocionais','Desenvolvimento de competências socioemocionais transversais ao curso.',0,0,'Transversal')"><span>Competências Socioemocionais</span><span class="ch-tag">Transv.</span></div>
-    <div class="uc-item" onclick="setUC('IA','IA Aplicada à SST','Utilizar ferramentas de inteligência artificial como apoio às atividades de segurança do trabalho.',0,0,'Transversal')"><span>IA Aplicada à SST</span><span class="ch-tag">Transv.</span></div>
+    <div class="uc-item" onclick="setUC('MB_UC1','Sustentabilidade nos Processos Industriais','',3,5,'Módulo Básico')">
+      <span>UC1 — Sustentabilidade nos Processos Industriais</span><span class="ch-badge">8h</span>
+    </div>
+    <div class="uc-item" onclick="setUC('MB_UC2','Introdução à Indústria 4.0','',10,14,'Módulo Básico')">
+      <span>UC2 — Introdução à Indústria 4.0</span><span class="ch-badge">24h</span>
+    </div>
+    <div class="uc-item" onclick="setUC('MB_UC3','Introdução à Qualidade e Produtividade','',6,10,'Módulo Básico')">
+      <span>UC3 — Introdução à Qualidade e Produtividade</span><span class="ch-badge">16h</span>
+    </div>
+    <div class="uc-item" onclick="setUC('MB_UC4','Saúde e Segurança no Trabalho','',5,7,'Módulo Básico')">
+      <span>UC4 — Saúde e Segurança no Trabalho</span><span class="ch-badge">12h</span>
+    </div>
+    <div class="uc-item" onclick="setUC('MB_UC5','Introdução à Tecnologia da Informação e Comunicação','',16,24,'Módulo Básico')">
+      <span>UC5 — Introdução à Tecnologia da Informação e Comunicação</span><span class="ch-badge">40h</span>
+    </div>
+    <div class="uc-item" onclick="setUC('MB_UC6','Introdução ao Desenvolvimento de Projetos','',5,7,'Módulo Básico')">
+      <span>UC6 — Introdução ao Desenvolvimento de Projetos</span><span class="ch-badge">12h</span>
+    </div>
+    <div class="uc-group-header">📦 Módulo Introdutório <span class="ch-tag">260h</span></div>
+    <div class="uc-item" onclick="setUC('MI_UC1','Fundamentos de Segurança e Saúde do Trabalho','',48,72,'Módulo Introdutório')">
+      <span>UC1 — Fundamentos de Segurança e Saúde do Trabalho</span><span class="ch-badge">120h</span>
+    </div>
+    <div class="uc-item" onclick="setUC('MI_UC2','Ciências Aplicadas à Segurança e Saúde do Trabalho','',24,36,'Módulo Introdutório')">
+      <span>UC2 — Ciências Aplicadas à Segurança e Saúde do Trabalho</span><span class="ch-badge">60h</span>
+    </div>
+    <div class="uc-item" onclick="setUC('MI_UC3','Comunicação e Informação Aplicadas à Segurança e Saúde do Trabalho','',16,24,'Módulo Introdutório')">
+      <span>UC3 — Comunicação e Informação Aplicadas à Segurança e Saúde do Trabalho</span><span class="ch-badge">40h</span>
+    </div>
+    <div class="uc-item" onclick="setUC('MI_UC4','Gestão de Pessoas Aplicada à Segurança e Saúde do Trabalho','',16,24,'Módulo Introdutório')">
+      <span>UC4 — Gestão de Pessoas Aplicada à Segurança e Saúde do Trabalho</span><span class="ch-badge">40h</span>
+    </div>
+    <div class="uc-group-header">📦 Módulo Específico I <span class="ch-tag">336h</span></div>
+    <div class="uc-item" onclick="setUC('ME1_UC1','Rotinas de Segurança e Saúde do Trabalho','',80,120,'Módulo Específico I')">
+      <span>UC1 — Rotinas de Segurança e Saúde do Trabalho</span><span class="ch-badge">200h</span>
+    </div>
+    <div class="uc-item" onclick="setUC('ME1_UC2','Higiene Ocupacional','',48,72,'Módulo Específico I')">
+      <span>UC2 — Higiene Ocupacional</span><span class="ch-badge">120h</span>
+    </div>
+    <div class="uc-item" onclick="setUC('ME1_UC3','Criatividade e Ideação em Projetos de Inovação','',6,10,'Módulo Específico I')">
+      <span>UC3 — Criatividade e Ideação em Projetos de Inovação</span><span class="ch-badge">16h</span>
+    </div>
+    <div class="uc-group-header">📦 Módulo Específico II <span class="ch-tag">292h</span></div>
+    <div class="uc-item" onclick="setUC('ME2_UC1','Coordenação de Programas e Procedimentos de Saúde e Segurança do Trabalho','',83,125,'Módulo Específico II')">
+      <span>UC1 — Coordenação de Programas e Procedimentos de Saúde e Segurança do Trabalho</span><span class="ch-badge">208h</span>
+    </div>
+    <div class="uc-item" onclick="setUC('ME2_UC2','Planejamento e Execução de Ações Educativas','',16,24,'Módulo Específico II')">
+      <span>UC2 — Planejamento e Execução de Ações Educativas</span><span class="ch-badge">40h</span>
+    </div>
+    <div class="uc-item" onclick="setUC('ME2_UC3','Modelagem de Projetos de Inovação','',8,12,'Módulo Específico II')">
+      <span>UC3 — Modelagem de Projetos de Inovação</span><span class="ch-badge">20h</span>
+    </div>
+    <div class="uc-item" onclick="setUC('ME2_UC4','Prototipagem de Negócios Inovadores','',10,14,'Módulo Específico II')">
+      <span>UC4 — Prototipagem de Negócios Inovadores</span><span class="ch-badge">24h</span>
+    </div>
+    <div class="uc-group-header">📦 Módulo Específico III <span class="ch-tag">80h</span></div>
+    <div class="uc-item" onclick="setUC('ME3_UC1','Assessoria e Consultoria em Saúde, Segurança e Meio Ambiente do Trabalho','',24,36,'Módulo Específico III')">
+      <span>UC1 — Assessoria e Consultoria em Saúde, Segurança e Meio Ambiente do Trabalho</span><span class="ch-badge">60h</span>
+    </div>
+    <div class="uc-item" onclick="setUC('ME3_UC2','Implementação de Negócios Inovadores','',8,12,'Módulo Específico III')">
+      <span>UC2 — Implementação de Negócios Inovadores</span><span class="ch-badge">20h</span>
+    </div>
+    <div class="uc-group-header">📦 Módulo Específico IV <span class="ch-tag">120h</span></div>
+    <div class="uc-item" onclick="setUC('ME4_UC1','Gestão de Auditorias em Segurança e Saúde do Trabalho','',24,36,'Módulo Específico IV')">
+      <span>UC1 — Gestão de Auditorias em Segurança e Saúde do Trabalho</span><span class="ch-badge">60h</span>
+    </div>
+    <div class="uc-item" onclick="setUC('ME4_UC2','Monitoramento dos Programas e Documentos de Segurança e Saúde do Trabalho','',24,36,'Módulo Específico IV')">
+      <span>UC2 — Monitoramento dos Programas e Documentos de Segurança e Saúde do Trabalho</span><span class="ch-badge">60h</span>
+    </div>
+
 
   </aside>
 
@@ -225,7 +275,7 @@ function toggleTheme(){
   document.body.dataset.theme = dark?'light':'dark';
   document.querySelector('.theme-btn').textContent = dark?'🌙':'☀️';
 }
-function voltarHub(){ window.location.href='https://profpaulofilho.github.io/hub-artifacts_IA/areas/seletor-seguranca.html'; }
+function voltarHub(){ window.location.href='../index.html'; }
 
 function calcAulas(){
   const cht=parseInt(document.getElementById('pa-cht').value)||0;
