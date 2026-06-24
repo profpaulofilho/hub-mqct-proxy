@@ -86,12 +86,22 @@ async function gerarSlides() {
   if (btnPptx) btnPptx.disabled = true;
 
   try {
+    /* Token Supabase — lido do localStorage pela função getToken() da página */
+    const _token = (typeof getToken === 'function') ? getToken() : null;
+    const _headers = { 'Content-Type': 'application/json' };
+    if (_token) _headers['Authorization'] = `Bearer ${_token}`;
+
     const res = await fetch('https://hub-mqct-proxy.vercel.app/api/gemini', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: _headers,
       body: JSON.stringify({ prompt })
     });
 
+    if (res.status === 401) {
+      if (typeof showToast === 'function') showToast('Sessão expirada. Redirecionando...', 'error');
+      setTimeout(() => window.location.href = '../index.html', 2000);
+      throw new Error('Proxy retornou 401');
+    }
     if (!res.ok) throw new Error(`Proxy retornou ${res.status}`);
     const data = await res.json();
 
