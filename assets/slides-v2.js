@@ -96,7 +96,7 @@ async function gerarSlides() {
   const uc  = _slidesUc || (typeof ucAtual !== 'undefined' ? ucAtual?.nome : '') || 'UC não informada';
 
   let ctx = '';
-  if (typeof buildOfficialContext === 'function') ctx = buildOfficialContext();
+  if (typeof buildOfficialContext === 'function') ctx = buildOfficialContext((typeof ucAtual !== 'undefined' && ucAtual?.id) ? ucAtual.id : uc);
   else if (typeof getCtxTransversal === 'function' && typeof ucAtual !== 'undefined')
     ctx = getCtxTransversal(ucAtual?.id);
   if (!ctx) ctx = 'Contexto não disponível. Use referências gerais da área.';
@@ -130,7 +130,14 @@ async function gerarSlides() {
       setTimeout(() => window.location.href = '../index.html', 2000);
       throw new Error('Sessão expirada (401)');
     }
-    if (!res.ok) throw new Error(`Proxy retornou ${res.status}`);
+    if (!res.ok) {
+      let detail = '';
+      try {
+        const errData = await res.json();
+        detail = errData?.detail || errData?.error || errData?.message || '';
+      } catch (_) {}
+      throw new Error(`Proxy retornou ${res.status}${detail ? ' — ' + detail : ''}`);
+    }
 
     const data = await res.json();
     const raw  = data?.candidates?.[0]?.content?.parts?.[0]?.text
