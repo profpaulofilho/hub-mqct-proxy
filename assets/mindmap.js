@@ -1,34 +1,34 @@
 /* ============================================================
-   MINDMAP.JS — Motor de Mapa Mental Interativo
+   MINDMAP.JS — Motor de Mapa Mental Interativo (v2)
    Hub MQCT · SENAI Bahia
-   Extraído e generalizado a partir de mapa-mental-senai.html
    Reaproveitável por TODAS as áreas (Itinerário Nacional e DR-BA)
 
-   USO (dentro de cada areas/[area].html):
+   USO (igual à v1 — nada muda nas páginas de área):
 
-     1) No HTML do modal, ter um container vazio:
-          <div id="mm-mount"></div>
+     const data = MindMap.fromOfficialUC(ucOficial);
+     MindMap.render('mm-mount', data, { accent: '#00695C' });
 
-     2) Ao gerar o mapa, ter um objeto de UC oficial (vindo de
-        data/[area].js, localizado via findOfficialUC()) e chamar:
-
-          const data = MindMap.fromOfficialUC(ucOficial);
-          MindMap.render('mm-mount', data, { accent: '#00695C' });
-
-        Não depende do Gemini — é só dado local + desenho via JS.
-
-   Formato aceito por MindMap.render(id, data, opts):
-     data = {
-       curso: "Nome da UC ou do curso",
-       perfilProfissional: ["..."],   // opcional — [] esconde o ramo
-       competenciasGerais:  ["..."],  // opcional — [] esconde o ramo
-       unidadesCurriculares: [
-         { nome, subfuncoes:[], conhecimentos:[], habilidades:[], atitudes:[] }
-       ]
-     }
+   NOVIDADES NESTA VERSÃO:
+   - Layout radial por peso de subárvore (não quebra mais quando
+     há só 1 ramo principal — caso real do mapa de UC única).
+   - Categorias (Subfunções/Conhecimentos/Habilidades/Atitudes)
+     começam RECOLHIDAS — clique para revelar (antes vinha tudo
+     aberto de uma vez, lotando a tela).
+   - Botão "Tela cheia" (Fullscreen API nativa do navegador).
+   - Botão "Nova aba" — abre o mesmo mapa em assets/mindmap-viewer.html.
+   - Botão "Baixar HTML" — gera um .html autônomo (CSS+JS+dados
+     embutidos), funciona offline, sem precisar do Hub.
    ============================================================ */
 (function () {
   'use strict';
+
+  // ---------- Localização deste próprio script (pra achar mindmap.css/viewer) ----------
+  var SELF_SRC = (document.currentScript && document.currentScript.src) || (function () {
+    var ss = document.getElementsByTagName('script');
+    for (var i = ss.length - 1; i >= 0; i--) { if (/mindmap\.js(?:[?#].*)?$/.test(ss[i].src)) return ss[i].src; }
+    return '';
+  })();
+  var MM_BASE = SELF_SRC.replace(/mindmap\.js(?:[?#].*)?$/, '');
 
   // ---------- Paleta vibrante (uma cor por ramo principal / UC) ----------
   var PALETTE = ['#FF6B6B', '#4ECDC4', '#A78BFA', '#FF9F45', '#2EC4B6',
@@ -51,6 +51,10 @@
       '<button type="button" class="mm-btn" data-act="zoomin">🔍+</button>' +
       '<button type="button" class="mm-btn" data-act="zoomout">🔍−</button>' +
       '<button type="button" class="mm-btn" data-act="reset">⟳ Resetar</button>' +
+      '<span class="mm-sep"></span>' +
+      '<button type="button" class="mm-btn mm-btn-accent" data-act="fullscreen">⛶ Tela cheia</button>' +
+      '<button type="button" class="mm-btn mm-btn-accent" data-act="newtab">↗ Nova aba</button>' +
+      '<button type="button" class="mm-btn mm-btn-accent" data-act="download">⬇ Baixar HTML</button>' +
     '</div>' +
     '<div class="mm-legend"></div>' +
     '<div class="mm-stage">' +
@@ -67,12 +71,14 @@
     this.treeRoot = null;
     this.visibleNodes = [];
     this.nodeEls = new Map();
-    this.scale = 0.45; this.panX = 0; this.panY = 0;
-    this.CENTER = 1000; this.RADII = [0, 260, 480, 760];
+    this.scale = 0.55; this.panX = 0; this.panY = 0;
+    this.CENTER = 1000; this.RADII = [0, 210, 380, 540];
+    this.lastData = null; this.lastOpts = null;
     this._build();
   }
 
   MindMapInstance.prototype._build = function () {
+    var self = this;
     this.container.classList.add('mm-widget');
     this.container.innerHTML = SHELL;
     this.stage = this.container.querySelector('.mm-stage');
@@ -82,13 +88,21 @@
     this.legendEl = this.container.querySelector('.mm-legend');
     this.titleEl = this.container.querySelector('.mm-title');
     this.subEl = this.container.querySelector('.mm-sub');
+    this.btnNewtab = this.container.querySelector('[data-act="newtab"]');
+    this.btnDownload = this.container.querySelector('[data-act="download"]');
 
-    var self = this;
     this.container.querySelector('[data-act="expand"]').onclick = function () { self._expandAll(self.treeRoot); self._render(); };
-    this.container.querySelector('[data-act="collapse"]').onclick = function () { self._collapseAll(self.treeRoot); self._render(); };
-    this.container.querySelector('[data-act="zoomin"]').onclick = function () { self._zoomAtCenter(1.2); };
+    this.container.querySelector('[data-act="collapse"]').onclick = function () { self._collapseAll(self.treeRoot); self.treeRoot.expanded = true; self._render(); };
+    this.container.querySelector('[data-act="zoomin"]').onclick = function () { self._zoomAtCenter(1.25); };
     this.container.querySelector('[data-act="zoomout"]').onclick = function () { self._zoomAtCenter(0.8); };
     this.container.querySelector('[data-act="reset"]').onclick = function () { self._centerView(); };
+    this.container.querySelector('[data-act="fullscreen"]').onclick = function () { self._toggleFullscreen(); };
+    this.btnNewtab.onclick = function () { self._openInNewTab(); };
+    this.btnDownload.onclick = function () { self._downloadStandalone(); };
+
+    document.addEventListener('fullscreenchange', function () {
+      requestAnimationFrame(function () { self._centerView(); });
+    });
 
     // ---- pan (mouse) ----
     var dragging = false, sx = 0, sy = 0, spx = 0, spy = 0;
@@ -124,10 +138,65 @@
       var r = self.stage.getBoundingClientRect();
       var mx = e.clientX - r.left, my = e.clientY - r.top;
       var wx = (mx - self.panX) / self.scale, wy = (my - self.panY) / self.scale;
-      self.scale = Math.min(1.6, Math.max(0.2, self.scale * (e.deltaY > 0 ? 0.9 : 1.1)));
+      self.scale = Math.min(2.2, Math.max(0.15, self.scale * (e.deltaY > 0 ? 0.9 : 1.1)));
       self.panX = mx - wx * self.scale; self.panY = my - wy * self.scale;
       self._applyTransform();
     }, { passive: false });
+  };
+
+  MindMapInstance.prototype._toggleFullscreen = function () {
+    var el = this.container;
+    if (!document.fullscreenElement) {
+      var req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+      if (req) req.call(el);
+    } else {
+      var exit = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+      if (exit) exit.call(document);
+    }
+  };
+
+  MindMapInstance.prototype._openInNewTab = function () {
+    if (!this.lastData) return;
+    try {
+      var payload = JSON.stringify({ data: this.lastData, opts: this.lastOpts || {} });
+      var b64 = btoa(unescape(encodeURIComponent(payload)));
+      window.open(MM_BASE + 'mindmap-viewer.html#' + b64, '_blank');
+    } catch (e) { console.error(e); }
+  };
+
+  MindMapInstance.prototype._downloadStandalone = function () {
+    if (!this.lastData) return;
+    var self = this;
+    var btn = this.btnDownload;
+    var prevTxt = btn.textContent;
+    btn.disabled = true; btn.textContent = '⏳ Gerando...';
+    Promise.all([
+      fetch(MM_BASE + 'mindmap.css').then(function (r) { return r.text(); }),
+      fetch(MM_BASE + 'mindmap.js').then(function (r) { return r.text(); })
+    ]).then(function (parts) {
+      var css = parts[0], js = parts[1];
+      var dataJson = JSON.stringify(self.lastData);
+      var optsJson = JSON.stringify(Object.assign({}, self.lastOpts || {}, { embedded: true }));
+      var title = esc((self.lastData.curso || 'Mapa Mental'));
+      var html = '<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">' +
+        '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+        '<title>' + title + ' — Mapa Mental</title><style>' + css +
+        '\nhtml,body{margin:0;height:100%;background:#0d0c16}#mm-mount{width:100vw;height:100vh}</style></head>' +
+        '<body><div id="mm-mount"></div><script>' + js + '<' + '/script>' +
+        '<script>MindMap.render("mm-mount", ' + dataJson + ', ' + optsJson + ');<' + '/script></body></html>';
+      var blob = new Blob([html], { type: 'text/html' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      var safe = (self.lastData.curso || 'mapa_mental').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 60) || 'mapa_mental';
+      a.download = 'Mapa_Mental_' + safe + '.html';
+      document.body.appendChild(a); a.click(); a.remove();
+    }).catch(function (e) {
+      console.error(e);
+      alert('Não foi possível gerar o arquivo para download. Verifique a conexão e tente novamente.');
+    }).finally(function () {
+      btn.disabled = false; btn.textContent = prevTxt;
+    });
   };
 
   MindMapInstance.prototype._applyTransform = function () {
@@ -135,7 +204,7 @@
   };
   MindMapInstance.prototype._centerView = function () {
     var r = this.stage.getBoundingClientRect();
-    this.scale = 0.45;
+    this.scale = 0.55;
     this.panX = r.width / 2 - this.CENTER * this.scale;
     this.panY = r.height / 2 - this.CENTER * this.scale;
     this._applyTransform();
@@ -144,7 +213,7 @@
     var r = this.stage.getBoundingClientRect();
     var cx = r.width / 2, cy = r.height / 2;
     var wx = (cx - this.panX) / this.scale, wy = (cy - this.panY) / this.scale;
-    this.scale = Math.min(1.6, Math.max(0.2, this.scale * factor));
+    this.scale = Math.min(2.2, Math.max(0.15, this.scale * factor));
     this.panX = cx - wx * this.scale; this.panY = cy - wy * this.scale;
     this._applyTransform();
   };
@@ -173,12 +242,16 @@
     var ucs = data.unidadesCurriculares || [];
     ucs.forEach((uc, i) => {
       var color = PALETTE[(i + 2) % PALETTE.length];
+      // UC única (caso real do Hub): abre direto mostrando as categorias.
+      // Várias UCs (mapa de curso completo, uso futuro): começa recolhida.
       var ucNode = { id: 'n' + (this.idSeq++), label: uc.nome, type: 'uc', color: color, parent: root, expanded: ucs.length === 1, children: [] };
       var cats = [['Subfunções', uc.subfuncoes], ['Conhecimentos', uc.conhecimentos], ['Habilidades', uc.habilidades], ['Atitudes', uc.atitudes]];
       cats.forEach((pair) => {
         var label = pair[0], items = pair[1];
         if (!items || !items.length) return;
-        var sub = { id: 'n' + (this.idSeq++), label: label, type: 'subcategory', color: color, parent: ucNode, expanded: ucs.length === 1,
+        // Categorias começam SEMPRE recolhidas — usuário clica pra revelar.
+        // Evita amontoar dezenas de nós de uma vez na tela.
+        var sub = { id: 'n' + (this.idSeq++), label: label, type: 'subcategory', color: color, parent: ucNode, expanded: false,
           children: items.map((t) => this._leafNode(t, color, null)) };
         sub.children.forEach((c) => { c.parent = sub; });
         ucNode.children.push(sub);
@@ -204,29 +277,38 @@
     }
   }
 
-  MindMapInstance.prototype._layout = function (node, depth, angle, budget) {
+  // ---------- Peso de subárvore: ramos com mais conteúdo visível ganham mais arco ----------
+  MindMapInstance.prototype._computeWeights = function (node) {
+    if (!node.expanded || !node.children || !node.children.length) { node._w = 1; return 1; }
+    var w = 0, self = this;
+    node.children.forEach((c) => { w += self._computeWeights(c); });
+    node._w = Math.max(w, 1);
+    return node._w;
+  };
+
+  // ---------- Layout radial recursivo por wedge (substitui a versão antiga, que
+  // quebrava com um único ramo principal — caso real do mapa de 1 UC) ----------
+  MindMapInstance.prototype._layout = function (node, depth, angleCenter, angleSpan) {
     node.depth = depth;
     if (depth === 0) { node.x = this.CENTER; node.y = this.CENTER; }
     else {
-      var rad = angle * Math.PI / 180;
+      var rad = angleCenter * Math.PI / 180;
       node.x = this.CENTER + this.RADII[depth] * Math.cos(rad);
       node.y = this.CENTER + this.RADII[depth] * Math.sin(rad);
     }
     this.visibleNodes.push(node);
     if (node.expanded && node.children && node.children.length) {
-      var n = node.children.length;
+      var total = 0;
+      node.children.forEach((c) => { total += (c._w || 1); });
+      total = total || 1;
+      var cursor = angleCenter - angleSpan / 2;
       var self = this;
-      node.children.forEach((child, i) => {
-        var childAngle, childBudget;
-        if (depth === 0) {
-          childAngle = i * (360 / n) - 90;
-          childBudget = (360 / n) / 2 * 0.85;
-        } else {
-          var step = (budget * 2) / n;
-          childAngle = (angle - budget) + step * (i + 0.5);
-          childBudget = Math.max(budget / n * 2.2, 10);
-        }
-        self._layout(child, depth + 1, childAngle, childBudget);
+      node.children.forEach((child) => {
+        var w = child._w || 1;
+        var span = angleSpan * (w / total);
+        var center = cursor + span / 2;
+        self._layout(child, depth + 1, center, span);
+        cursor += span;
       });
     }
   };
@@ -234,7 +316,7 @@
   MindMapInstance.prototype._drawCurve = function (x1, y1, x2, y2, depth, color) {
     var dx = x2 - x1, dy = y2 - y1, len = Math.sqrt(dx * dx + dy * dy) || 1;
     var px = -dy / len, py = dx / len;
-    var offset = Math.min(len * 0.25, 60);
+    var offset = Math.min(len * 0.22, 50);
     var mx = (x1 + x2) / 2 + px * offset, my = (y1 + y2) / 2 + py * offset;
     var p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     p.setAttribute('d', 'M ' + x1 + ' ' + y1 + ' Q ' + mx + ' ' + my + ' ' + x2 + ' ' + y2);
@@ -314,7 +396,8 @@
 
   MindMapInstance.prototype._render = function () {
     this.visibleNodes = [];
-    this._layout(this.treeRoot, 0, 0, 180);
+    this._computeWeights(this.treeRoot);
+    this._layout(this.treeRoot, 0, -90, 360);
     this._renderEdges();
     this._renderNodes();
   };
@@ -331,9 +414,14 @@
 
   MindMapInstance.prototype.renderData = function (data, opts) {
     opts = opts || {};
+    this.lastData = data; this.lastOpts = opts;
     this.titleEl.textContent = '🧠 ' + (data.curso || 'Mapa Mental');
     this.subEl.textContent = opts.subtitle || '';
     if (opts.accent) { this.container.style.setProperty('--mm-accent', opts.accent); }
+    if (opts.embedded) {
+      this.btnNewtab.style.display = 'none';
+      this.btnDownload.style.display = 'none';
+    }
     this.nodeEls.forEach((el) => el.remove());
     this.nodeEls.clear();
     this.treeRoot = this._buildTree(data);
@@ -343,12 +431,11 @@
   };
 
   // ============================================================
-  // API PÚBLICA
+  // API PÚBLICA (igual à v1 — compatível com as páginas já no ar)
   // ============================================================
   var instances = new WeakMap();
 
   window.MindMap = {
-    /** Cria (uma vez) o motor dentro do elemento com esse id. Idempotente. */
     mount: function (containerId) {
       var el = document.getElementById(containerId);
       if (!el) { console.error('MindMap.mount: elemento não encontrado:', containerId); return null; }
@@ -357,25 +444,12 @@
       return inst;
     },
 
-    /** Monta (se preciso) e desenha os dados. opts: {accent, subtitle} */
     render: function (containerId, data, opts) {
       var inst = window.MindMap.mount(containerId);
       if (inst) inst.renderData(data, opts);
       return inst;
     },
 
-    /**
-     * Adaptador: converte uma UC oficial (objeto vindo de data/[area].js,
-     * já localizado via findOfficialUC()) para o schema do motor.
-     * Tolerante a pequenas variações de schema entre Itinerário Nacional
-     * e os Planos de Curso DR-BA:
-     *   - uc.capacidades pode ser array de strings OU array de
-     *     {tipo, dominio, texto, conhecimentos:[]}
-     *   - conhecimentos pode vir embutido em cada capacidade OU como
-     *     uc.conhecimentos (array plano)
-     *   - habilidades vem de uc.padroes (padrões de desempenho)
-     *   - atitudes vem de uc.socioemocionais
-     */
     fromOfficialUC: function (uc) {
       if (!uc) return null;
       var capArr = Array.isArray(uc.capacidades) ? uc.capacidades : [];
