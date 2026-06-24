@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mapa Mental — Hub MQCT · SENAI Bahia</title>
+<link rel="stylesheet" href="mindmap.css">
+<script src="mindmap.js" defer></script>
+<style>
+  html,body{margin:0;height:100%;background:#0d0c16;font-family:'Segoe UI',system-ui,-apple-system,sans-serif}
+  #mm-mount{width:100vw;height:100vh}
+  #mm-empty{
+    display:none;align-items:center;justify-content:center;height:100vh;
+    color:#b9b3cf;font-size:14px;text-align:center;padding:24px;
+  }
+</style>
+</head>
+<body>
+<div id="mm-mount"></div>
+<div id="mm-empty">Nenhum mapa para exibir. Volte ao Hub MQCT, gere o mapa e clique em "Nova aba" novamente.</div>
+<script>
+  function iniciar(){
+    var empty = document.getElementById('mm-empty');
+    try{
+      var hash = location.hash.slice(1);
+      if(!hash){ empty.style.display = 'flex'; return; }
+      var json = decodeURIComponent(escape(atob(hash)));
+      var payload = JSON.parse(json);
+      window.MindMap.render('mm-mount', payload.data, payload.opts || {});
+    }catch(e){
+      console.error(e);
+      empty.textContent = 'Não foi possível carregar este mapa mental.';
+      empty.style.display = 'flex';
+    }
+  }
+  if(window.MindMap){ iniciar(); }
+  else { window.addEventListener('load', iniciar); }
+</script>
+</body>
+</html>
