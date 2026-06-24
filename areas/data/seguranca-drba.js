@@ -12707,3 +12707,10 @@ const SEGURANCA = {
     }
   ]
 };
+
+
+// Exposição global obrigatória para páginas HTML estáticas.
+// Sem isso, scripts carregados por <script src> com const SEGURANCA não ficam acessíveis em window.
+window.SEGURANCA_DRBA = SEGURANCA;
+window.SEGURANCA = SEGURANCA;
+window.HUB_CURRICULUM_SEGURANCA_DRBA = SEGURANCA;
