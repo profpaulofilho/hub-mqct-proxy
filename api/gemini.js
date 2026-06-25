@@ -1,14 +1,22 @@
 // api/gemini.js — Proxy Vercel · Hub MQCT SENAI Bahia
-// Corrigido: CommonJS compatível com Vercel, resposta padronizada { text },
-// validação segura de Supabase, tratamento de erros Gemini e CORS.
+// Correção robusta: evita 502 por maxOutputTokens alto, aceita parâmetros por chamada,
+// faz fallback de modelo e devolve detalhes úteis para o frontend.
 
 const GEMINI_KEY = process.env.GOOGLE_GEMINI_API_KEY;
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SECRET = process.env.SUPABASE_SECRET_KEY;
 const ALLOWED_DOMAIN = process.env.ALLOWED_DOMAIN || "ba.docente.senai.br";
 const RATE_LIMIT = Number.parseInt(process.env.RATE_LIMIT_PER_HOUR || "30", 10);
-const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+
+// Use GEMINI_MODEL no Vercel se quiser fixar um modelo.
+// Se ele falhar por indisponibilidade/modelo inválido/quota momentânea, tenta os fallbacks.
+const PRIMARY_MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
+const FALLBACK_MODELS = (process.env.GEMINI_FALLBACK_MODELS || "gemini-2.0-flash,gemini-1.5-flash")
+  .split(",")
+  .map(s => s.trim())
+  .filter(Boolean);
+
+const MODELS = Array.from(new Set([PRIMARY_MODEL, ...FALLBACK_MODELS]));
 
 // Rate limiting simples em memória.
 // Observação: em serverless pode reiniciar entre execuções, mas ajuda a reduzir abuso.
@@ -73,6 +81,52 @@ function extractGeminiText(data) {
   return parts.map(part => part?.text || "").join("").trim();
 }
 
+function clampNumber(value, fallback, min, max) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(max, Math.max(min, Math.round(n)));
+}
+
+async function callGeminiModel(model, prompt, generationConfig) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_KEY}`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      generationConfig
+    })
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const message =
+      data?.error?.message ||
+      data?.message ||
+      `Gemini HTTP ${response.status}`;
+
+    const error = new Error(message);
+    error.status = response.status;
+    error.model = model;
+    error.raw = data;
+    throw error;
+  }
+
+  const text = extractGeminiText(data);
+  if (!text) {
+    const reason = data?.candidates?.[0]?.finishReason || "sem texto";
+    const error = new Error(`Resposta vazia do Gemini (${reason}).`);
+    error.status = 502;
+    error.model = model;
+    error.raw = data;
+    throw error;
+  }
+
+  return { text, model };
+}
+
 async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", process.env.CORS_ORIGIN || "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -107,7 +161,8 @@ async function handler(req, res) {
     return send(res, 429, { error: `Limite de ${RATE_LIMIT} gerações/hora atingido.` });
   }
 
-  const { prompt, forceJSON = false } = getBody(req);
+  const body = getBody(req);
+  const { prompt, forceJSON = false } = body;
 
   if (!prompt || typeof prompt !== "string") {
     return send(res, 400, { error: "Campo 'prompt' obrigatório." });
@@ -121,54 +176,52 @@ async function handler(req, res) {
     });
   }
 
-  try {
-    const generationConfig = {
-      maxOutputTokens: 20000,
-      temperature: 0.65
-    };
+  // Ponto principal da correção:
+  // 20000 tokens causava falha em alguns modelos/contas do Gemini e o frontend só via 502.
+  const maxOutputTokens = clampNumber(body.maxOutputTokens, forceJSON ? 8192 : 6144, 512, 8192);
+  const temperature = Math.min(1, Math.max(0, Number.isFinite(Number(body.temperature)) ? Number(body.temperature) : 0.55));
 
-    if (forceJSON) {
-      generationConfig.responseMimeType = "application/json";
-    }
+  const generationConfig = {
+    maxOutputTokens,
+    temperature
+  };
 
-    const geminiResponse = await fetch(`${GEMINI_URL}?key=${GEMINI_KEY}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig
-      })
-    });
-
-    const geminiData = await geminiResponse.json().catch(() => ({}));
-
-    if (!geminiResponse.ok) {
-      const message =
-        geminiData?.error?.message ||
-        geminiData?.message ||
-        `Gemini HTTP ${geminiResponse.status}`;
-
-      console.error("[MQCT Proxy] Gemini:", geminiResponse.status, message);
-      return send(res, 502, {
-        error: "Falha ao consultar o Gemini.",
-        detail: message,
-        status: geminiResponse.status
-      });
-    }
-
-    const text = extractGeminiText(geminiData);
-
-    if (!text) {
-      console.error("[MQCT Proxy] Gemini sem texto:", JSON.stringify(geminiData).slice(0, 1000));
-      return send(res, 502, { error: "Resposta vazia do Gemini." });
-    }
-
-    // Mantém compatibilidade com telas antigas: elas podem ler data.text.
-    return send(res, 200, { text, user: email, model: GEMINI_MODEL });
-  } catch (err) {
-    console.error("[MQCT Proxy] Erro interno:", err);
-    return send(res, 500, { error: "Erro interno no proxy.", detail: err.message });
+  if (forceJSON) {
+    generationConfig.responseMimeType = "application/json";
   }
+
+  const errors = [];
+
+  for (const model of MODELS) {
+    try {
+      const result = await callGeminiModel(model, prompt, generationConfig);
+      return send(res, 200, {
+        text: result.text,
+        user: email,
+        model: result.model,
+        maxOutputTokens
+      });
+    } catch (err) {
+      errors.push({
+        model: err.model || model,
+        status: err.status || 500,
+        message: err.message
+      });
+      console.error("[MQCT Proxy] Gemini falhou:", err.model || model, err.status || "", err.message);
+
+      // 400 geralmente é prompt/configuração; fallback de modelo pode resolver quando o modelo primário não aceita algo.
+      // 429/503/500 são temporários/quota; fallback também pode ajudar.
+      continue;
+    }
+  }
+
+  const last = errors[errors.length - 1] || {};
+  return send(res, 502, {
+    error: "Falha ao consultar o Gemini.",
+    detail: last.message || "Todos os modelos configurados falharam.",
+    attempts: errors,
+    hint: "Verifique GOOGLE_GEMINI_API_KEY, GEMINI_MODEL e quota do Gemini no Vercel."
+  });
 }
 
 module.exports = handler;
