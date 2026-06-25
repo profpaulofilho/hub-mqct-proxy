@@ -7,6 +7,7 @@
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <link rel="stylesheet" href="../assets/mindmap.css">
 <script src="../assets/mindmap.js" defer></script>
+<script src="../assets/document-engine.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script src="../assets/slides-v2.js"></script>
 <style>
@@ -242,7 +243,7 @@
 
 <div class="toast" id="toast"></div>
 
-<script src="../data/informatica-nem.js"></script>
+<script src="data/informatica-nem.js"></script>
 <script>
 const PROXY_URL = 'https://hub-mqct-proxy.vercel.app/api/gemini';
 const AREA_NOME = 'Informática para Internet · NEM';
@@ -257,7 +258,7 @@ function toggleTheme(){
   document.querySelector('.theme-btn').textContent=dark?'🌙':'☀️';
 }
 function voltarHub(){
-  window.location.href='https://profpaulofilho.github.io/hub-artifacts_IA/index.html';
+  window.location.href='../index.html';
 }
 
 function calcAulas(){
@@ -324,9 +325,114 @@ async function callGemini(prompt){
 }
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast visible'+(type?' '+type:'');setTimeout(()=>t.className='toast',3200);}
 function setLoading(prefix,on){const l=document.getElementById(prefix+'-loading');const b=document.getElementById(prefix+'-btn');if(l)l.style.display=on?'flex':'none';if(b)b.disabled=on;}
-function showOutput(prefix,text){const o=document.getElementById(prefix+'-output');const a=document.getElementById(prefix+'-actions');if(o){o.textContent=text;o.classList.add('visible');}if(a)a.style.display='flex';showToast('Material gerado!');}
-function downloadDoc(outputId,filename){const content=document.getElementById(outputId)?.textContent||'';if(!content.trim()){showToast('Nenhum conteúdo.','error');return;}const blob=new Blob(['\ufeff'+content],{type:'application/msword'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${filename}_${new Date().toISOString().slice(0,10)}.doc`;a.click();showToast('Arquivo .doc baixado!');}
-function copiarTexto(outputId){const text=document.getElementById(outputId)?.textContent||'';navigator.clipboard.writeText(text).then(()=>showToast('Copiado!'));}
+
+function getDocTypeByPrefix(prefix){
+  return {
+    pa:'plano-aula',
+    sa:'situacao-aprendizagem',
+    pr:'roteiro-praticas',
+    oa:'objeto-aprendizagem',
+    av:'avaliacao-prova',
+    cu:'material-personalizado'
+  }[prefix] || 'material-personalizado';
+}
+
+function buildDocMeta(extra={}){
+  return {
+    area: AREA_NOME,
+    curso: CURSO,
+    uc: extra.uc || ucAtual.nome || '',
+    docente: extra.docente || document.getElementById('pa-docente')?.value || '',
+    turma: extra.turma || document.getElementById('pa-turma')?.value || '',
+    data: extra.data || document.getElementById('pa-data')?.value || new Date().toISOString().slice(0,10),
+    cht: extra.cht ?? (parseInt(document.getElementById('pa-cht')?.value)||0),
+    chp: extra.chp ?? (parseInt(document.getElementById('pa-chp')?.value)||0),
+    total: extra.total || ((parseInt(document.getElementById('pa-cht')?.value)||0)+(parseInt(document.getElementById('pa-chp')?.value)||0))+'h',
+    observacoes: extra.observacoes || ''
+  };
+}
+
+function showOutput(prefix,text){
+  showDocOutput(prefix,getDocTypeByPrefix(prefix),'',text,{});
+}
+
+function showDocOutput(prefix,type,title,raw,meta={}){
+  const out=document.getElementById(prefix+'-output');
+  const actions=document.getElementById(prefix+'-actions');
+  const accent=window.areaDados?.cor||getComputedStyle(document.documentElement).getPropertyValue('--cor').trim()||'#6A0DAD';
+
+  if(!window.DocumentEngine){
+    if(out){out.textContent=raw;out.classList.add('visible');}
+    if(actions)actions.style.display='flex';
+    showToast('Material gerado, mas o Document Engine não foi carregado.','error');
+    return;
+  }
+
+  const fullMeta=buildDocMeta(meta);
+  let wordHtml='', preview='';
+  if(type==='plano-aula'){
+    const structured=DocumentEngine.fromGeminiText(raw,{
+      area:fullMeta.area,curso:fullMeta.curso,uc:fullMeta.uc,docente:fullMeta.docente,turma:fullMeta.turma,
+      data:fullMeta.data,cht:fullMeta.cht,chp:fullMeta.chp,total:fullMeta.total,observacoes:fullMeta.observacoes
+    });
+    wordHtml=DocumentEngine.renderPlanoAulaWord(structured,{accent});
+    preview=DocumentEngine.renderPreview(structured,{accent});
+  }else{
+    const structured=DocumentEngine.fromAnyText(raw,type,{
+      area:fullMeta.area,curso:fullMeta.curso,uc:fullMeta.uc,docente:fullMeta.docente,turma:fullMeta.turma,
+      data:fullMeta.data,observacoes:fullMeta.observacoes
+    });
+    wordHtml=DocumentEngine.renderWordDocument(structured,{accent,type});
+    preview=DocumentEngine.renderGenericPreview(structured,{accent,type});
+  }
+
+  if(out){
+    out.innerHTML=preview;
+    out.dataset.docHtml=wordHtml;
+    out.dataset.rawText=raw;
+    out.classList.add('visible');
+  }
+  if(actions)actions.style.display='flex';
+  showToast('Material gerado no padrão Word SENAI!');
+}
+
+function downloadDoc(outputId,filename){
+  const el=document.getElementById(outputId);
+  if(!el){showToast('Nenhum conteúdo.','error');return;}
+  const html=el.dataset?.docHtml||'';
+  if(html && window.DocumentEngine){
+    DocumentEngine.downloadHtmlAsDoc(html,filename);
+    showToast('Arquivo .doc baixado no padrão Word SENAI!');
+    return;
+  }
+  const content=el.dataset?.rawText||el.textContent||'';
+  if(!content.trim()){showToast('Nenhum conteúdo.','error');return;}
+  const prefix=String(outputId).split('-')[0];
+  const type=getDocTypeByPrefix(prefix);
+  const accent=window.areaDados?.cor||'#6A0DAD';
+  let wordHtml='';
+  if(window.DocumentEngine){
+    if(type==='plano-aula'){
+      const structured=DocumentEngine.fromGeminiText(content,buildDocMeta({}));
+      wordHtml=DocumentEngine.renderPlanoAulaWord(structured,{accent});
+    }else{
+      const structured=DocumentEngine.fromAnyText(content,type,buildDocMeta({}));
+      wordHtml=DocumentEngine.renderWordDocument(structured,{accent,type});
+    }
+    DocumentEngine.downloadHtmlAsDoc(wordHtml,filename);
+    showToast('Arquivo .doc baixado no padrão Word SENAI!');
+    return;
+  }
+  const blob=new Blob(['\ufeff'+content],{type:'application/msword;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${filename}_${new Date().toISOString().slice(0,10)}.doc`;a.click();
+  showToast('Arquivo .doc baixado!');
+}
+
+function copiarTexto(outputId){
+  const el=document.getElementById(outputId);
+  const text=el?.dataset?.rawText||el?.textContent||'';
+  navigator.clipboard.writeText(text).then(()=>showToast('Copiado!'));
+}
 
 const MSEP_BASE=`Você é um especialista em educação profissional do SENAI, com amplo conhecimento do Plano de Curso Técnico em Informática para Internet NEM (Ensino Médio com Itinerário de Formação Técnica e Profissional) — SENAI DR-BA — Janeiro/2022 — e da Metodologia SENAI de Educação Profissional (MSEP).
 Curso: ${CURSO}
@@ -403,7 +509,7 @@ UC: ${uc} | Docente: ${docente} | Turma: ${turma} | Data: ${data}
 CH Teórica: ${cht}h | CH Prática: ${chp}h | Total: ${isTransversal?'Transversal':total+'h'} | Aulas: ${nAulas} de ${chDia}h | Modelo: ${modelo}
 ${obs?'Obs: '+obs:''}
 Seções: Cabeçalho, Objetivos (gerúndio), Capacidades/Habilidades, Tabela de Aulas (${nAulas} linhas com Nº|Tema|Metodologia|Recursos/Ferramentas|Avaliação), Critérios de Avaliação, Referências técnicas.`;
-    const text=await callGemini(prompt);showOutput('pa',text);
+    const text=await callGemini(prompt);showDocOutput('pa','plano-aula','Plano de Aula',text,{uc,docente,turma,data,cht,chp,total: total+'h',observacoes: obs});
   }catch(e){if(e.message!=='Unauthorized')showToast('Erro ao gerar.','error');}
   setLoading('pa',false);
 }
@@ -415,7 +521,7 @@ async function gerarSA(){
     const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
 Gere uma SITUAÇÃO DE APRENDIZAGEM MSEP para UC: ${uc} | Contexto: ${ctx||'Empresa de tecnologia com demanda real de desenvolvimento web'}
 Inclua: Título, Situação-Problema (startup/empresa real de TI), Desafio, Competências (gerúndio), Etapas de desenvolvimento (pesquisa → prototipagem → codificação → testes → deploy → apresentação), Evidências esperadas (código, repositório, demo), Critérios de Avaliação, Referências.`;
-    const text=await callGemini(prompt);showOutput('sa',text);
+    const text=await callGemini(prompt);showDocOutput('sa','situacao-aprendizagem','Situação de Aprendizagem',text,{uc});
   }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
   setLoading('sa',false);
 }
@@ -428,7 +534,7 @@ async function gerarPratica(){
     const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
 Gere ROTEIRO DE PRÁTICAS para UC: ${uc} | Tipo: ${tipo} | Ferramentas: ${rec||'VSCode, Node.js, Git, navegador web'}
 Inclua: Título, Objetivos, Fundamentação teórica, Ferramentas e tecnologias, Procedimentos numerados (passo a passo de codificação), Pontos de controle/critérios de qualidade de código, Resultado esperado (funcionalidade ou entregável), Commit e documentação no GitHub, Referências (MDN, documentação oficial, W3C).`;
-    const text=await callGemini(prompt);showOutput('pr',text);
+    const text=await callGemini(prompt);showDocOutput('pr','roteiro-praticas','Roteiro de Práticas',text,{uc});
   }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
   setLoading('pr',false);
 }
@@ -440,7 +546,7 @@ async function gerarOA(){
     const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
 Gere OBJETO DE APRENDIZAGEM para UC: ${uc} | Nível: ${nivel}
 Inclua: Apresentação do tema, Objetivos, Conteúdo com subtítulos e exemplos de código reais (use blocos de código quando pertinente), Saiba Mais (tendências, frameworks, ferramentas), 3 atividades de fixação práticas, Glossário técnico, Referências (MDN, documentação oficial, livros técnicos).`;
-    const text=await callGemini(prompt);showOutput('oa',text);
+    const text=await callGemini(prompt);showDocOutput('oa','objeto-aprendizagem','Objeto de Aprendizagem',text,{uc});
   }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
   setLoading('oa',false);
 }
@@ -520,7 +626,7 @@ async function gerarAvaliacao(){
     const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
 Gere AVALIAÇÃO/PROVA: UC: ${uc} | ${obj} objetivas (A/B/C/D) | ${disc} discursivas | Nível: ${nivel} | Total: 10 pts
 Inclua: cabeçalho, instruções, questões com exemplos de código quando pertinente, gabarito ao final. Baseie nas tecnologias e normas oficiais da área (MDN, W3C, documentação oficial das ferramentas).`;
-    const text=await callGemini(prompt);showOutput('av',text);
+    const text=await callGemini(prompt);showDocOutput('av','avaliacao-prova','Avaliação / Prova',text,{uc});
   }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
   setLoading('av',false);
 }
@@ -531,7 +637,7 @@ async function gerarCustom(){
   setLoading('cu',true);
   try{
     const prompt=`${MSEP_BASE}\nGere o seguinte MATERIAL DIDÁTICO personalizado: ${desc}\nMantenha alinhamento com o Plano de Curso NEM SENAI DR-BA, MSEP e tecnologias web atuais.`;
-    const text=await callGemini(prompt);showOutput('cu',text);
+    const text=await callGemini(prompt);showDocOutput('cu','material-personalizado','Material Personalizado',text,{uc:ucAtual.nome||AREA_NOME});
   }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
   setLoading('cu',false);
 }
