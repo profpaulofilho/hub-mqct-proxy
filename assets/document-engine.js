@@ -28,13 +28,63 @@
 
   function arr(v) {
     if (!v) return [];
-    if (Array.isArray(v)) return v.map(x => typeof x === 'string' ? x : (x?.texto || x?.descricao || x?.titulo || JSON.stringify(x))).filter(Boolean);
+    if (Array.isArray(v)) return v.map(x => {
+      if (typeof x === 'string') return x;
+      if (x && typeof x === 'object') return curricularItemText(x);
+      return String(x || '');
+    }).filter(Boolean);
     if (typeof v === 'string') {
       return v.split(/\n|•|\u2022/g)
         .map(s => s.replace(/^\s*[-*]\s*/, '').trim())
         .filter(Boolean);
     }
+    if (typeof v === 'object') return [curricularItemText(v)].filter(Boolean);
     return [String(v)];
+  }
+
+  function rawArray(v) {
+    if (!v) return [];
+    return Array.isArray(v) ? v : [v];
+  }
+
+  function isBlank(v) {
+    return String(v == null ? '' : v).trim() === '';
+  }
+
+  function isUsefulAula(a) {
+    if (!a || typeof a !== 'object') return false;
+    const content = [a.capacidade, a.capacidades, a.habilidade, a.habilidades, a.padrao, a.conteudo, a.tema, a.temaAula, a.estrategias, a.metodologia, a.recursos, a.avaliacao].join(' ').trim();
+    return content.length > 8 && !/^n\/?a$/i.test(content);
+  }
+
+  function splitTopics(values) {
+    const out = [];
+    arr(values).forEach(item => {
+      const clean = stripMd(item).replace(/\s+/g, ' ').trim();
+      if (!clean) return;
+      // Se vier um bloco longo de conhecimentos numerados, quebra em tópicos principais.
+      const numbered = clean
+        .replace(/\s+(\d+(?:\.\d+)*\s+[A-ZÁÉÍÓÚÂÊÔÃÕÇ][^\d]{3,})/g, '\n$1')
+        .split(/\n|;/)
+        .map(s => s.trim())
+        .filter(Boolean);
+      (numbered.length > 1 ? numbered : [clean]).forEach(x => {
+        const y = x.replace(/^[-–—•·\u2022]\s*/, '').trim();
+        if (y && !out.includes(y)) out.push(y);
+      });
+    });
+    return out;
+  }
+
+  function inferOfficialUC(meta) {
+    const m = meta || {};
+    if (m.officialUC || m.ucOficial) return m.officialUC || m.ucOficial;
+    try {
+      if (typeof window !== 'undefined' && typeof window.findOfficialUC === 'function') {
+        return window.findOfficialUC(m.uc || m.ucId || '') || null;
+      }
+    } catch (e) {}
+    return null;
   }
 
   function safeDate() {
@@ -116,33 +166,54 @@
 
   function generateFallbackAulas(ctx, qtd, chDia) {
     const capacidades = arr(ctx.capacidades);
-    const conhecimentos = arr(ctx.conhecimentos);
+    const conhecimentos = splitTopics(ctx.conhecimentos);
     const habilidades = arr(ctx.habilidades);
     const socio = arr(ctx.socioemocionais);
-    const n = Math.max(1, Number(qtd || 0) || Math.min(Math.max(conhecimentos.length || capacidades.length || 1, 1), 12));
+    const recursosBase = (ctx.recursos || '').trim() || 'Sala/laboratório, projetor, computador, materiais didáticos e recursos indicados no plano de curso.';
+    const totalCH = parseInt(String(ctx.total || '').replace(/\D+/g, ''), 10) || parseInt(ctx.chPratica, 10) || parseInt(ctx.chTeorica, 10) || 0;
+    const chAula = parseInt(chDia, 10) || 4;
+    const n = Math.max(1, Number(qtd || 0) || (totalCH ? Math.ceil(totalCH / chAula) : Math.min(Math.max(conhecimentos.length || capacidades.length || 1, 1), 12)));
+
+    const topics = conhecimentos.length ? conhecimentos : (capacidades.length ? capacidades : [ctx.uc || 'Tema da UC']);
     const aulas = [];
+
     for (let i = 0; i < n; i++) {
-      const cap = capacidades[i % Math.max(capacidades.length, 1)] || '';
-      const hab = habilidades[i % Math.max(habilidades.length, 1)] || '';
-      const cont = conhecimentos[i % Math.max(conhecimentos.length, 1)] || cap || ctx.uc || 'Tema da UC';
+      const cap = capacidades.length ? capacidades[i % capacidades.length] : '';
+      const hab = habilidades.length ? habilidades[i % habilidades.length] : (cap ? cap : 'N/A');
+      const cont = topics[i % topics.length];
+      const next = topics[(i + 1) % topics.length];
       const socioTxt = socio.length ? ` Integração socioemocional: ${socio[i % socio.length]}.` : '';
+      const pratica = Number(ctx.chPratica || 0) > Number(ctx.chTeorica || 0);
+
       aulas.push({
         numero: `Aula ${i + 1}`,
         capacidade: cap,
         habilidade: hab || 'N/A',
-        conteudo: cont,
-        estrategias: `Abertura: contextualização do tema com situação-problema. Desenvolvimento: atividade orientada com aplicação prática do conteúdo oficial da UC. Fechamento: socialização das evidências, feedback e registro de aprendizagem.${socioTxt}`,
-        recursos: (ctx.recursos || '').trim() || 'Sala/laboratório, projetor, computador, materiais didáticos e recursos indicados no plano de curso.',
-        avaliacao: 'Observação processual, entrega da atividade, participação, qualidade técnica e evidências de aprendizagem.'
+        conteudo: `${cont}${next && next !== cont && n > topics.length ? `; articulação com ${next}` : ''}`,
+        estrategias: [
+          `Abertura (${Math.max(15, Math.round(chAula * 10))}min): problematização contextualizada da UC "${ctx.uc}" e retomada da aula anterior.`,
+          pratica
+            ? `Desenvolvimento: demonstração técnica, prática orientada em laboratório/oficina ou ambiente simulado, com aplicação do conhecimento "${cont}" e registro das evidências.`
+            : `Desenvolvimento: exposição dialogada, estudo de caso, exercícios orientados e aplicação do conhecimento "${cont}" em situação real da área.`,
+          `Fechamento: socialização dos resultados, feedback docente, síntese dos pontos críticos e encaminhamento da próxima atividade.${socioTxt}`
+        ].join(' '),
+        recursos: recursosBase,
+        avaliacao: `Avaliação formativa por participação, execução da atividade, registros técnicos e evidências ligadas à capacidade trabalhada${cap ? ': ' + cap : ''}.`
       });
     }
     return aulas;
   }
 
+  function aulasAreEmpty(aulas) {
+    const list = rawArray(aulas);
+    if (!list.length) return true;
+    return !list.some(isUsefulAula);
+  }
+
   function normalizePlanoAula(input, meta) {
     const data = input && typeof input === 'object' ? input : {};
     const m = meta || {};
-    const official = m.officialUC || m.ucOficial || {};
+    const official = inferOfficialUC(m) || {};
 
     const officialCapacidades = officialArr(official, ['capacidades', 'capacidadesBasicas', 'capacidadesTecnicas', 'habilidadesCapacidades']);
     const officialConhecimentos = officialArr(official, ['conhecimentos', 'objetosConhecimento', 'objetosDeConhecimento']);
@@ -150,10 +221,11 @@
     const officialSocio = officialArr(official, ['socioemocionais', 'capacidadesSocioemocionais']);
     const officialReferencias = officialArr(official, ['referencias', 'referenciasBasicas', 'bibliografia']);
 
-    let aulas = arr(data.aulas).map((a, i) => {
+    let aulas = rawArray(data.aulas).map((a, i) => {
       if (typeof a === 'string') {
         return { numero: `Aula ${i + 1}`, capacidade: '', habilidade: '', conteudo: a, estrategias: '', recursos: '', avaliacao: '' };
       }
+      a = a || {};
       return {
         numero: a.numero || a.n || `Aula ${i + 1}`,
         capacidade: a.capacidade || a.capacidades || '',
@@ -185,14 +257,14 @@
       avaliacoes: arr(data.avaliacoes || data.criteriosAvaliacao || data.criterios),
       referencias: arr(data.referencias).length ? arr(data.referencias) : officialReferencias,
       observacoes: data.observacoes || m.observacoes || '',
-      recursos: arr(official.equipamentos || official.ambientes).join(', ')
+      recursos: arr([].concat(official.ambientes || [], official.equipamentos || official.maquinas || official.recursos || [])).join(', ')
     };
 
     if (!ctx.objetivo) {
       ctx.objetivo = 'Desenvolver as capacidades previstas na unidade curricular, articulando conhecimentos, práticas e evidências de aprendizagem conforme o Plano de Curso SENAI DR-BA.';
     }
 
-    if (!ctx.aulas.length) {
+    if (!ctx.aulas.length || aulasAreEmpty(ctx.aulas)) {
       ctx.aulas = generateFallbackAulas(ctx, m.nAulas || m.qtdAulas, m.chDia);
     } else {
       ctx.aulas = ctx.aulas.map((a, i) => ({
@@ -400,7 +472,7 @@ JSON esperado:
   "referencias": ["referência 1"]
 }
 
-Dados do formulário:
+REGRAS PARA AS AULAS:\n- Gere exatamente ${m.nAulas || ''} aulas.\n- Cada aula deve ter capacidade, habilidade/padrão, conteúdo, estratégias, recursos e avaliação preenchidos.\n- Distribua todos os conhecimentos oficiais ao longo das aulas, sem deixar conteúdo vazio.\n\nDados do formulário:
 UC: ${m.uc}
 Docente: ${m.docente}
 Turma: ${m.turma}
