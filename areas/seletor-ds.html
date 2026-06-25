@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DS e Informática para Internet — Hub MQCT SENAI Bahia</title>
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--cor:#6A0DAD;--cor-d:#4A0080;--cor-l:#F3E8FF;--text:#1A0A2E;--muted:#4A0080;--border:#CE93D8;--bg:#FAF8FF}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);min-height:100vh;padding:24px 16px;color:var(--text)}
+  .wrap{max-width:980px;margin:0 auto}
+  .top{margin-bottom:20px}
+  .back{display:inline-flex;align-items:center;gap:6px;color:var(--cor);text-decoration:none;font-size:14px;font-weight:600;padding:6px 12px;border:1px solid var(--cor);border-radius:8px;transition:background .2s}
+  .back:hover{background:var(--cor-l)}
+  .hero{background:linear-gradient(135deg,#4A0080,#6A0DAD,#9C27B0);color:#fff;border-radius:16px;padding:36px 40px;margin-bottom:32px}
+  .tag{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;opacity:.8;margin-bottom:8px;display:block}
+  .hero h1{font-size:28px;font-weight:800;margin-bottom:10px}
+  .hero p{font-size:15px;opacity:.9;line-height:1.6;max-width:640px}
+  .section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--cor);margin:0 0 14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-bottom:32px}
+  .card{background:#fff;border:2px solid var(--border);border-radius:16px;padding:28px;text-decoration:none;color:var(--text);display:flex;flex-direction:column;transition:border-color .2s,box-shadow .2s}
+  .card:hover{border-color:var(--cor);box-shadow:0 4px 20px rgba(106,13,173,.12)}
+  .card.soon{opacity:.65;cursor:not-allowed;pointer-events:none}
+  .icon{font-size:36px;margin-bottom:14px}
+  .card h2{font-size:17px;font-weight:800;margin-bottom:8px;color:var(--cor-d)}
+  .card p{font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:18px;flex:1}
+  .badge{display:inline-flex;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:900;text-transform:uppercase;margin-bottom:12px;border:1px solid}
+  .badge.green{background:#dcfce7;color:#166534;border-color:#86efac}
+  .badge.purple{background:#ede9fe;color:#5b21b6;border-color:#c4b5fd}
+  .badge.gray{background:#f1f5f9;color:#64748b;border-color:#cbd5e1}
+  .cta{display:flex;justify-content:space-between;align-items:center;margin-top:auto;font-weight:900;color:var(--cor);font-size:14px}
+  .soon .cta{color:#94a3b8}
+  @media(max-width:760px){.grid,.grid-3{grid-template-columns:1fr}.hero{padding:26px}.hero h1{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a class="back" href="../index.html">← Voltar ao Hub</a></div>
+
+  <section class="hero">
+    <span class="tag">💻 Hub MQCT · DS e Informática para Internet · SENAI Bahia</span>
+    <h1>Desenvolvimento de Software e Informática para Internet</h1>
+    <p>Selecione o curso e a base curricular para gerar materiais didáticos alinhados ao documento oficial correspondente.</p>
+  </section>
+
+  <!-- TÉCNICO EM INFORMÁTICA PARA INTERNET -->
+  <div class="section-label">🌐 Técnico em Informática para Internet</div>
+  <div class="grid">
+    <a class="card" href="informatica-nem.html">
+      <div class="icon">🏫</div>
+      <span class="badge purple">NEM · Ensino Médio Integrado</span>
+      <h2>Informática para Internet · NEM</h2>
+      <p>Plano de Curso SENAI DR-BA (Jan/2022) para Ensino Médio com Itinerário de Formação Técnica e Profissional. 1200h — 5 módulos: Mundo do Trabalho, Integrador Básico, Integrador Introdutório, Específico I (Front-End) e II (Back-End).</p>
+      <div class="cta"><span>Acessar NEM</span><span>→</span></div>
+    </a>
+    <a class="card soon" href="#">
+      <div class="icon">🇧🇷</div>
+      <span class="badge gray">Em breve</span>
+      <h2>Informática para Internet · Itinerário Nacional</h2>
+      <p>Materiais baseados no Itinerário Nacional SENAI para Técnico em Informática para Internet. Disponível em breve.</p>
+      <div class="cta"><span>Em breve</span><span>–</span></div>
+    </a>
+  </div>
+
+  <!-- DESENVOLVIMENTO DE SOFTWARE -->
+  <div class="section-label">🖥️ Técnico em Desenvolvimento de Software (DS)</div>
+  <div class="grid">
+    <a class="card soon" href="#">
+      <div class="icon">📋</div>
+      <span class="badge gray">Em breve</span>
+      <h2>DS · Itinerário Nacional</h2>
+      <p>Materiais baseados no Itinerário Nacional SENAI para Técnico em Desenvolvimento de Software. Disponível em breve.</p>
+      <div class="cta"><span>Em breve</span><span>–</span></div>
+    </a>
+    <a class="card soon" href="#">
+      <div class="icon">🏛️</div>
+      <span class="badge gray">Em breve</span>
+      <h2>DS · Plano de Curso DR-BA</h2>
+      <p>Materiais baseados no Plano de Curso SENAI DR-BA para Técnico em Desenvolvimento de Software. Disponível em breve.</p>
+      <div class="cta"><span>Em breve</span><span>–</span></div>
+    </a>
+  </div>
+</div>
+</body>
+</html>

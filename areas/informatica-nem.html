@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Informática para Internet · NEM — Hub MQCT · SENAI Bahia</title>
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="stylesheet" href="../assets/mindmap.css">
+<script src="../assets/mindmap.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<script src="../assets/slides-v2.js"></script>
+<style>
+  :root{
+    --cor:#6A0DAD;--cor-dark:#4A0080;--cor-light:#F3E8FF;--cor-muted:#E1BEE7;
+    --bg:#FAF8FF;--bg-card:#FFFFFF;--text:#1A0A2E;--text-2:#4A0080;
+    --text-3:#6A0DAD;--border:#CE93D8;--shadow:0 2px 12px rgba(106,13,173,.12);
+    --radius:12px;--radius-sm:8px;
+    --font-head:'Segoe UI',Arial,sans-serif;--font-body:'Segoe UI',system-ui,sans-serif;--tr:.2s ease;
+  }
+  [data-theme="dark"]{
+    --bg:#0D0518;--bg-card:#1A0A2E;--text:#F3E8FF;--text-2:#CE93D8;
+    --text-3:#9C4DCC;--border:#4A0080;--cor-light:#2D1060;--cor-muted:#3D1880;
+    --shadow:0 2px 12px rgba(0,0,0,.4);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--font-body);background:var(--bg);color:var(--text);min-height:100vh;transition:background var(--tr),color var(--tr)}
+  button{cursor:pointer;font-family:inherit}
+  .topbar{position:sticky;top:0;z-index:100;background:var(--bg-card);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;box-shadow:var(--shadow)}
+  .topbar-left{display:flex;align-items:center;gap:12px}
+  .back-btn{display:flex;align-items:center;gap:6px;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 12px;color:var(--text-2);font-size:13px;transition:all var(--tr)}
+  .back-btn:hover{background:var(--cor-light);border-color:var(--cor);color:var(--cor)}
+  .topbar-title{font-size:14px;font-weight:600;color:var(--text-2)}
+  .theme-btn{background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px 10px;font-size:16px;color:var(--text-2);transition:all var(--tr)}
+  .theme-btn:hover{background:var(--cor-light);border-color:var(--cor)}
+  .hero{background:linear-gradient(135deg,#4A0080 0%,#6A0DAD 50%,#9C27B0 100%);color:#fff;padding:48px 32px 40px;position:relative;overflow:hidden}
+  .hero::before{content:'💻';position:absolute;right:40px;top:20px;font-size:120px;opacity:.12;line-height:1;pointer-events:none;user-select:none}
+  .hero-tag{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600;letter-spacing:.05em;margin-bottom:16px;text-transform:uppercase}
+  .hero h1{font-family:var(--font-head);font-size:clamp(28px,5vw,48px);font-weight:700;line-height:1.1;margin-bottom:10px}
+  .hero-sub{font-size:15px;opacity:.85;margin-bottom:24px;max-width:560px}
+  .hero-badges{display:flex;flex-wrap:wrap;gap:8px}
+  .badge{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600}
+  .badge.ch{background:rgba(0,0,0,.25)}
+  .layout{display:grid;grid-template-columns:280px 1fr;gap:0;min-height:calc(100vh - 56px - 148px)}
+  .sidebar{background:var(--bg-card);border-right:1px solid var(--border);padding:20px 0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+  .sidebar-title{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);padding:0 18px 10px}
+  .uc-group-header{display:flex;align-items:center;justify-content:space-between;padding:9px 18px;cursor:pointer;color:var(--text-2);font-size:12px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;border-left:3px solid transparent;transition:all var(--tr)}
+  .uc-group-header:hover{background:var(--cor-light);border-left-color:var(--cor);color:var(--cor-dark)}
+  .uc-item{padding:7px 18px 7px 26px;font-size:12px;color:var(--text-2);cursor:pointer;border-left:3px solid transparent;transition:all var(--tr);display:flex;justify-content:space-between;align-items:center}
+  .uc-item:hover{background:var(--cor-light);color:var(--cor-dark);border-left-color:var(--cor)}
+  .uc-item.ativo{background:var(--cor-light)!important;border-left-color:var(--cor)!important;color:var(--cor-dark)!important;font-weight:700;}
+  .uc-item .ch-tag{font-size:10px;background:var(--cor-muted);color:var(--cor-dark);border-radius:10px;padding:1px 6px;white-space:nowrap;font-weight:600}
+  .sidebar-divider{height:1px;background:var(--border);margin:12px 18px}
+  .main{padding:28px 32px}
+  .uc-header{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px;border-left:4px solid var(--cor)}
+  .uc-header h2{font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px}
+  .uc-header p{font-size:13px;color:var(--text-2);line-height:1.5}
+  .uc-meta{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .uc-meta span{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:600;background:var(--cor-muted);color:var(--cor-dark)}
+  .uc-meta span.ch-t{background:#dbeafe;color:#1e40af}
+  .uc-meta span.ch-p{background:#dcfce7;color:#166534}
+  .uc-meta span.ch-total{background:var(--cor);color:#fff}
+  .comp-section{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:24px}
+  .comp-section h3{font-size:14px;font-weight:700;color:var(--text);margin-bottom:14px}
+  .comp-tags{display:flex;flex-wrap:wrap;gap:8px}
+  .comp-tag{font-size:11px;padding:4px 12px;border-radius:12px;font-weight:600;background:var(--cor-muted);color:var(--cor-dark);border:1px solid var(--cor)}
+  .comp-tag.socio{background:#e8f4fd;color:#1565c0;border-color:#90caf9}
+  .comp-tag.ia{background:#e8f5e9;color:#2e7d32;border-color:#a5d6a7}
+  .section-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  .materials-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:32px}
+  .material-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;cursor:pointer;transition:all var(--tr);display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+  .material-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--cor);transform:scaleX(0);transition:transform var(--tr);transform-origin:left}
+  .material-card:hover{border-color:var(--cor);box-shadow:var(--shadow);transform:translateY(-2px)}
+  .material-card:hover::before{transform:scaleX(1)}
+  .mat-icon{font-size:28px;line-height:1}
+  .mat-name{font-size:13px;font-weight:700;color:var(--text)}
+  .mat-desc{font-size:11px;color:var(--text-2);line-height:1.5;flex:1}
+  .mat-btn{background:var(--cor);color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 14px;font-size:12px;font-weight:700;width:100%;transition:background var(--tr)}
+  .mat-btn:hover{background:var(--cor-dark)}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:center;justify-content:center;padding:20px}
+  .modal-overlay.open{display:flex}
+  .modal{background:var(--bg-card);border-radius:var(--radius);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .modal-mapa-wide{max-width:900px}
+  .modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg-card);z-index:1}
+  .modal-header h3{font-size:15px;font-weight:700;color:var(--text)}
+  .modal-close{background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px;color:var(--text-2);font-size:14px;transition:all var(--tr)}
+  .modal-close:hover{background:var(--cor-light);border-color:var(--cor);color:var(--cor)}
+  .modal-body{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+  .form-group{display:flex;flex-direction:column;gap:6px}
+  .form-group label{font-size:12px;font-weight:600;color:var(--text-2)}
+  .form-group input,.form-group select,.form-group textarea{padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);font-size:13px;font-family:inherit;transition:border-color var(--tr);outline:none}
+  .form-group select:focus,.form-group input:focus,.form-group textarea:focus{border-color:var(--cor);box-shadow:0 0 0 3px rgba(106,13,173,.15)}
+  .form-group textarea{resize:vertical;min-height:80px}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  .ch-info-box{background:var(--cor-light);border:1px solid var(--cor);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:var(--cor-dark);margin-bottom:16px;display:none}
+  .ch-info-box.visible{display:block}
+  .ch-info-box strong{display:block;margin-bottom:4px;font-size:13px}
+  .output-area{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;font-size:13px;line-height:1.7;color:var(--text);min-height:120px;white-space:pre-wrap;display:none}
+  .output-area.visible{display:block}
+  .btn-primary{width:100%;padding:12px;background:var(--cor);color:#fff;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;transition:background var(--tr);margin-bottom:10px}
+  .btn-primary:hover{background:var(--cor-dark)}
+  .btn-primary:disabled{opacity:.6;cursor:not-allowed}
+  .btn-secondary{flex:1;padding:10px;background:none;color:var(--cor-dark);border:1px solid var(--cor);border-radius:var(--radius-sm);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:all var(--tr)}
+  .btn-secondary:hover{background:var(--cor-light)}
+  .btn-secondary:disabled{opacity:.5;cursor:not-allowed}
+  .btn-row{display:flex;gap:10px;margin-top:12px}
+  .loading{display:none;align-items:center;gap:10px;padding:14px;font-size:13px;color:var(--text-2)}
+  .loading.visible{display:flex}
+  .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--cor);border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--bg-card);border:1px solid var(--border);border-left:4px solid var(--cor);border-radius:var(--radius-sm);padding:12px 18px;font-size:13px;color:var(--text);box-shadow:var(--shadow);animation:toastIn .3s ease;display:none}
+  .toast.visible{display:block}
+  .toast.error{border-left-color:#ef4444}
+  @keyframes toastIn{from{transform:translateX(30px);opacity:0}}
+  @media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{position:relative;height:auto;border-right:none;border-bottom:1px solid var(--border)}.main{padding:20px 16px}.form-row,.form-row-3{grid-template-columns:1fr}.materials-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:480px){.materials-grid{grid-template-columns:1fr}.hero{padding:32px 20px 28px}}
+</style>
+</head>
+<body data-theme="light">
+
+<div class="topbar">
+  <div class="topbar-left">
+    <button class="back-btn" onclick="voltarHub()">← Hub Principal</button>
+    <span class="topbar-title">💻 Informática para Internet · NEM</span>
+  </div>
+  <button class="theme-btn" onclick="toggleTheme()" title="Alternar tema">🌙</button>
+</div>
+
+<div class="hero">
+  <div class="hero-tag">💻 MQCT · SENAI Bahia</div>
+  <h1>Informática para Internet · NEM</h1>
+  <p class="hero-sub">Materiais didáticos alinhados ao Plano de Curso NEM · Ensino Médio com Itinerário de Formação Técnica e Profissional · SENAI DR-BA · Jan/2022</p>
+  <div class="hero-badges">
+    <span class="badge">Técnico em Informática para Internet</span>
+    <span class="badge ch">⏱ 1200h</span>
+    <span class="badge">NEM · Eixo: Informação e Comunicação</span>
+    <span class="badge">1º ao 3º Ano</span>
+  </div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-title">Módulos e UCs · Plano NEM DR-BA</div>
+
+    <div class="uc-group-header">📚 MÓDULO MUNDO DO TRABALHO · 1º Ano <span class="ch-tag">200h</span></div>
+    <div class="uc-item" onclick="setUC('MT_UC1','Autoconhecimento','Desenvolver a capacidade de reflexão sobre si mesmo, identidade, valores e potencialidades para a inserção no mundo do trabalho.',0,30,'Módulo Mundo do Trabalho')"><span>UC1 — Autoconhecimento</span><span class="ch-tag">30h</span></div>
+    <div class="uc-item" onclick="setUC('MT_UC2','Projeto de Vida e Carreira','Desenvolver habilidades de planejamento de projeto de vida e trajetória profissional alinhadas ao mundo do trabalho.',0,50,'Módulo Mundo do Trabalho')"><span>UC2 — Projeto de Vida e Carreira</span><span class="ch-tag">50h</span></div>
+    <div class="uc-item" onclick="setUC('MT_UC3','Mundo do Trabalho','Compreender o contexto do mundo do trabalho, relações de emprego, legislação trabalhista e tendências do mercado de TI.',0,120,'Módulo Mundo do Trabalho')"><span>UC3 — Mundo do Trabalho</span><span class="ch-tag">120h</span></div>
+    <div class="sidebar-divider"></div>
+
+    <div class="uc-group-header">🖥️ MÓDULO INTEGRADOR BÁSICO · 2º Ano <span class="ch-tag">240h</span></div>
+    <div class="uc-item" onclick="setUC('MIB_UC1','Fundamentos de Tecnologia da Informação','Propiciar o desenvolvimento de fundamentos técnicos e científicos relativos à tecnologia da informação que subsidiarão o desenvolvimento das capacidades técnicas dos cursos técnicos de referência.',0,80,'Módulo Integrador Básico')"><span>UC1 — Fundamentos de TI</span><span class="ch-tag">80h</span></div>
+    <div class="uc-item" onclick="setUC('MIB_UC2','Fundamentos de Bancos de Dados','Propiciar o desenvolvimento de fundamentos técnicos e científicos relativos a banco de dados que subsidiarão o desenvolvimento das capacidades técnicas.',0,40,'Módulo Integrador Básico')"><span>UC2 — Fundamentos de Bancos de Dados</span><span class="ch-tag">40h</span></div>
+    <div class="uc-item" onclick="setUC('MIB_UC3','Fundamentos de Redes de Computadores','Propiciar o desenvolvimento de fundamentos técnicos e científicos relativos à infraestrutura e tecnologias de redes de computadores do ambiente de usuário.',0,60,'Módulo Integrador Básico')"><span>UC3 — Fundamentos de Redes</span><span class="ch-tag">60h</span></div>
+    <div class="uc-item" onclick="setUC('MIB_UC4','Lógica Computacional','Propiciar o desenvolvimento de fundamentos de lógica computacional que subsidiarão o desenvolvimento das capacidades técnicas.',0,60,'Módulo Integrador Básico')"><span>UC4 — Lógica Computacional</span><span class="ch-tag">60h</span></div>
+    <div class="sidebar-divider"></div>
+
+    <div class="uc-group-header">🎨 MÓDULO INTEGRADOR INTRODUTÓRIO · 2º Ano <span class="ch-tag">160h</span></div>
+    <div class="uc-item" onclick="setUC('MII_UC1','Fundamentos de UI / UX','Desenvolver as capacidades básicas e as socioemocionais requeridas para compreender os princípios de design, considerando a experiência do usuário no desenvolvimento de interfaces.',0,40,'Módulo Integrador Introdutório')"><span>UC1 — Fundamentos de UI / UX</span><span class="ch-tag">40h</span></div>
+    <div class="uc-item" onclick="setUC('MII_UC2','Lógica de Programação','Propiciar o desenvolvimento de capacidades básicas e socioemocionais relativas à lógica de programação que subsidiarão o desenvolvimento das capacidades técnicas da ocupação.',0,80,'Módulo Integrador Introdutório')"><span>UC2 — Lógica de Programação</span><span class="ch-tag">80h</span></div>
+    <div class="uc-item" onclick="setUC('MII_UC3','Versionamento e Colaboração','Desenvolver as capacidades básicas e socioemocionais requeridas para utilizar ferramentas de versionamento e colaboração em projetos de software.',0,20,'Módulo Integrador Introdutório')"><span>UC3 — Versionamento e Colaboração</span><span class="ch-tag">20h</span></div>
+    <div class="uc-item" onclick="setUC('MII_UC4','Metodologias de Desenvolvimento de Projetos','Propiciar o desenvolvimento de capacidades básicas e socioemocionais para aplicação de metodologias ágeis no desenvolvimento de projetos de software.',0,20,'Módulo Integrador Introdutório')"><span>UC4 — Metodologias de Desenvolvimento</span><span class="ch-tag">20h</span></div>
+    <div class="sidebar-divider"></div>
+
+    <div class="uc-group-header">⚡ MÓDULO ESPECÍFICO I — Front-End · 3º Ano <span class="ch-tag">260h</span></div>
+    <div class="uc-item" onclick="setUC('MEI_UC1','Codificação para Front-End','Propiciar desenvolvimento de capacidades básicas e socioemocionais para codificação de interfaces baseadas em UX e UI em aplicações web, considerando as necessidades do usuário.',0,80,'Módulo Específico I — Front-End')"><span>UC1 — Codificação para Front-End</span><span class="ch-tag">80h</span></div>
+    <div class="uc-item" onclick="setUC('MEI_UC2','Interação com APIs','Propiciar o desenvolvimento de capacidades básicas e socioemocionais que permitam desenvolver aplicações que consumam serviços do servidor exibindo-os na aplicação Front-End.',0,40,'Módulo Específico I — Front-End')"><span>UC2 — Interação com APIs</span><span class="ch-tag">40h</span></div>
+    <div class="uc-item" onclick="setUC('MEI_UC3','Testes de Front-End','Propiciar desenvolvimento de capacidades básicas e socioemocionais para codificação de interfaces baseadas em UX e UI em aplicações web, considerando as necessidades do usuário.',0,40,'Módulo Específico I — Front-End')"><span>UC3 — Testes de Front-End</span><span class="ch-tag">40h</span></div>
+    <div class="uc-item" onclick="setUC('MEI_UC4','Projeto de Front-End','Propiciar o desenvolvimento de capacidades técnicas e socioemocionais para o desenvolvimento de projetos de Front-End.',0,100,'Módulo Específico I — Front-End')"><span>UC4 — Projeto de Front-End</span><span class="ch-tag">100h</span></div>
+    <div class="sidebar-divider"></div>
+
+    <div class="uc-group-header">🔧 MÓDULO ESPECÍFICO II — Back-End · 3º Ano <span class="ch-tag">340h</span></div>
+    <div class="uc-item" onclick="setUC('MEII_UC1','Codificação para Back-End','Propiciar desenvolvimento de capacidades básicas e socioemocionais para codificação de sistemas web server-side, considerando as necessidades do usuário.',0,80,'Módulo Específico II — Back-End')"><span>UC1 — Codificação para Back-End</span><span class="ch-tag">80h</span></div>
+    <div class="uc-item" onclick="setUC('MEII_UC2','Desenvolvimento de APIs','Propiciar o desenvolvimento de capacidades técnicas e socioemocionais requeridas para o desenvolvimento de sistemas em arquitetura de serviços com aplicação de boas práticas de programação.',0,40,'Módulo Específico II — Back-End')"><span>UC2 — Desenvolvimento de APIs</span><span class="ch-tag">40h</span></div>
+    <div class="uc-item" onclick="setUC('MEII_UC3','Banco de Dados','Propiciar o desenvolvimento de capacidades básicas e socioemocionais que permitem realizar a interação entre a aplicação Back-End e um banco de dados.',0,80,'Módulo Específico II — Back-End')"><span>UC3 — Banco de Dados</span><span class="ch-tag">80h</span></div>
+    <div class="uc-item" onclick="setUC('MEII_UC4','Testes de Back-End','Propiciar o desenvolvimento de capacidades básicas e socioemocionais para execução de testes de sistemas web server-side, considerando as necessidades do usuário.',0,40,'Módulo Específico II — Back-End')"><span>UC4 — Testes de Back-End</span><span class="ch-tag">40h</span></div>
+    <div class="uc-item" onclick="setUC('MEII_UC5','Projeto de Back-End','Propiciar o desenvolvimento de capacidades técnicas e socioemocionais para o desenvolvimento de projetos de Back-End.',0,100,'Módulo Específico II — Back-End')"><span>UC5 — Projeto de Back-End</span><span class="ch-tag">100h</span></div>
+  </aside>
+
+  <main class="main">
+    <div class="uc-header" id="uc-header">
+      <h2 id="uc-nome">Selecione uma UC na barra lateral</h2>
+      <p id="uc-desc">Escolha um módulo ou unidade curricular ao lado para gerar materiais didáticos específicos, alinhados ao Plano de Curso NEM · Técnico em Informática para Internet — SENAI DR-BA (1200h).</p>
+      <div class="uc-meta" id="uc-meta"></div>
+    </div>
+
+    <div class="comp-section">
+      <h3>📋 Perfil de Competências — Técnico em Informática para Internet (NEM)</h3>
+      <div class="comp-tags">
+        <span class="comp-tag">Desenvolvimento Front-End</span>
+        <span class="comp-tag">Desenvolvimento Back-End</span>
+        <span class="comp-tag">HTML5, CSS3 e JavaScript</span>
+        <span class="comp-tag">Frameworks (React, Vue, Node.js)</span>
+        <span class="comp-tag">Desenvolvimento de APIs REST</span>
+        <span class="comp-tag">Banco de Dados (SQL e NoSQL)</span>
+        <span class="comp-tag">Testes de Software</span>
+        <span class="comp-tag">Versionamento com Git</span>
+        <span class="comp-tag">UI / UX Design</span>
+        <span class="comp-tag">Metodologias Ágeis (Scrum, Kanban)</span>
+        <span class="comp-tag socio">Protagonismo</span>
+        <span class="comp-tag socio">Trabalho em Equipe</span>
+        <span class="comp-tag socio">Resolução de Problemas</span>
+        <span class="comp-tag ia">IA aplicada ao Desenvolvimento Web</span>
+        <span class="comp-tag ia">GitHub Copilot e Ferramentas de IA</span>
+      </div>
+    </div>
+
+    <div class="section-title">Gerar Material Didático</div>
+    <div class="materials-grid">
+      <div class="material-card" onclick="openModal('plano')"><div class="mat-icon">📋</div><div class="mat-name">Plano de Aula</div><div class="mat-desc">Plano completo no padrão SENAI com tabela de aulas calculada pela CH da UC.</div><button class="mat-btn">✨ Gerar → .doc</button></div>
+      <div class="material-card" onclick="openModal('sa')"><div class="mat-icon">🎯</div><div class="mat-name">Situação de Aprendizagem</div><div class="mat-desc">SA contextualizada com desafio real do desenvolvimento web.</div><button class="mat-btn">✨ Gerar → .doc</button></div>
+      <div class="material-card" onclick="openModal('pratica')"><div class="mat-icon">🧪</div><div class="mat-name">Roteiro de Práticas</div><div class="mat-desc">Roteiro de laboratório com etapas, ferramentas e critérios de qualidade.</div><button class="mat-btn">✨ Gerar → .doc</button></div>
+      <div class="material-card" onclick="openModal('oa')"><div class="mat-icon">📚</div><div class="mat-name">Objeto de Aprendizagem</div><div class="mat-desc">Material teórico com conceitos, exemplos de código e referências técnicas.</div><button class="mat-btn">✨ Gerar → .doc</button></div>
+      <div class="material-card" onclick="openModal('mapa')"><div class="mat-icon">🗺️</div><div class="mat-name">Mapa Mental</div><div class="mat-desc">Visualização dos conceitos e conexões da UC — instantâneo, sem IA.</div><button class="mat-btn">✨ Gerar → SVG</button></div>
+      <div class="material-card" onclick="openModal('caca')"><div class="mat-icon">🔤</div><div class="mat-name">Caça-Palavras</div><div class="mat-desc">Atividade lúdica com termos técnicos da área de TI.</div><button class="mat-btn">✨ Gerar → PNG</button></div>
+      <div class="material-card" onclick="openModal('avaliacao')"><div class="mat-icon">📝</div><div class="mat-name">Avaliação / Prova</div><div class="mat-desc">Instrumento avaliativo com questões objetivas e discursivas por UC.</div><button class="mat-btn">✨ Gerar → .doc</button></div>
+      <div class="material-card" onclick="openModal('slides')"><div class="mat-icon">🎞️</div><div class="mat-name">Slides</div><div class="mat-desc">Apresentação interativa com navegação por teclado + export .pptx.</div><button class="mat-btn">✨ Gerar → HTML / .pptx</button></div>
+      <div class="material-card" onclick="openModal('custom')"><div class="mat-icon">⚙️</div><div class="mat-name">Material Personalizado</div><div class="mat-desc">Descreva o que precisa e a IA gera um material sob medida.</div><button class="mat-btn">✨ Gerar → .doc</button></div>
+    </div>
+  </main>
+</div>
+
+<!-- MODAIS -->
+<div class="modal-overlay" id="modal-plano"><div class="modal"><div class="modal-header"><h3>📋 Plano de Aula — Padrão SENAI</h3><button class="modal-close" onclick="closeModal('plano')">✕</button></div><div class="modal-body"><div class="form-row"><div class="form-group"><label>Docente</label><input type="text" id="pa-docente" placeholder="Nome completo do docente" /></div><div class="form-group"><label>Data</label><input type="date" id="pa-data" /></div></div><div class="form-group"><label>Unidade Curricular</label><input type="text" id="pa-uc" placeholder="Ex: UC selecionada na sidebar" /></div><div class="form-group"><label>Turma / Período</label><input type="text" id="pa-turma" placeholder="Ex: Técnico em Informática para Internet — 2025.1" /></div><div class="form-row-3"><div class="form-group"><label>CH Teórica (h)</label><input type="number" id="pa-cht" value="16" min="0" max="200" oninput="calcAulas()" /></div><div class="form-group"><label>CH Prática (h)</label><input type="number" id="pa-chp" value="24" min="0" max="200" oninput="calcAulas()" /></div><div class="form-group"><label>CH por Aula</label><select id="pa-chpordia" onchange="calcAulas()"><option value="4">4h</option><option value="3">3h</option><option value="2">2h</option></select></div></div><div class="form-row"><div class="form-group"><label>Modelo</label><select id="pa-modelo"><option value="exemplo" selected>SENAI simples</option><option value="detalhado">Detalhado</option></select></div><div class="form-group"><label>Qtd aulas (opcional)</label><input type="number" id="pa-aulas-custom" placeholder="Auto" min="1" max="60" oninput="calcAulas()" /></div></div><div class="ch-info-box visible" id="pa-aulas-info"><strong id="pa-aulas-txt">Calculando...</strong><span id="pa-aulas-sub"></span></div><div class="form-group"><label>Observações</label><textarea id="pa-obs" placeholder="Recursos, necessidades especiais..."></textarea></div><button class="btn-primary" id="pa-btn" onclick="gerarPlano()">✨ Gerar Plano de Aula</button><div class="loading" id="pa-loading"><div class="spinner"></div> Gerando com IA Gemini...</div><div class="output-area" id="pa-output"></div><div class="btn-row" id="pa-actions" style="display:none"><button class="btn-secondary" onclick="downloadDoc('pa-output','Plano_de_Aula')">⬇ Baixar .doc</button><button class="btn-secondary" onclick="copiarTexto('pa-output')">📋 Copiar</button></div></div></div></div>
+
+<div class="modal-overlay" id="modal-sa"><div class="modal"><div class="modal-header"><h3>🎯 Situação de Aprendizagem</h3><button class="modal-close" onclick="closeModal('sa')">✕</button></div><div class="modal-body"><div class="form-group"><label>Unidade Curricular</label><input type="text" id="sa-uc" placeholder="Ex: UC selecionada" /></div><div class="form-group"><label>Contexto / Cenário (opcional)</label><textarea id="sa-ctx" placeholder="Ex: Startup recebe demanda de cliente para novo sistema web..."></textarea></div><button class="btn-primary" id="sa-btn" onclick="gerarSA()">✨ Gerar SA</button><div class="loading" id="sa-loading"><div class="spinner"></div> Gerando...</div><div class="output-area" id="sa-output"></div><div class="btn-row" id="sa-actions" style="display:none"><button class="btn-secondary" onclick="downloadDoc('sa-output','Situacao_de_Aprendizagem')">⬇ Baixar .doc</button><button class="btn-secondary" onclick="copiarTexto('sa-output')">📋 Copiar</button></div></div></div></div>
+
+<div class="modal-overlay" id="modal-pratica"><div class="modal"><div class="modal-header"><h3>🧪 Roteiro de Práticas</h3><button class="modal-close" onclick="closeModal('pratica')">✕</button></div><div class="modal-body"><div class="form-group"><label>UC / Atividade Prática</label><input type="text" id="pr-uc" placeholder="Ex: UC — Codificação para Front-End" /></div><div class="form-group"><label>Tipo de Prática</label><select id="pr-tipo"><option>Laboratório de programação</option><option>Projeto prático</option><option>Code review</option><option>Simulação / estudo de caso</option></select></div><div class="form-group"><label>Ferramentas disponíveis</label><textarea id="pr-recursos" placeholder="Ex: VSCode, Node.js, Git, Figma..."></textarea></div><button class="btn-primary" id="pr-btn" onclick="gerarPratica()">✨ Gerar Roteiro</button><div class="loading" id="pr-loading"><div class="spinner"></div> Gerando...</div><div class="output-area" id="pr-output"></div><div class="btn-row" id="pr-actions" style="display:none"><button class="btn-secondary" onclick="downloadDoc('pr-output','Roteiro_de_Praticas')">⬇ Baixar .doc</button><button class="btn-secondary" onclick="copiarTexto('pr-output')">📋 Copiar</button></div></div></div></div>
+
+<div class="modal-overlay" id="modal-oa"><div class="modal"><div class="modal-header"><h3>📚 Objeto de Aprendizagem</h3><button class="modal-close" onclick="closeModal('oa')">✕</button></div><div class="modal-body"><div class="form-group"><label>UC / Tema</label><input type="text" id="oa-uc" placeholder="Ex: UC selecionada" /></div><div class="form-group"><label>Nível</label><select id="oa-nivel"><option>Introdutório</option><option>Intermediário</option><option>Avançado</option></select></div><button class="btn-primary" id="oa-btn" onclick="gerarOA()">✨ Gerar OA</button><div class="loading" id="oa-loading"><div class="spinner"></div> Gerando...</div><div class="output-area" id="oa-output"></div><div class="btn-row" id="oa-actions" style="display:none"><button class="btn-secondary" onclick="downloadDoc('oa-output','Objeto_de_Aprendizagem')">⬇ Baixar .doc</button><button class="btn-secondary" onclick="copiarTexto('oa-output')">📋 Copiar</button></div></div></div></div>
+
+<div class="modal-overlay" id="modal-mapa"><div class="modal modal-mapa-wide"><div class="modal-header"><h3>🗺️ Mapa Mental</h3><button class="modal-close" onclick="closeModal('mapa')">✕</button></div><div class="modal-body"><div class="form-group"><label>UC / Tema Central</label><input type="text" id="mm-uc" placeholder="Ex: UC selecionada" /></div><button class="btn-primary" id="mm-btn" onclick="gerarMapa()">✨ Gerar Mapa Mental</button><p style="font-size:11px;color:var(--text-3);margin-top:6px">Montado a partir da base oficial da UC — instantâneo, sem IA.</p><div id="mm-mount" style="display:none;margin-top:14px;height:62vh;min-height:420px"></div></div></div></div>
+
+<div class="modal-overlay" id="modal-caca"><div class="modal"><div class="modal-header"><h3>🔤 Caça-Palavras</h3><button class="modal-close" onclick="closeModal('caca')">✕</button></div><div class="modal-body"><div class="form-group"><label>UC / Tema</label><input type="text" id="cw-uc" placeholder="Ex: UC selecionada" /></div><div class="form-group"><label>Número de palavras</label><select id="cw-num"><option value="10">10</option><option value="15" selected>15</option><option value="20">20</option></select></div><button class="btn-primary" id="cw-btn" onclick="gerarCaca()">✨ Gerar Caça-Palavras</button><div class="loading" id="cw-loading"><div class="spinner"></div> Gerando...</div><canvas id="cw-canvas" style="display:none;max-width:100%;margin-top:16px;border:1px solid var(--border);border-radius:8px"></canvas><div class="btn-row" id="cw-actions" style="display:none"><button class="btn-secondary" onclick="downloadCacaPNG()">⬇ Baixar PNG</button></div></div></div></div>
+
+<div class="modal-overlay" id="modal-avaliacao"><div class="modal"><div class="modal-header"><h3>📝 Avaliação / Prova</h3><button class="modal-close" onclick="closeModal('avaliacao')">✕</button></div><div class="modal-body"><div class="form-group"><label>Unidade Curricular</label><input type="text" id="av-uc" placeholder="Ex: UC selecionada" /></div><div class="form-row"><div class="form-group"><label>Questões Objetivas</label><input type="number" id="av-obj" value="5" min="0" max="20" /></div><div class="form-group"><label>Questões Discursivas</label><input type="number" id="av-disc" value="3" min="0" max="10" /></div></div><div class="form-group"><label>Nível de dificuldade</label><select id="av-nivel"><option>Básico</option><option selected>Intermediário</option><option>Avançado</option></select></div><button class="btn-primary" id="av-btn" onclick="gerarAvaliacao()">✨ Gerar Avaliação</button><div class="loading" id="av-loading"><div class="spinner"></div> Gerando...</div><div class="output-area" id="av-output"></div><div class="btn-row" id="av-actions" style="display:none"><button class="btn-secondary" onclick="downloadDoc('av-output','Avaliacao')">⬇ Baixar .doc</button><button class="btn-secondary" onclick="copiarTexto('av-output')">📋 Copiar</button></div></div></div></div>
+
+<div class="modal-overlay" id="modal-slides"><div class="modal"><div class="modal-header"><h3>🎞️ Slides</h3><button class="modal-close" onclick="closeModal('slides')">✕</button></div><div class="modal-body"><div class="form-group"><label>UC selecionada</label><div id="sl-uc-nome" style="font-size:13px;color:var(--text-2);padding:6px 0;font-weight:600;min-height:20px">Nenhuma UC selecionada</div></div><div class="form-group"><label>Número de slides</label><input id="sl-num" type="number" min="5" max="20" value="10" /></div><button class="btn-primary" onclick="gerarSlides()">✨ Gerar Slides</button><div class="loading" id="sl-loading" style="display:none"><div class="spinner"></div> Gerando com IA...</div><div id="sl-label"></div><pre id="sl-output" style="display:none;margin-top:12px;font-size:11px;background:var(--cor-light);color:var(--text-2);padding:12px;border-radius:var(--radius-sm);max-height:180px;overflow:auto;white-space:pre-wrap;border:1px solid var(--border)"></pre><div class="btn-row"><button id="sl-btn-html" class="btn-secondary" onclick="downloadSlides()" disabled>⬇ Baixar HTML</button><button id="sl-btn-pptx" class="btn-secondary" onclick="downloadPptx()" disabled>⬇ Baixar .pptx</button></div></div></div></div>
+
+<div class="modal-overlay" id="modal-custom"><div class="modal"><div class="modal-header"><h3>⚙️ Material Personalizado</h3><button class="modal-close" onclick="closeModal('custom')">✕</button></div><div class="modal-body"><div class="form-group"><label>Descreva o material que você precisa</label><textarea id="cu-desc" rows="5" placeholder="Ex: Ficha de acompanhamento de projeto Front-End..."></textarea></div><button class="btn-primary" id="cu-btn" onclick="gerarCustom()">✨ Gerar Material</button><div class="loading" id="cu-loading"><div class="spinner"></div> Gerando...</div><div class="output-area" id="cu-output"></div><div class="btn-row" id="cu-actions" style="display:none"><button class="btn-secondary" onclick="downloadDoc('cu-output','Material_Personalizado')">⬇ Baixar .doc</button><button class="btn-secondary" onclick="copiarTexto('cu-output')">📋 Copiar</button></div></div></div></div>
+
+<div class="toast" id="toast"></div>
+
+<script src="../data/informatica-nem.js"></script>
+<script>
+const PROXY_URL = 'https://hub-mqct-proxy.vercel.app/api/gemini';
+const AREA_NOME = 'Informática para Internet · NEM';
+const CURSO     = 'Técnico em Informática para Internet — NEM · SENAI DR-BA · 1200h';
+let ucAtual = {id:'',nome:'',desc:'',cht:0,chp:0,modulo:''};
+
+window.areaDados = { nome: 'Informática para Internet', cor: '#6A0DAD' };
+
+function toggleTheme(){
+  const dark=document.body.dataset.theme==='dark';
+  document.body.dataset.theme=dark?'light':'dark';
+  document.querySelector('.theme-btn').textContent=dark?'🌙':'☀️';
+}
+function voltarHub(){
+  window.location.href='https://profpaulofilho.github.io/hub-artifacts_IA/index.html';
+}
+
+function calcAulas(){
+  const cht=parseInt(document.getElementById('pa-cht').value)||0;
+  const chp=parseInt(document.getElementById('pa-chp').value)||0;
+  const chDia=parseInt(document.getElementById('pa-chpordia').value)||4;
+  const total=cht+chp;
+  const customAulas=parseInt(document.getElementById('pa-aulas-custom')?.value)||0;
+  const isTransversal=(total===0);
+  const totalEfetivo=isTransversal?chDia:total;
+  const nAulasAuto=Math.max(1,Math.ceil(totalEfetivo/chDia));
+  const nAulas=customAulas>0?customAulas:nAulasAuto;
+  if(!isTransversal){
+    document.getElementById('pa-aulas-txt').textContent=`📊 Total: ${cht}h teórica + ${chp}h prática = ${total}h`;
+    document.getElementById('pa-aulas-sub').textContent=customAulas>0?`→ ${nAulas} aula(s) conforme formulário`:`→ ${nAulas} aula(s) de ${chDia}h cada`;
+  }else{
+    document.getElementById('pa-aulas-txt').textContent='📊 UC Transversal — CH definida pela instituição';
+    document.getElementById('pa-aulas-sub').textContent='→ Ajuste a CH acima para calcular automaticamente';
+  }
+  document.getElementById('pa-aulas-info').classList.add('visible');
+  return {cht,chp,total:totalEfetivo,chDia,nAulas,isTransversal};
+}
+
+function setUC(id,nome,desc,cht,chp,modulo){
+  ucAtual={id,nome,desc,cht,chp,modulo};
+  document.getElementById('uc-nome').textContent=nome;
+  document.getElementById('uc-desc').textContent=desc;
+  const total=cht+chp;
+  const meta=document.getElementById('uc-meta');
+  if(total>0){
+    meta.innerHTML=`<span>${modulo}</span><span class="ch-t">📖 Teórica: ${cht}h</span><span class="ch-p">💻 Prática: ${chp}h</span><span class="ch-total">⏱ Total: ${total}h</span>`;
+  }else{meta.innerHTML=`<span>${modulo}</span>`;}
+  const ucStr=`${id} — ${nome}`;
+  ['pa-uc','sa-uc','pr-uc','oa-uc','mm-uc','cw-uc','av-uc'].forEach(fid=>{
+    const el=document.getElementById(fid);if(el)el.value=ucStr;
+  });
+  if(total>0){
+    const e1=document.getElementById('pa-cht');const e2=document.getElementById('pa-chp');
+    if(e1)e1.value=cht;if(e2)e2.value=chp;calcAulas();
+  }
+  window._slidesUc=nome;window._slidesArea=AREA_NOME;window._slidesCor='#6A0DAD';
+  const elNome=document.getElementById('sl-uc-nome');
+  if(elNome)elNome.textContent=nome||'Nenhuma UC selecionada';
+  document.querySelectorAll('.uc-item').forEach(i=>i.classList.remove('ativo'));
+  if(event&&event.currentTarget)event.currentTarget.classList.add('ativo');
+  document.querySelector('.main').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function openModal(id){document.getElementById('modal-'+id).classList.add('open');document.body.style.overflow='hidden';if(id==='plano')calcAulas();}
+function closeModal(id){document.getElementById('modal-'+id).classList.remove('open');document.body.style.overflow='';}
+document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)closeModal(m.id.replace('modal-',''));});});
+
+function getToken(){
+  try{for(let k of Object.keys(localStorage)){if(k.includes('auth-token')){const p=JSON.parse(localStorage.getItem(k));if(p?.access_token)return p.access_token;}}}catch{}return null;
+}
+async function callGemini(prompt){
+  const token=getToken();const headers={'Content-Type':'application/json'};
+  if(token)headers['Authorization']=`Bearer ${token}`;
+  const res=await fetch(PROXY_URL,{method:'POST',headers,body:JSON.stringify({prompt})});
+  if(res.status===401){showToast('Sessão expirada. Redirecionando...','error');setTimeout(()=>window.location.href='../index.html',2000);throw new Error('Unauthorized');}
+  if(!res.ok)throw new Error(`Erro ${res.status}`);
+  const data=await res.json();
+  return data.text||data.candidates?.[0]?.content?.parts?.[0]?.text||'';
+}
+function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast visible'+(type?' '+type:'');setTimeout(()=>t.className='toast',3200);}
+function setLoading(prefix,on){const l=document.getElementById(prefix+'-loading');const b=document.getElementById(prefix+'-btn');if(l)l.style.display=on?'flex':'none';if(b)b.disabled=on;}
+function showOutput(prefix,text){const o=document.getElementById(prefix+'-output');const a=document.getElementById(prefix+'-actions');if(o){o.textContent=text;o.classList.add('visible');}if(a)a.style.display='flex';showToast('Material gerado!');}
+function downloadDoc(outputId,filename){const content=document.getElementById(outputId)?.textContent||'';if(!content.trim()){showToast('Nenhum conteúdo.','error');return;}const blob=new Blob(['\ufeff'+content],{type:'application/msword'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${filename}_${new Date().toISOString().slice(0,10)}.doc`;a.click();showToast('Arquivo .doc baixado!');}
+function copiarTexto(outputId){const text=document.getElementById(outputId)?.textContent||'';navigator.clipboard.writeText(text).then(()=>showToast('Copiado!'));}
+
+const MSEP_BASE=`Você é um especialista em educação profissional do SENAI, com amplo conhecimento do Plano de Curso Técnico em Informática para Internet NEM (Ensino Médio com Itinerário de Formação Técnica e Profissional) — SENAI DR-BA — Janeiro/2022 — e da Metodologia SENAI de Educação Profissional (MSEP).
+Curso: ${CURSO}
+Eixo Tecnológico: Informação e Comunicação
+Perfil Profissional: desenvolver aplicações web responsivas e acessíveis (Front-End e Back-End), criar e consumir APIs RESTful, modelar e gerenciar bancos de dados, aplicar testes de software, utilizar metodologias ágeis e ferramentas de versionamento, com ética, criatividade e protagonismo juvenil.
+Estrutura: 1º Ano (Módulo Mundo do Trabalho — 200h) | 2º Ano (Módulo Integrador Básico 240h + Integrador Introdutório 160h) | 3º Ano (Módulo Específico I Front-End 260h + Módulo Específico II Back-End 340h)
+REGRAS MSEP: use exclusivamente a base oficial fechada da UC selecionada; não invente CHAs; contextualize com situações reais do mercado de TI: startups, empresas de tecnologia, projetos web, desenvolvimento ágil, qualidade de software.`;
+
+function normalizeTxt(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+function getAllOfficialUCs(){
+  try{
+    if(typeof INFORMATICA_NEM==='undefined'||!INFORMATICA_NEM.modulos)return[];
+    return INFORMATICA_NEM.modulos.flatMap(m=>(m.ucs||[]).map(uc=>({...uc,modulo:m.nome,moduloId:m.id})));
+  }catch(e){return[];}
+}
+function findOfficialUC(input){
+  const alvo=normalizeTxt(input+' '+(ucAtual?.nome||'')+' '+(ucAtual?.id||''));
+  const ucs=getAllOfficialUCs();if(!ucs.length)return null;
+  let f=ucs.find(uc=>alvo.includes(normalizeTxt(uc.nome))||normalizeTxt(uc.nome).includes(alvo));if(f)return f;
+  f=ucs.find(uc=>alvo.includes(normalizeTxt(uc.id||''))||alvo.includes(normalizeTxt(uc.codigo||'')));if(f)return f;
+  const words=alvo.split(/\s+/).filter(w=>w.length>4);
+  const s=ucs.map(uc=>({uc,score:words.filter(w=>normalizeTxt(uc.nome).includes(w)).length})).sort((a,b)=>b.score-a.score);
+  return s[0]?.score>0?s[0].uc:null;
+}
+function listify(v){
+  if(Array.isArray(v))return v.map(x=>typeof x==='string'?`- ${x}`:`- ${x.texto||JSON.stringify(x)}`).join('\n');
+  if(typeof v==='string')return v;return '- Não informado.';
+}
+function buildOfficialContext(ucInput){
+  const uc=findOfficialUC(ucInput||'');
+  if(!uc)return '\nBASE OFICIAL: UC não localizada. Use somente os dados do formulário e não invente CHAs.';
+  return `\nBASE OFICIAL FECHADA NEM DR-BA — USE EXCLUSIVAMENTE ESTES DADOS
+Módulo: ${uc.modulo}
+UC oficial: ${uc.codigo||uc.id} — ${uc.nome}
+CH oficial: ${uc.ch}h
+Objetivo geral: ${uc.objetivo||''}
+
+Capacidades/Habilidades oficiais:
+${listify(uc.capacidades)}
+
+Conhecimentos oficiais:
+${listify(uc.conhecimentos)}
+
+Competências socioemocionais:
+${listify(uc.socioemocionais||[])}
+
+Ambientes pedagógicos:
+${listify(uc.ambientes||[])}
+
+Ferramentas e recursos:
+${listify(uc.equipamentos||[])}
+
+REGRA CRÍTICA: não crie capacidades, conhecimentos ou habilidades fora desta base.`;
+}
+function getCtxTransversal(ucId){
+  if(ucId==='SOCIO')return '\nALERT: COMPETÊNCIA SOCIOEMOCIONAL transversal. Contextualize com situações reais do desenvolvimento web: trabalho em equipe em sprints, comunicação com cliente, entrega de projetos, code review, ética no uso de dados e IA.';
+  if(ucId==='IA')return '\nALERT: COMPETÊNCIA DE IA transversal. Contextualize com aplicações reais de IA no desenvolvimento web: GitHub Copilot, geração de código, testes automatizados com IA, análise de UX, acessibilidade automatizada e segurança assistida por IA.';
+  return buildOfficialContext(ucId||'');
+}
+
+async function gerarPlano(){
+  const {cht,chp,total,chDia,nAulas,isTransversal}=calcAulas();
+  const uc=document.getElementById('pa-uc').value||ucAtual.nome;
+  const docente=document.getElementById('pa-docente').value||'______';
+  const data=document.getElementById('pa-data').value;
+  const turma=document.getElementById('pa-turma').value||CURSO;
+  const obs=document.getElementById('pa-obs').value;
+  const modelo=document.getElementById('pa-modelo')?.value||'exemplo';
+  setLoading('pa',true);
+  try{
+    const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
+Gere um PLANO DE AULA COMPLETO padrão SENAI:
+UC: ${uc} | Docente: ${docente} | Turma: ${turma} | Data: ${data}
+CH Teórica: ${cht}h | CH Prática: ${chp}h | Total: ${isTransversal?'Transversal':total+'h'} | Aulas: ${nAulas} de ${chDia}h | Modelo: ${modelo}
+${obs?'Obs: '+obs:''}
+Seções: Cabeçalho, Objetivos (gerúndio), Capacidades/Habilidades, Tabela de Aulas (${nAulas} linhas com Nº|Tema|Metodologia|Recursos/Ferramentas|Avaliação), Critérios de Avaliação, Referências técnicas.`;
+    const text=await callGemini(prompt);showOutput('pa',text);
+  }catch(e){if(e.message!=='Unauthorized')showToast('Erro ao gerar.','error');}
+  setLoading('pa',false);
+}
+async function gerarSA(){
+  const uc=document.getElementById('sa-uc').value||ucAtual.nome;
+  const ctx=document.getElementById('sa-ctx').value;
+  setLoading('sa',true);
+  try{
+    const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
+Gere uma SITUAÇÃO DE APRENDIZAGEM MSEP para UC: ${uc} | Contexto: ${ctx||'Empresa de tecnologia com demanda real de desenvolvimento web'}
+Inclua: Título, Situação-Problema (startup/empresa real de TI), Desafio, Competências (gerúndio), Etapas de desenvolvimento (pesquisa → prototipagem → codificação → testes → deploy → apresentação), Evidências esperadas (código, repositório, demo), Critérios de Avaliação, Referências.`;
+    const text=await callGemini(prompt);showOutput('sa',text);
+  }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
+  setLoading('sa',false);
+}
+async function gerarPratica(){
+  const uc=document.getElementById('pr-uc').value||ucAtual.nome;
+  const tipo=document.getElementById('pr-tipo').value;
+  const rec=document.getElementById('pr-recursos').value;
+  setLoading('pr',true);
+  try{
+    const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
+Gere ROTEIRO DE PRÁTICAS para UC: ${uc} | Tipo: ${tipo} | Ferramentas: ${rec||'VSCode, Node.js, Git, navegador web'}
+Inclua: Título, Objetivos, Fundamentação teórica, Ferramentas e tecnologias, Procedimentos numerados (passo a passo de codificação), Pontos de controle/critérios de qualidade de código, Resultado esperado (funcionalidade ou entregável), Commit e documentação no GitHub, Referências (MDN, documentação oficial, W3C).`;
+    const text=await callGemini(prompt);showOutput('pr',text);
+  }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
+  setLoading('pr',false);
+}
+async function gerarOA(){
+  const uc=document.getElementById('oa-uc').value||ucAtual.nome;
+  const nivel=document.getElementById('oa-nivel').value;
+  setLoading('oa',true);
+  try{
+    const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
+Gere OBJETO DE APRENDIZAGEM para UC: ${uc} | Nível: ${nivel}
+Inclua: Apresentação do tema, Objetivos, Conteúdo com subtítulos e exemplos de código reais (use blocos de código quando pertinente), Saiba Mais (tendências, frameworks, ferramentas), 3 atividades de fixação práticas, Glossário técnico, Referências (MDN, documentação oficial, livros técnicos).`;
+    const text=await callGemini(prompt);showOutput('oa',text);
+  }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
+  setLoading('oa',false);
+}
+async function gerarMapa(){
+  const ucInput=document.getElementById('mm-uc').value||ucAtual.nome||CURSO;
+  const oficial=findOfficialUC(ucInput);
+  const mount=document.getElementById('mm-mount');
+  if(!oficial){showToast('UC não encontrada na base oficial.','error');return;}
+  const data=MindMap.fromOfficialUC(oficial);
+  const accent=getComputedStyle(document.documentElement).getPropertyValue('--cor').trim()||'#6A0DAD';
+  mount.style.display='block';
+  MindMap.render('mm-mount',data,{accent,subtitle:oficial.modulo||''});
+}
+function normalizarPalavra(p){return p.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z]/g,'').toUpperCase();}
+function posicionarPalavra(grade,palavra,ROWS,COLS){
+  const dirs=[[0,1],[1,0],[1,1],[0,-1],[-1,0],[1,-1],[-1,1],[-1,-1]];
+  for(let i=dirs.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[dirs[i],dirs[j]]=[dirs[j],dirs[i]];}
+  for(let t=0;t<200;t++){
+    const[dr,dc]=dirs[t%dirs.length];const sR=Math.floor(Math.random()*ROWS);const sC=Math.floor(Math.random()*COLS);
+    const eR=sR+dr*(palavra.length-1);const eC=sC+dc*(palavra.length-1);
+    if(eR<0||eR>=ROWS||eC<0||eC>=COLS)continue;
+    let ok=true;for(let i=0;i<palavra.length;i++){const r=sR+dr*i,c=sC+dc*i;if(grade[r][c]!==''&&grade[r][c]!==palavra[i]){ok=false;break;}}
+    if(ok){for(let i=0;i<palavra.length;i++)grade[sR+dr*i][sC+dc*i]=palavra[i];return true;}
+  }return false;
+}
+function montaGrid(palavras,ROWS=20,COLS=20){
+  const grade=Array.from({length:ROWS},()=>Array(COLS).fill(''));const colocadas=[];const L='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  palavras.forEach(p=>{const n=normalizarPalavra(p);if(n.length>1&&n.length<=COLS&&posicionarPalavra(grade,n,ROWS,COLS))colocadas.push(p);});
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)if(grade[r][c]==='')grade[r][c]=L[Math.floor(Math.random()*26)];
+  return{grade,colocadas};
+}
+function renderCacaPNG(grade,colocadas,ucNome){
+  const canvas=document.getElementById('cw-canvas');const CELL=28,PAD=24,HEADER=60,FOOTER=Math.ceil(colocadas.length/4)*22+16;
+  const ROWS=grade.length,COLS=grade[0].length;
+  canvas.width=COLS*CELL+PAD*2;canvas.height=HEADER+ROWS*CELL+PAD+FOOTER;
+  const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='#6A0DAD';ctx.fillRect(0,0,canvas.width,HEADER);
+  ctx.fillStyle='#fff';ctx.font='bold 15px Arial';ctx.textAlign='center';
+  ctx.fillText('💻 SENAI BAHIA — Caça-Palavras: Informática para Internet',canvas.width/2,22);
+  ctx.font='12px Arial';ctx.fillText(ucNome.length>70?ucNome.slice(0,70)+'…':ucNome,canvas.width/2,44);
+  ctx.fillStyle='#1A0A2E';ctx.font='bold 14px Courier New';ctx.textAlign='center';
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)ctx.fillText(grade[r][c],PAD+c*CELL+CELL/2,HEADER+r*CELL+CELL*0.72);
+  ctx.strokeStyle='#E1BEE7';ctx.lineWidth=0.5;
+  for(let r=0;r<=ROWS;r++){ctx.beginPath();ctx.moveTo(PAD,HEADER+r*CELL);ctx.lineTo(PAD+COLS*CELL,HEADER+r*CELL);ctx.stroke();}
+  for(let c=0;c<=COLS;c++){ctx.beginPath();ctx.moveTo(PAD+c*CELL,HEADER);ctx.lineTo(PAD+c*CELL,HEADER+ROWS*CELL);ctx.stroke();}
+  const baseY=HEADER+ROWS*CELL+PAD;ctx.fillStyle='#1A0A2E';ctx.font='bold 11px Arial';ctx.textAlign='left';
+  ctx.fillText('Encontre as palavras:',PAD,baseY);ctx.font='10px Arial';
+  colocadas.forEach((p,i)=>{const col=i%4,row=Math.floor(i/4);ctx.fillText('▸ '+p.toUpperCase(),PAD+col*(canvas.width-PAD*2)/4,baseY+16+row*22);});
+  canvas.style.display='block';
+}
+async function gerarCaca(){
+  const uc=document.getElementById('cw-uc').value||ucAtual.nome;const num=document.getElementById('cw-num').value;
+  setLoading('cw',true);
+  try{
+    const oficial=findOfficialUC(uc);
+    let cands='';
+    if(oficial){const words=listify(oficial.conhecimentos).split(/[\s,;:\-\/\n]+/).filter(w=>w.length>4);cands=`\nPalavras dos conhecimentos oficiais (USE COMO BASE):\n${words.slice(0,60).join(', ')}`;}
+    const prompt=`Selecione ${num} termos técnicos para caça-palavras sobre "${uc}" (área de Informática para Internet). ${cands}
+Responda SOMENTE com array JSON de strings sem espaços, hífens ou acentos. Mín 5 letras, máx 15.`;
+    const raw=await callGemini(prompt);const clean=raw.replace(/\`\`\`json|\`\`\`/gi,'').trim();
+    const lista=JSON.parse(clean);if(!Array.isArray(lista)||!lista.length)throw new Error('Resposta inválida');
+    const{grade,colocadas}=montaGrid(lista);renderCacaPNG(grade,colocadas,uc);
+    document.getElementById('cw-actions').style.display='flex';showToast(`Caça-palavras gerado com ${colocadas.length} palavras!`);
+  }catch(e){showToast('Erro ao gerar.','error');console.error(e);}
+  setLoading('cw',false);
+}
+function downloadCacaPNG(){
+  const canvas=document.getElementById('cw-canvas');if(!canvas||canvas.style.display==='none'){showToast('Gere primeiro.','error');return;}
+  canvas.toBlob(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`Caca_Palavras_${new Date().toISOString().slice(0,10)}.png`;a.click();showToast('PNG baixado!');});
+}
+async function gerarAvaliacao(){
+  const uc=document.getElementById('av-uc').value||ucAtual.nome;
+  const obj=document.getElementById('av-obj').value;const disc=document.getElementById('av-disc').value;
+  const nivel=document.getElementById('av-nivel').value;
+  setLoading('av',true);
+  try{
+    const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
+Gere AVALIAÇÃO/PROVA: UC: ${uc} | ${obj} objetivas (A/B/C/D) | ${disc} discursivas | Nível: ${nivel} | Total: 10 pts
+Inclua: cabeçalho, instruções, questões com exemplos de código quando pertinente, gabarito ao final. Baseie nas tecnologias e normas oficiais da área (MDN, W3C, documentação oficial das ferramentas).`;
+    const text=await callGemini(prompt);showOutput('av',text);
+  }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
+  setLoading('av',false);
+}
+// gerarSlides / downloadSlides / downloadPptx → ../assets/slides-v2.js
+async function gerarCustom(){
+  const desc=document.getElementById('cu-desc').value;
+  if(!desc.trim()){showToast('Descreva o material.','error');return;}
+  setLoading('cu',true);
+  try{
+    const prompt=`${MSEP_BASE}\nGere o seguinte MATERIAL DIDÁTICO personalizado: ${desc}\nMantenha alinhamento com o Plano de Curso NEM SENAI DR-BA, MSEP e tecnologias web atuais.`;
+    const text=await callGemini(prompt);showOutput('cu',text);
+  }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
+  setLoading('cu',false);
+}
+document.getElementById('pa-data').value=new Date().toISOString().slice(0,10);
+calcAulas();
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay.open').forEach(m=>closeModal(m.id.replace('modal-','')));});
+</script>
+</body>
+</html>
