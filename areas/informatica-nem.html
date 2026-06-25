@@ -338,17 +338,23 @@ function getDocTypeByPrefix(prefix){
 }
 
 function buildDocMeta(extra={}){
+  const ucTexto = extra.uc || ucAtual.id || ucAtual.nome || '';
+  const officialUC = typeof findOfficialUC === 'function' ? findOfficialUC(ucTexto) : null;
+  const totalCalc = ((parseInt(document.getElementById('pa-cht')?.value)||0)+(parseInt(document.getElementById('pa-chp')?.value)||0))+'h';
   return {
     area: AREA_NOME,
     curso: CURSO,
-    uc: extra.uc || ucAtual.nome || '',
+    uc: extra.uc || (ucAtual.id ? `${ucAtual.id} — ${ucAtual.nome}` : ucAtual.nome) || '',
     docente: extra.docente || document.getElementById('pa-docente')?.value || '',
     turma: extra.turma || document.getElementById('pa-turma')?.value || '',
     data: extra.data || document.getElementById('pa-data')?.value || new Date().toISOString().slice(0,10),
     cht: extra.cht ?? (parseInt(document.getElementById('pa-cht')?.value)||0),
     chp: extra.chp ?? (parseInt(document.getElementById('pa-chp')?.value)||0),
-    total: extra.total || ((parseInt(document.getElementById('pa-cht')?.value)||0)+(parseInt(document.getElementById('pa-chp')?.value)||0))+'h',
-    observacoes: extra.observacoes || ''
+    total: extra.total || totalCalc,
+    nAulas: extra.nAulas || extra.qtdAulas || null,
+    chDia: extra.chDia || null,
+    observacoes: extra.observacoes || '',
+    officialUC
   };
 }
 
@@ -508,8 +514,11 @@ Gere um PLANO DE AULA COMPLETO padrão SENAI:
 UC: ${uc} | Docente: ${docente} | Turma: ${turma} | Data: ${data}
 CH Teórica: ${cht}h | CH Prática: ${chp}h | Total: ${isTransversal?'Transversal':total+'h'} | Aulas: ${nAulas} de ${chDia}h | Modelo: ${modelo}
 ${obs?'Obs: '+obs:''}
-Seções: Cabeçalho, Objetivos (gerúndio), Capacidades/Habilidades, Tabela de Aulas (${nAulas} linhas com Nº|Tema|Metodologia|Recursos/Ferramentas|Avaliação), Critérios de Avaliação, Referências técnicas.`;
-    const text=await callGemini(prompt);showDocOutput('pa','plano-aula','Plano de Aula',text,{uc,docente,turma,data,cht,chp,total: total+'h',observacoes: obs});
+IMPORTANTE: responda preferencialmente em JSON válido, sem markdown, com as chaves:
+objetivo, capacidades, conhecimentos, habilidades, socioemocionais, aulas[{numero,capacidade,habilidade,conteudo,estrategias,recursos,avaliacao}], avaliacoes, referencias.
+Use as capacidades, conhecimentos e socioemocionais oficiais fornecidos na BASE OFICIAL. Não deixe esses campos vazios.
+Seções esperadas: Cabeçalho, Objetivos (gerúndio), Capacidades/Habilidades, Conhecimentos, Tabela de Aulas (${nAulas} linhas com Nº|Capacidade|Hab.|Conteúdo|Estratégias|Recursos|Avaliação), Critérios de Avaliação, Referências técnicas.`;
+    const text=await callGemini(prompt);showDocOutput('pa','plano-aula','Plano de Aula',text,{uc,docente,turma,data,cht,chp,total: total+'h',nAulas,chDia,observacoes: obs});
   }catch(e){if(e.message!=='Unauthorized')showToast('Erro ao gerar.','error');}
   setLoading('pa',false);
 }
