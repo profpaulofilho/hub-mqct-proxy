@@ -379,10 +379,11 @@ function showDocOutput(prefix,type,title,raw,meta={}){
   if(type==='plano-aula'){
     const structured=DocumentEngine.fromGeminiText(raw,{
       area:fullMeta.area,curso:fullMeta.curso,uc:fullMeta.uc,docente:fullMeta.docente,turma:fullMeta.turma,
-      data:fullMeta.data,cht:fullMeta.cht,chp:fullMeta.chp,total:fullMeta.total,observacoes:fullMeta.observacoes
+      data:fullMeta.data,cht:fullMeta.cht,chp:fullMeta.chp,total:fullMeta.total,
+      nAulas:fullMeta.nAulas,chDia:fullMeta.chDia,observacoes:fullMeta.observacoes,officialUC:fullMeta.officialUC
     });
-    wordHtml=DocumentEngine.renderPlanoAulaWord(structured,{accent});
-    preview=DocumentEngine.renderPreview(structured,{accent});
+    wordHtml=DocumentEngine.renderPlanoAulaWord(structured,{accent,officialUC:fullMeta.officialUC,nAulas:fullMeta.nAulas,chDia:fullMeta.chDia});
+    preview=DocumentEngine.renderPreview(structured,{accent,officialUC:fullMeta.officialUC,nAulas:fullMeta.nAulas,chDia:fullMeta.chDia});
   }else{
     const structured=DocumentEngine.fromAnyText(raw,type,{
       area:fullMeta.area,curso:fullMeta.curso,uc:fullMeta.uc,docente:fullMeta.docente,turma:fullMeta.turma,
@@ -420,7 +421,7 @@ function downloadDoc(outputId,filename){
   if(window.DocumentEngine){
     if(type==='plano-aula'){
       const structured=DocumentEngine.fromGeminiText(content,buildDocMeta({}));
-      wordHtml=DocumentEngine.renderPlanoAulaWord(structured,{accent});
+      wordHtml=DocumentEngine.renderPlanoAulaWord(structured,{accent,officialUC:fullMeta.officialUC,nAulas:fullMeta.nAulas,chDia:fullMeta.chDia});
     }else{
       const structured=DocumentEngine.fromAnyText(content,type,buildDocMeta({}));
       wordHtml=DocumentEngine.renderWordDocument(structured,{accent,type});

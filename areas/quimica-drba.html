@@ -924,13 +924,14 @@ async function gerarPlano(){
       nAulas,
       modelo,
       observacoes: obs,
-      base: typeof MSEP_BASE!=='undefined'?MSEP_BASE:''
+      base: typeof MSEP_BASE!=='undefined'?MSEP_BASE:'',
+      officialUC: (typeof findOfficialUC==='function' ? findOfficialUC(ucAtual.id || uc) : null)
     };
     const prompt=DocumentEngine.buildPlanoAulaPrompt(meta, getCtxTransversal(ucAtual.id));
     const raw=await callGemini(prompt);
     const plano=DocumentEngine.fromGeminiText(raw,meta);
-    const wordHtml=DocumentEngine.renderPlanoAulaWord(plano,{accent:window.areaDados?.cor||'#00695C'});
-    const preview=DocumentEngine.renderPreview(plano,{accent:window.areaDados?.cor||'#00695C'});
+    const wordHtml=DocumentEngine.renderPlanoAulaWord(plano,{accent:window.areaDados?.cor||'#00695C',officialUC:meta.officialUC,nAulas:meta.nAulas,chDia:meta.chDia});
+    const preview=DocumentEngine.renderPreview(plano,{accent:window.areaDados?.cor||'#00695C',officialUC:meta.officialUC,nAulas:meta.nAulas,chDia:meta.chDia});
     const out=document.getElementById('pa-output');
     const actions=document.getElementById('pa-actions');
     if(out){
