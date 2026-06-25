@@ -10,13 +10,13 @@ const RATE_LIMIT = Number.parseInt(process.env.RATE_LIMIT_PER_HOUR || "30", 10);
 
 // Use GEMINI_MODEL no Vercel se quiser fixar um modelo.
 // Se ele falhar por indisponibilidade/modelo inválido/quota momentânea, tenta os fallbacks.
-const PRIMARY_MODEL = process.env.GEMINI_MODEL || "gemini-2.0-flash";
-const FALLBACK_MODELS = (process.env.GEMINI_FALLBACK_MODELS || "gemini-2.0-flash,gemini-1.5-flash")
+const PRIMARY_MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const FALLBACK_MODELS = (process.env.GEMINI_FALLBACK_MODELS || "gemini-2.5-flash,gemini-2.0-flash,gemini-2.5-flash-lite,gemini-2.0-flash-lite")
   .split(",")
   .map(s => s.trim())
   .filter(Boolean);
 
-const MODELS = Array.from(new Set([PRIMARY_MODEL, ...FALLBACK_MODELS]));
+const MODELS = Array.from(new Set([PRIMARY_MODEL, ...FALLBACK_MODELS])).filter(m => !/^gemini-1\.5/i.test(m));
 
 // Rate limiting simples em memória.
 // Observação: em serverless pode reiniciar entre execuções, mas ajuda a reduzir abuso.
