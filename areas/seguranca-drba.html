@@ -338,13 +338,27 @@ document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('clic
 function getToken(){
   try{for(let k of Object.keys(localStorage)){if(k.includes('auth-token')){const p=JSON.parse(localStorage.getItem(k));if(p?.access_token)return p.access_token;}}}catch{}return null;
 }
-async function callGemini(prompt){
+async function callGemini(prompt,opts={}){
   const token=getToken();const headers={'Content-Type':'application/json'};
   if(token)headers['Authorization']=`Bearer ${token}`;
-  const res=await fetch(PROXY_URL,{method:'POST',headers,body:JSON.stringify({prompt})});
-  if(res.status===401){showToast('Sessão expirada. Redirecionando...','error');setTimeout(()=>window.location.href='../index.html',2000);throw new Error('Unauthorized');}
-  if(!res.ok)throw new Error(`Erro ${res.status}`);
-  const data=await res.json();
+  const body={
+    prompt,
+    forceJSON: !!opts.forceJSON,
+    maxOutputTokens: opts.maxOutputTokens || 6144,
+    temperature: opts.temperature ?? 0.55
+  };
+  const res=await fetch(PROXY_URL,{method:'POST',headers,body:JSON.stringify(body)});
+  const data=await res.json().catch(()=>({}));
+  if(res.status===401){
+    showToast('Sessão expirada. Redirecionando...','error');
+    setTimeout(()=>window.location.href='../index.html',2000);
+    throw new Error('Unauthorized');
+  }
+  if(!res.ok){
+    const detalhe=data.detail||data.error||`Erro ${res.status}`;
+    console.error('[Gemini Proxy]', res.status, data);
+    throw new Error(detalhe);
+  }
   return data.text||data.candidates?.[0]?.content?.parts?.[0]?.text||'';
 }
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast visible'+(type?' '+type:'');setTimeout(()=>t.className='toast',3200);}
@@ -471,8 +485,8 @@ UC: ${uc} | Docente: ${docente} | Turma: ${turma} | Data: ${data}
 CH Teórica: ${cht}h | CH Prática: ${chp}h | Total: ${isTransversal?'Transversal':total+'h'} | Aulas: ${nAulas} de ${chDia}h | Modelo: ${modelo}
 ${obs?'Obs: '+obs:''}
 Seções: Cabeçalho, Objetivos (gerúndio), Capacidades, Tabela de Aulas (${nAulas} linhas com Nº|Tema|Metodologia|Recursos|Avaliação), Critérios de Avaliação, Referências.`;
-    const text=await callGemini(prompt);showOutput('pa',text);
-  }catch(e){if(e.message!=='Unauthorized')showToast('Erro ao gerar.','error');}
+    const text=await callGemini(prompt,{maxOutputTokens:6144,temperature:0.45});showOutput('pa',text);
+  }catch(e){if(e.message!=='Unauthorized')showToast('Erro ao gerar: '+e.message,'error');}
   setLoading('pa',false);
 }
 async function gerarSA(){
@@ -483,7 +497,7 @@ async function gerarSA(){
     const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
 Gere uma SITUAÇÃO DE APRENDIZAGEM MSEP para UC: ${uc} | Contexto: ${ctx||'Ambiente industrial/profissional da área'}
 Inclua: Título, Situação-Problema, Desafio, Competências (gerúndio), Etapas, Evidências, Critérios de Avaliação, Referências.`;
-    const text=await callGemini(prompt);showOutput('sa',text);
+    const text=await callGemini(prompt,{maxOutputTokens:6144,temperature:0.5});showOutput('sa',text);
   }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
   setLoading('sa',false);
 }
@@ -496,7 +510,7 @@ async function gerarPratica(){
     const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
 Gere ROTEIRO DE PRÁTICAS para UC: ${uc} | Tipo: ${tipo} | Recursos: ${rec||'Padrão SENAI'}
 Inclua: Título, Objetivos, Fundamentação, Materiais/EPIs, Procedimentos numerados, Pontos de controle, Resultados esperados, Descarte, Relatório (campos), Referências.`;
-    const text=await callGemini(prompt);showOutput('pr',text);
+    const text=await callGemini(prompt,{maxOutputTokens:6144,temperature:0.5});showOutput('pr',text);
   }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
   setLoading('pr',false);
 }
@@ -508,7 +522,7 @@ async function gerarOA(){
     const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
 Gere OBJETO DE APRENDIZAGEM para UC: ${uc} | Nível: ${nivel}
 Inclua: Apresentação, Objetivos, Conteúdo com subtítulos, Saiba Mais, 3 atividades de fixação, Glossário, Referências.`;
-    const text=await callGemini(prompt);showOutput('oa',text);
+    const text=await callGemini(prompt,{maxOutputTokens:6144,temperature:0.5});showOutput('oa',text);
   }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
   setLoading('oa',false);
 }
