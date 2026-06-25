@@ -10,6 +10,7 @@
 <script src="../assets/mindmap.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script src="../assets/slides-v2.js"></script>
+<script src="../assets/document-engine.js"></script>
 <style>
   :root {
     --cor:#E65100; --cor-dark:#B45309; --cor-light:#FFF3EB; --cor-muted:#FED7AA;
@@ -344,7 +345,38 @@ async function callGemini(prompt){
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast visible'+(type?' '+type:'');setTimeout(()=>t.className='toast',3200);}
 function setLoading(prefix,on){const l=document.getElementById(prefix+'-loading');const b=document.getElementById(prefix+'-btn');if(l)l.style.display=on?'flex':'none';if(b)b.disabled=on;}
 function showOutput(prefix,text){const o=document.getElementById(prefix+'-output');const a=document.getElementById(prefix+'-actions');if(o){o.textContent=text;o.classList.add('visible');}if(a)a.style.display='flex';showToast('Material gerado!');}
-function downloadDoc(outputId,filename){const content=document.getElementById(outputId)?.textContent||'';if(!content.trim()){showToast('Nenhum conteúdo.','error');return;}const blob=new Blob(['\ufeff'+content],{type:'application/msword'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`${filename}_${new Date().toISOString().slice(0,10)}.doc`;a.click();showToast('Arquivo .doc baixado!');}
+function showDocOutput(prefix,type,title,raw,meta={}){
+  const out=document.getElementById(prefix+'-output');
+  const actions=document.getElementById(prefix+'-actions');
+  const accent=window.areaDados?.cor||getComputedStyle(document.documentElement).getPropertyValue('--cor').trim()||'#00695C';
+  const structured=DocumentEngine.fromAnyText(raw,type,{area:AREA_NOME,curso:CURSO,uc:meta.uc||ucAtual.nome,docente:meta.docente||'',turma:meta.turma||'',data:meta.data||new Date().toISOString().slice(0,10),observacoes:meta.observacoes||''});
+  const wordHtml=DocumentEngine.renderWordDocument(structured,{accent,type});
+  const preview=DocumentEngine.renderGenericPreview(structured,{accent,type});
+  if(out){
+    out.innerHTML=preview;
+    out.dataset.docHtml=wordHtml;
+    out.dataset.rawIa=raw;
+    out.dataset.docType=type;
+    out.classList.add('visible');
+  }
+  if(actions)actions.style.display='flex';
+  showToast((title||'Documento')+' gerado no padrão Word SENAI!');
+}
+function downloadDoc(outputId,filename){
+  const el=document.getElementById(outputId);
+  if(!el){showToast('Nenhum conteúdo.','error');return;}
+  const html=el.dataset?.docHtml||'';
+  if(html){
+    DocumentEngine.downloadHtmlAsDoc(html,filename);
+    showToast('Arquivo .doc baixado no padrão Word SENAI!');
+    return;
+  }
+  const content=el.textContent||'';
+  if(!content.trim()){showToast('Nenhum conteúdo.','error');return;}
+  const safeHtml='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body><pre>'+content.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</pre></body></html>';
+  DocumentEngine.downloadHtmlAsDoc(safeHtml,filename);
+  showToast('Arquivo .doc baixado!');
+}
 function copiarTexto(outputId){const text=document.getElementById(outputId)?.textContent||'';navigator.clipboard.writeText(text).then(()=>showToast('Copiado!'));}
 
 const MSEP_BASE=`Você é especialista em educação profissional SENAI com amplo conhecimento do Itinerário Nacional de Segurança do Trabalho (versão 2025.1) e da MSEP. Curso: Técnico em Segurança do Trabalho — 1200h. Competência geral: executar ações prevencionistas, monitorar os processos de SST e prestar assessoria conforme NRs, higiene ocupacional, responsabilidade social e sustentabilidade. REGRAS MSEP: use exclusivamente a base oficial fechada; não invente CHAs; contextualize com situações reais de SST: NRs, FUNDACENTRO/NHO, PCMSO, PGR, LTCAT, PPRA, SESMT, DDS, inspeções, auditorias.`;
@@ -409,14 +441,41 @@ async function gerarPlano(){
   const modelo=document.getElementById('pa-modelo')?.value||'exemplo';
   setLoading('pa',true);
   try{
-    const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
-Gere um PLANO DE AULA COMPLETO padrão SENAI:
-UC: ${uc} | Docente: ${docente} | Turma: ${turma} | Data: ${data}
-CH Teórica: ${cht}h | CH Prática: ${chp}h | Total: ${isTransversal?'Transversal':total+'h'} | Aulas: ${nAulas} de ${chDia}h | Modelo: ${modelo}
-${obs?'Obs: '+obs:''}
-Seções: Cabeçalho, Objetivos (gerúndio), Capacidades, Tabela de Aulas (${nAulas} linhas com Nº|Tema|Metodologia|Recursos|Avaliação), Critérios de Avaliação, Referências.`;
-    const text=await callGemini(prompt);showOutput('pa',text);
-  }catch(e){if(e.message!=='Unauthorized')showToast('Erro ao gerar.','error');}
+    const meta={
+      area: AREA_NOME,
+      curso: CURSO,
+      uc,
+      docente,
+      turma,
+      data,
+      cht,
+      chp,
+      total: isTransversal?'Transversal':`${total}h`,
+      chDia,
+      nAulas,
+      modelo,
+      observacoes: obs,
+      base: typeof MSEP_BASE!=='undefined'?MSEP_BASE:''
+    };
+    const prompt=DocumentEngine.buildPlanoAulaPrompt(meta, getCtxTransversal(ucAtual.id));
+    const raw=await callGemini(prompt);
+    const plano=DocumentEngine.fromGeminiText(raw,meta);
+    const wordHtml=DocumentEngine.renderPlanoAulaWord(plano,{accent:window.areaDados?.cor||'#00695C'});
+    const preview=DocumentEngine.renderPreview(plano,{accent:window.areaDados?.cor||'#00695C'});
+    const out=document.getElementById('pa-output');
+    const actions=document.getElementById('pa-actions');
+    if(out){
+      out.innerHTML=preview;
+      out.dataset.docHtml=wordHtml;
+      out.dataset.rawIa=raw;
+      out.classList.add('visible');
+    }
+    if(actions)actions.style.display='flex';
+    showToast('Plano de aula gerado no padrão Word SENAI!');
+  }catch(e){
+    console.error(e);
+    if(e.message!=='Unauthorized')showToast('Erro ao gerar plano de aula.','error');
+  }
   setLoading('pa',false);
 }
 async function gerarSA(){
@@ -426,8 +485,9 @@ async function gerarSA(){
   try{
     const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
 Gere uma SITUAÇÃO DE APRENDIZAGEM MSEP para UC: ${uc} | Contexto: ${ctx||'Ambiente industrial/profissional da área'}
-Inclua: Título, Situação-Problema, Desafio, Competências (gerúndio), Etapas, Evidências, Critérios de Avaliação, Referências.`;
-    const text=await callGemini(prompt);showOutput('sa',text);
+Inclua: Título, Situação-Problema, Desafio, Competências (gerúndio), Etapas, Evidências, Critérios de Avaliação, Recursos e Referências. Responda preferencialmente em JSON estruturado, sem Markdown.`;
+    const text = await callGemini(prompt);
+    showDocOutput('sa','situacao-aprendizagem','Situação de Aprendizagem',text,{uc});
   }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
   setLoading('sa',false);
 }
@@ -439,8 +499,9 @@ async function gerarPratica(){
   try{
     const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
 Gere ROTEIRO DE PRÁTICAS para UC: ${uc} | Tipo: ${tipo} | Recursos: ${rec||'Padrão SENAI'}
-Inclua: Título, Objetivos, Fundamentação, Materiais/EPIs, Procedimentos numerados, Pontos de controle, Resultados esperados, Descarte, Relatório (campos), Referências.`;
-    const text=await callGemini(prompt);showOutput('pr',text);
+Inclua: Título, Objetivos, Fundamentação, Materiais/EPIs, Procedimentos numerados, Pontos de controle, Resultados esperados, Descarte, Relatório (campos), Referências. Responda preferencialmente em JSON estruturado, sem Markdown.`;
+    const text = await callGemini(prompt);
+    showDocOutput('pr','roteiro-praticas','Roteiro de Práticas',text,{uc});
   }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
   setLoading('pr',false);
 }
@@ -451,8 +512,9 @@ async function gerarOA(){
   try{
     const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
 Gere OBJETO DE APRENDIZAGEM para UC: ${uc} | Nível: ${nivel}
-Inclua: Apresentação, Objetivos, Conteúdo com subtítulos, Saiba Mais, 3 atividades de fixação, Glossário, Referências.`;
-    const text=await callGemini(prompt);showOutput('oa',text);
+Inclua: Apresentação, Objetivos, Conteúdo com subtítulos, Saiba Mais, 3 atividades de fixação, Glossário, Referências. Responda preferencialmente em JSON estruturado, sem Markdown.`;
+    const text = await callGemini(prompt);
+    showDocOutput('oa','objeto-aprendizagem','Objeto de Aprendizagem',text,{uc});
   }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
   setLoading('oa',false);
 }
@@ -531,8 +593,8 @@ async function gerarAvaliacao(){
   try{
     const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
 Gere AVALIAÇÃO/PROVA: UC: ${uc} | ${obj} objetivas (A/B/C/D) | ${disc} discursivas | Nível: ${nivel} | Total: 10 pts
-Inclua: cabeçalho, instruções, questões, gabarito. Baseie nas normas: NRs aplicáveis, ABNT NBR, FUNDACENTRO/NHO, legislação previdenciária e trabalhista.`;
-    const text=await callGemini(prompt);showOutput('av',text);
+Inclua: cabeçalho, instruções, questões, critérios, gabarito. Baseie nas normas: NRs aplicáveis, ABNT NBR, FUNDACENTRO/NHO, legislação previdenciária e trabalhista. Responda preferencialmente em JSON estruturado, sem Markdown.`;
+    const text=await callGemini(prompt);showDocOutput('av','avaliacao-prova','Avaliação / Prova',text,{uc});
   }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
   setLoading('av',false);
 }
@@ -543,7 +605,7 @@ async function gerarCustom(){
   setLoading('cu',true);
   try{
     const prompt=`${MSEP_BASE}\nGere o seguinte MATERIAL DIDÁTICO personalizado: ${desc}\nMantenha alinhamento com o Itinerário Nacional SENAI, MSEP e normas técnicas de SST.`;
-    const text=await callGemini(prompt);showOutput('cu',text);
+    const text=await callGemini(prompt);showDocOutput('cu','material-personalizado','Material Personalizado',text,{uc:ucAtual.nome,observacoes:desc});
   }catch(e){if(e.message!=='Unauthorized')showToast('Erro.','error');}
   setLoading('cu',false);
 }

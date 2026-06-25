@@ -2,6 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="alternate icon" type="image/x-icon" href="../assets/favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Química DR-BA — Hub MQCT · SENAI Bahia</title>
 <link rel="stylesheet" href="../assets/mindmap.css">
@@ -9,6 +11,7 @@
 <!-- slides-v2.js: PptxGenJS + engine de slides -->
 <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
 <script src="../assets/slides-v2.js"></script>
+<script src="../assets/document-engine.js"></script>
 <style>
   :root {
     --cor:#00695C; --cor-dark:#004D40; --cor-light:#E0F2F1; --cor-muted:#B2DFDB;
@@ -777,15 +780,39 @@ function showOutput(prefix,text){
   showToast('Material gerado com sucesso!');
 }
 
+
+function showDocOutput(prefix,type,title,raw,meta={}){
+  const out=document.getElementById(prefix+'-output');
+  const actions=document.getElementById(prefix+'-actions');
+  const accent=window.areaDados?.cor||getComputedStyle(document.documentElement).getPropertyValue('--cor').trim()||'#00695C';
+  const structured=DocumentEngine.fromAnyText(raw,type,{area:AREA_NOME,curso:CURSO,uc:meta.uc||ucAtual.nome,docente:meta.docente||'',turma:meta.turma||'',data:meta.data||new Date().toISOString().slice(0,10),observacoes:meta.observacoes||''});
+  const wordHtml=DocumentEngine.renderWordDocument(structured,{accent,type});
+  const preview=DocumentEngine.renderGenericPreview(structured,{accent,type});
+  if(out){
+    out.innerHTML=preview;
+    out.dataset.docHtml=wordHtml;
+    out.dataset.rawIa=raw;
+    out.dataset.docType=type;
+    out.classList.add('visible');
+  }
+  if(actions)actions.style.display='flex';
+  showToast((title||'Documento')+' gerado no padrão Word SENAI!');
+}
+
 // ── DOWNLOAD DOC ─────────────────────────────────────────────
 function downloadDoc(outputId, filename){
-  const content = document.getElementById(outputId)?.textContent || '';
+  const el=document.getElementById(outputId);
+  if(!el){ showToast('Nenhum conteúdo para baixar.','error'); return; }
+  const html=el.dataset?.docHtml||'';
+  if(html){
+    DocumentEngine.downloadHtmlAsDoc(html,filename);
+    showToast('Arquivo .doc baixado no padrão Word SENAI!');
+    return;
+  }
+  const content=el.textContent||'';
   if(!content.trim()){ showToast('Nenhum conteúdo para baixar.','error'); return; }
-  const blob = new Blob(['\ufeff'+content],{type:'application/msword'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `${filename}_${new Date().toISOString().slice(0,10)}.doc`;
-  a.click();
+  const safeHtml='<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body><pre>'+content.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))+'</pre></body></html>';
+  DocumentEngine.downloadHtmlAsDoc(safeHtml,filename);
   showToast('Arquivo .doc baixado!');
 }
 
@@ -874,39 +901,52 @@ Contextualize TODOS os conteúdos com aplicações reais de IA na área química
 
 // ── GERADORES ─────────────────────────────────────────────────
 async function gerarPlano(){
-  const {cht, chp, total, chDia, nAulas, isTransversal} = calcAulas();
-  const uc      = document.getElementById('pa-uc').value || ucAtual.nome;
-  const docente = document.getElementById('pa-docente').value || 'Docente SENAI';
-  const turma   = document.getElementById('pa-turma').value || 'Técnico em Química';
-  const data    = document.getElementById('pa-data').value || new Date().toISOString().slice(0,10);
-  const obs     = document.getElementById('pa-obs').value;
-  const modelo  = document.getElementById('pa-modelo').value;
+  const {cht,chp,total,chDia,nAulas,isTransversal}=calcAulas();
+  const uc=document.getElementById('pa-uc').value||ucAtual.nome;
+  const docente=document.getElementById('pa-docente').value||'______';
+  const data=document.getElementById('pa-data').value;
+  const turma=document.getElementById('pa-turma').value||CURSO;
+  const obs=document.getElementById('pa-obs').value;
+  const modelo=document.getElementById('pa-modelo')?.value||'exemplo';
   setLoading('pa',true);
   try{
-    const prompt = `${MSEP_BASE}
-Gere um PLANO DE AULA completo no padrão SENAI para:
-- UC/Competência: ${uc}
-- Docente: ${docente} | Turma: ${turma} | Data de início: ${data}
-- CH Teórica: ${cht}h | CH Prática: ${chp}h | Total: ${isTransversal?'Transversal':total+'h'}
-- Número de aulas/encontros: ${nAulas} | CH por aula: ${chDia}h
-- Modelo: ${modelo}
-${obs ? `- Observações: ${obs}` : ''}
-${getCtxTransversal(ucAtual.id)}
-
-Inclua:
-1. Cabeçalho institucional (SENAI Bahia, curso, UC, docente, turma, datas)
-2. Objetivos de aprendizagem (capacidades em gerúndio)
-3. Tabela de aulas (número, tema, metodologia MSEP, recursos, avaliação) — ${nAulas} linhas
-4. Estratégias metodológicas (situação-problema, pesquisa, prática, socialização)
-5. Recursos didáticos (materiais, equipamentos, EPIs quando pertinente)
-6. Critérios de avaliação (processo + produto)
-7. Referências técnicas (normas ABNT NBR, FDS/NBR 14725, INMETRO, ANVISA, literatura técnica)`;
-    const text = await callGemini(prompt);
-    showOutput('pa',text);
-  }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar. Tente novamente.','error'); }
+    const meta={
+      area: AREA_NOME,
+      curso: CURSO,
+      uc,
+      docente,
+      turma,
+      data,
+      cht,
+      chp,
+      total: isTransversal?'Transversal':`${total}h`,
+      chDia,
+      nAulas,
+      modelo,
+      observacoes: obs,
+      base: typeof MSEP_BASE!=='undefined'?MSEP_BASE:''
+    };
+    const prompt=DocumentEngine.buildPlanoAulaPrompt(meta, getCtxTransversal(ucAtual.id));
+    const raw=await callGemini(prompt);
+    const plano=DocumentEngine.fromGeminiText(raw,meta);
+    const wordHtml=DocumentEngine.renderPlanoAulaWord(plano,{accent:window.areaDados?.cor||'#00695C'});
+    const preview=DocumentEngine.renderPreview(plano,{accent:window.areaDados?.cor||'#00695C'});
+    const out=document.getElementById('pa-output');
+    const actions=document.getElementById('pa-actions');
+    if(out){
+      out.innerHTML=preview;
+      out.dataset.docHtml=wordHtml;
+      out.dataset.rawIa=raw;
+      out.classList.add('visible');
+    }
+    if(actions)actions.style.display='flex';
+    showToast('Plano de aula gerado no padrão Word SENAI!');
+  }catch(e){
+    console.error(e);
+    if(e.message!=='Unauthorized')showToast('Erro ao gerar plano de aula.','error');
+  }
   setLoading('pa',false);
 }
-
 async function gerarSA(){
   const uc  = document.getElementById('sa-uc').value || ucAtual.nome;
   const ctx = document.getElementById('sa-ctx').value;
@@ -925,9 +965,11 @@ Estrutura obrigatória:
 5. Etapas de desenvolvimento (pesquisa → análise → proposição → implementação → avaliação)
 6. Produtos/Evidências esperados
 7. Critérios de avaliação (rubrica)
-8. Referências técnicas e legislações aplicáveis`;
+8. Referências técnicas e legislações aplicáveis
+
+Responda preferencialmente em JSON estruturado, sem Markdown.`;
     const text = await callGemini(prompt);
-    showOutput('sa',text);
+    showDocOutput('sa','situacao-aprendizagem','Situação de Aprendizagem',text,{uc});
   }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar.','error'); }
   setLoading('sa',false);
 }
@@ -955,7 +997,7 @@ Estrutura:
 9. Relatório de prática (campos para o aluno)
 10. Referências (ABNT NBR, FDS/NBR 14725, INMETRO e legislação aplicável)`;
     const text = await callGemini(prompt);
-    showOutput('pr',text);
+    showDocOutput('pr','roteiro-praticas','Roteiro de Práticas',text,{uc});
   }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar.','error'); }
   setLoading('pr',false);
 }
@@ -977,7 +1019,7 @@ Estrutura:
 6. Glossário técnico
 7. Referências (ABNT NBR, FDS/NBR 14725, INMETRO e literatura técnica)`;
     const text = await callGemini(prompt);
-    showOutput('oa',text);
+    showDocOutput('oa','objeto-aprendizagem','Objeto de Aprendizagem',text,{uc});
   }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar.','error'); }
   setLoading('oa',false);
 }
@@ -1126,7 +1168,7 @@ Inclua:
 - Gabarito completo ao final
 - Baseie nas normas: ABNT NBR, FDS/NBR 14725, INMETRO, ANVISA e legislação ambiental aplicável`;
     const text = await callGemini(prompt);
-    showOutput('av',text);
+    showDocOutput('av','avaliacao-prova','Avaliação / Prova',text,{uc});
   }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar.','error'); }
   setLoading('av',false);
 }
@@ -1145,7 +1187,7 @@ ${desc}
 Mantenha alinhamento com o Plano de Curso SENAI DR-BA, MSEP e normas técnicas da área de Química.
 Formate de forma clara, profissional e pronto para uso em sala de aula ou laboratório.`;
     const text = await callGemini(prompt);
-    showOutput('cu',text);
+    showDocOutput('cu','material-personalizado','Material Personalizado',text,{uc:ucAtual.nome,observacoes:desc});
   }catch(e){ if(e.message!=='Unauthorized') showToast('Erro ao gerar.','error'); }
   setLoading('cu',false);
 }
