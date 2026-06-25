@@ -314,13 +314,27 @@ document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('clic
 function getToken(){
   try{for(let k of Object.keys(localStorage)){if(k.includes('auth-token')){const p=JSON.parse(localStorage.getItem(k));if(p?.access_token)return p.access_token;}}}catch{}return null;
 }
-async function callGemini(prompt){
+async function callGemini(prompt,opts={}){
   const token=getToken();const headers={'Content-Type':'application/json'};
   if(token)headers['Authorization']=`Bearer ${token}`;
-  const res=await fetch(PROXY_URL,{method:'POST',headers,body:JSON.stringify({prompt})});
-  if(res.status===401){showToast('Sessão expirada. Redirecionando...','error');setTimeout(()=>window.location.href='../index.html',2000);throw new Error('Unauthorized');}
-  if(!res.ok)throw new Error(`Erro ${res.status}`);
-  const data=await res.json();
+  const body={
+    prompt,
+    forceJSON: !!opts.forceJSON,
+    maxOutputTokens: opts.maxOutputTokens || 8192,
+    temperature: opts.temperature ?? 0.45
+  };
+  const res=await fetch(PROXY_URL,{method:'POST',headers,body:JSON.stringify(body)});
+  const data=await res.json().catch(()=>({}));
+  if(res.status===401){
+    showToast('Sessão expirada. Redirecionando...','error');
+    setTimeout(()=>window.location.href='../index.html',2000);
+    throw new Error('Unauthorized');
+  }
+  if(!res.ok){
+    const detalhe=data.detail||data.error||`Erro ${res.status}`;
+    console.error('[Gemini Proxy]',res.status,data);
+    throw new Error(detalhe);
+  }
   return data.text||data.candidates?.[0]?.content?.parts?.[0]?.text||'';
 }
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast visible'+(type?' '+type:'');setTimeout(()=>t.className='toast',3200);}
@@ -366,6 +380,7 @@ function showDocOutput(prefix,type,title,raw,meta={}){
   const out=document.getElementById(prefix+'-output');
   const actions=document.getElementById(prefix+'-actions');
   const accent=window.areaDados?.cor||getComputedStyle(document.documentElement).getPropertyValue('--cor').trim()||'#6A0DAD';
+  const officialUCForDoc=(typeof findOfficialUC==='function'&&(findOfficialUC(meta.uc)||findOfficialUC(ucAtual?.id)||findOfficialUC(ucAtual?.nome)))||ucAtual||{};
 
   if(!window.DocumentEngine){
     if(out){out.textContent=raw;out.classList.add('visible');}
@@ -379,15 +394,14 @@ function showDocOutput(prefix,type,title,raw,meta={}){
   if(type==='plano-aula'){
     const structured=DocumentEngine.fromGeminiText(raw,{
       area:fullMeta.area,curso:fullMeta.curso,uc:fullMeta.uc,docente:fullMeta.docente,turma:fullMeta.turma,
-      data:fullMeta.data,cht:fullMeta.cht,chp:fullMeta.chp,total:fullMeta.total,
-      nAulas:fullMeta.nAulas,chDia:fullMeta.chDia,observacoes:fullMeta.observacoes,officialUC:fullMeta.officialUC
+      data:fullMeta.data,cht:fullMeta.cht,chp:fullMeta.chp,total:fullMeta.total,observacoes:fullMeta.observacoes,officialUC:officialUCForDoc
     });
-    wordHtml=DocumentEngine.renderPlanoAulaWord(structured,{accent,officialUC:fullMeta.officialUC,nAulas:fullMeta.nAulas,chDia:fullMeta.chDia});
-    preview=DocumentEngine.renderPreview(structured,{accent,officialUC:fullMeta.officialUC,nAulas:fullMeta.nAulas,chDia:fullMeta.chDia});
+    wordHtml=DocumentEngine.renderPlanoAulaWord(structured,{accent});
+    preview=DocumentEngine.renderPreview(structured,{accent});
   }else{
     const structured=DocumentEngine.fromAnyText(raw,type,{
       area:fullMeta.area,curso:fullMeta.curso,uc:fullMeta.uc,docente:fullMeta.docente,turma:fullMeta.turma,
-      data:fullMeta.data,observacoes:fullMeta.observacoes
+      data:fullMeta.data,observacoes:fullMeta.observacoes,officialUC:officialUCForDoc
     });
     wordHtml=DocumentEngine.renderWordDocument(structured,{accent,type});
     preview=DocumentEngine.renderGenericPreview(structured,{accent,type});
@@ -421,7 +435,7 @@ function downloadDoc(outputId,filename){
   if(window.DocumentEngine){
     if(type==='plano-aula'){
       const structured=DocumentEngine.fromGeminiText(content,buildDocMeta({}));
-      wordHtml=DocumentEngine.renderPlanoAulaWord(structured,{accent,officialUC:fullMeta.officialUC,nAulas:fullMeta.nAulas,chDia:fullMeta.chDia});
+      wordHtml=DocumentEngine.renderPlanoAulaWord(structured,{accent});
     }else{
       const structured=DocumentEngine.fromAnyText(content,type,buildDocMeta({}));
       wordHtml=DocumentEngine.renderWordDocument(structured,{accent,type});
@@ -504,23 +518,63 @@ async function gerarPlano(){
   const {cht,chp,total,chDia,nAulas,isTransversal}=calcAulas();
   const uc=document.getElementById('pa-uc').value||ucAtual.nome;
   const docente=document.getElementById('pa-docente').value||'______';
-  const data=document.getElementById('pa-data').value;
+  const data=document.getElementById('pa-data').value||new Date().toISOString().slice(0,10);
   const turma=document.getElementById('pa-turma').value||CURSO;
   const obs=document.getElementById('pa-obs').value;
-  const modelo=document.getElementById('pa-modelo')?.value||'exemplo';
+  const modelo=document.getElementById('pa-modelo')?.value||'detalhado';
+  const accent=window.areaDados?.cor||getComputedStyle(document.documentElement).getPropertyValue('--cor').trim()||'#6A0DAD';
+  const officialUC=(typeof findOfficialUC==='function'&&(findOfficialUC(ucAtual.id)||findOfficialUC(uc)||findOfficialUC(ucAtual.nome)))||ucAtual||{};
+  const meta={
+    area: (typeof AREA_NOME!=='undefined'?AREA_NOME:(window.areaDados?.nome||document.title||'Área Técnica')),
+    curso: (typeof CURSO!=='undefined'?CURSO:''),
+    uc,
+    docente,
+    turma,
+    data,
+    cht,
+    chp,
+    total: isTransversal?'Transversal':`${total}h`,
+    totalHoras: total,
+    chDia,
+    nAulas,
+    modelo,
+    observacoes: obs,
+    officialUC,
+    base: typeof MSEP_BASE!=='undefined'?MSEP_BASE:''
+  };
+
   setLoading('pa',true);
+  let raw='';
   try{
-    const prompt=`${MSEP_BASE}${getCtxTransversal(ucAtual.id)}
-Gere um PLANO DE AULA COMPLETO padrão SENAI:
-UC: ${uc} | Docente: ${docente} | Turma: ${turma} | Data: ${data}
-CH Teórica: ${cht}h | CH Prática: ${chp}h | Total: ${isTransversal?'Transversal':total+'h'} | Aulas: ${nAulas} de ${chDia}h | Modelo: ${modelo}
-${obs?'Obs: '+obs:''}
-IMPORTANTE: responda preferencialmente em JSON válido, sem markdown, com as chaves:
-objetivo, capacidades, conhecimentos, habilidades, socioemocionais, aulas[{numero,capacidade,habilidade,conteudo,estrategias,recursos,avaliacao}], avaliacoes, referencias.
-Use as capacidades, conhecimentos e socioemocionais oficiais fornecidos na BASE OFICIAL. Não deixe esses campos vazios.
-Seções esperadas: Cabeçalho, Objetivos (gerúndio), Capacidades/Habilidades, Conhecimentos, Tabela de Aulas (${nAulas} linhas com Nº|Capacidade|Hab.|Conteúdo|Estratégias|Recursos|Avaliação), Critérios de Avaliação, Referências técnicas.`;
-    const text=await callGemini(prompt);showDocOutput('pa','plano-aula','Plano de Aula',text,{uc,docente,turma,data,cht,chp,total: total+'h',nAulas,chDia,observacoes: obs});
-  }catch(e){if(e.message!=='Unauthorized')showToast('Erro ao gerar.','error');}
+    const officialContext=DocumentEngine.buildOfficialContext(officialUC);
+    const extra=(typeof getCtxTransversal==='function'?getCtxTransversal(ucAtual.id):'');
+    const prompt=DocumentEngine.buildPlanoAulaPrompt(meta, officialContext+'\n'+extra);
+    raw=await callGemini(prompt,{forceJSON:true,maxOutputTokens:8192,temperature:0.45});
+  }catch(e){
+    if(e.message==='Unauthorized'){setLoading('pa',false);return;}
+    console.warn('[Plano de Aula] IA indisponível ou resposta inválida. Gerando pela Engine Pedagógica oficial.',e);
+    raw='';
+  }
+
+  try{
+    const plano=raw?DocumentEngine.fromGeminiText(raw,meta):DocumentEngine.normalizePlanoAula({},meta);
+    const wordHtml=DocumentEngine.renderPlanoAulaWord(plano,{accent,officialUC});
+    const preview=DocumentEngine.renderPreview(plano,{accent,officialUC});
+    const out=document.getElementById('pa-output');
+    const actions=document.getElementById('pa-actions');
+    if(out){
+      out.innerHTML=preview;
+      out.dataset.docHtml=wordHtml;
+      out.dataset.rawIa=raw;
+      out.dataset.engine='pedagogica-v4';
+      out.classList.add('visible');
+    }
+    if(actions)actions.style.display='flex';
+    showToast(raw?'Plano de aula gerado com IA + base oficial!':'Plano de aula gerado pela base oficial da UC.');
+  }catch(e){
+    console.error('[Plano de Aula] Falha no DocumentEngine',e);
+    showToast('Erro ao montar o plano: '+(e.message||e),'error');
+  }
   setLoading('pa',false);
 }
 async function gerarSA(){
