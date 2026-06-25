@@ -96,11 +96,61 @@
     return '';
   }
 
+  function curricularItemText(item) {
+    if (item == null) return '';
+    if (typeof item === 'string') return item;
+    return item.codigo && item.texto ? `${item.codigo} — ${item.texto}` :
+      (item.codigo && item.descricao ? `${item.codigo} — ${item.descricao}` :
+      (item.texto || item.descricao || item.nome || item.titulo || String(item)));
+  }
+
+  function officialArr(uc, keys) {
+    if (!uc) return [];
+    for (const k of keys) {
+      const v = uc[k];
+      const out = arr(v).map(curricularItemText).filter(Boolean);
+      if (out.length) return out;
+    }
+    return [];
+  }
+
+  function generateFallbackAulas(ctx, qtd, chDia) {
+    const capacidades = arr(ctx.capacidades);
+    const conhecimentos = arr(ctx.conhecimentos);
+    const habilidades = arr(ctx.habilidades);
+    const socio = arr(ctx.socioemocionais);
+    const n = Math.max(1, Number(qtd || 0) || Math.min(Math.max(conhecimentos.length || capacidades.length || 1, 1), 12));
+    const aulas = [];
+    for (let i = 0; i < n; i++) {
+      const cap = capacidades[i % Math.max(capacidades.length, 1)] || '';
+      const hab = habilidades[i % Math.max(habilidades.length, 1)] || '';
+      const cont = conhecimentos[i % Math.max(conhecimentos.length, 1)] || cap || ctx.uc || 'Tema da UC';
+      const socioTxt = socio.length ? ` Integração socioemocional: ${socio[i % socio.length]}.` : '';
+      aulas.push({
+        numero: `Aula ${i + 1}`,
+        capacidade: cap,
+        habilidade: hab || 'N/A',
+        conteudo: cont,
+        estrategias: `Abertura: contextualização do tema com situação-problema. Desenvolvimento: atividade orientada com aplicação prática do conteúdo oficial da UC. Fechamento: socialização das evidências, feedback e registro de aprendizagem.${socioTxt}`,
+        recursos: (ctx.recursos || '').trim() || 'Sala/laboratório, projetor, computador, materiais didáticos e recursos indicados no plano de curso.',
+        avaliacao: 'Observação processual, entrega da atividade, participação, qualidade técnica e evidências de aprendizagem.'
+      });
+    }
+    return aulas;
+  }
+
   function normalizePlanoAula(input, meta) {
     const data = input && typeof input === 'object' ? input : {};
     const m = meta || {};
+    const official = m.officialUC || m.ucOficial || {};
 
-    const aulas = arr(data.aulas).map((a, i) => {
+    const officialCapacidades = officialArr(official, ['capacidades', 'capacidadesBasicas', 'capacidadesTecnicas', 'habilidadesCapacidades']);
+    const officialConhecimentos = officialArr(official, ['conhecimentos', 'objetosConhecimento', 'objetosDeConhecimento']);
+    const officialHabilidades = officialArr(official, ['padroes', 'padroesDesempenho', 'habilidades', 'criteriosDesempenho']);
+    const officialSocio = officialArr(official, ['socioemocionais', 'capacidadesSocioemocionais']);
+    const officialReferencias = officialArr(official, ['referencias', 'referenciasBasicas', 'bibliografia']);
+
+    let aulas = arr(data.aulas).map((a, i) => {
       if (typeof a === 'string') {
         return { numero: `Aula ${i + 1}`, capacidade: '', habilidade: '', conteudo: a, estrategias: '', recursos: '', avaliacao: '' };
       }
@@ -115,27 +165,62 @@
       };
     });
 
-    return {
+    const ctx = {
       tipo: 'plano-aula',
       area: data.area || m.area || 'Área Técnica',
       curso: data.curso || m.curso || '',
-      uc: data.uc || m.uc || '',
+      uc: data.uc || m.uc || official.nome || '',
       docente: data.docente || m.docente || '______',
       turma: data.turma || m.turma || '______',
       data: data.data || m.data || safeDate(),
       chTeorica: data.chTeorica ?? data.cht ?? m.cht ?? 0,
-      chPratica: data.chPratica ?? data.chp ?? m.chp ?? 0,
-      total: data.total ?? m.total ?? '',
-      objetivo: data.objetivo || data.objetivos || m.objetivo || '',
-      capacidades: arr(data.capacidades),
-      conhecimentos: arr(data.conhecimentos),
-      habilidades: arr(data.habilidades || data.padroesDesempenho || data.padroes),
-      socioemocionais: arr(data.socioemocionais || data.capacidadesSocioemocionais),
+      chPratica: data.chPratica ?? data.chp ?? m.chp ?? official.ch ?? 0,
+      total: data.total ?? m.total ?? (official.ch ? `${official.ch}h` : ''),
+      objetivo: data.objetivo || data.objetivos || m.objetivo || official.objetivo || '',
+      capacidades: arr(data.capacidades).length ? arr(data.capacidades) : officialCapacidades,
+      conhecimentos: arr(data.conhecimentos).length ? arr(data.conhecimentos) : officialConhecimentos,
+      habilidades: arr(data.habilidades || data.padroesDesempenho || data.padroes).length ? arr(data.habilidades || data.padroesDesempenho || data.padroes) : officialHabilidades,
+      socioemocionais: arr(data.socioemocionais || data.capacidadesSocioemocionais).length ? arr(data.socioemocionais || data.capacidadesSocioemocionais) : officialSocio,
       aulas,
       avaliacoes: arr(data.avaliacoes || data.criteriosAvaliacao || data.criterios),
-      referencias: arr(data.referencias),
-      observacoes: data.observacoes || m.observacoes || ''
+      referencias: arr(data.referencias).length ? arr(data.referencias) : officialReferencias,
+      observacoes: data.observacoes || m.observacoes || '',
+      recursos: arr(official.equipamentos || official.ambientes).join(', ')
     };
+
+    if (!ctx.objetivo) {
+      ctx.objetivo = 'Desenvolver as capacidades previstas na unidade curricular, articulando conhecimentos, práticas e evidências de aprendizagem conforme o Plano de Curso SENAI DR-BA.';
+    }
+
+    if (!ctx.aulas.length) {
+      ctx.aulas = generateFallbackAulas(ctx, m.nAulas || m.qtdAulas, m.chDia);
+    } else {
+      ctx.aulas = ctx.aulas.map((a, i) => ({
+        numero: a.numero || `Aula ${i + 1}`,
+        capacidade: a.capacidade || ctx.capacidades[i % Math.max(ctx.capacidades.length, 1)] || '',
+        habilidade: a.habilidade || ctx.habilidades[i % Math.max(ctx.habilidades.length, 1)] || 'N/A',
+        conteudo: a.conteudo || ctx.conhecimentos[i % Math.max(ctx.conhecimentos.length, 1)] || '',
+        estrategias: a.estrategias || 'Atividade contextualizada com mediação docente, prática orientada, discussão em grupo e registro das evidências de aprendizagem.',
+        recursos: a.recursos || ctx.recursos || 'Materiais didáticos e recursos da UC.',
+        avaliacao: a.avaliacao || 'Avaliação processual por evidências de desempenho.'
+      }));
+    }
+
+    if (!ctx.avaliacoes.length) {
+      ctx.avaliacoes = [
+        'Avaliação diagnóstica para identificar conhecimentos prévios.',
+        'Avaliação formativa durante atividades práticas, discussões e entregas.',
+        'Avaliação somativa por evidências, produtos, exercícios ou prova, conforme critérios da unidade curricular.'
+      ];
+    }
+    if (!ctx.referencias.length) {
+      ctx.referencias = [
+        'SENAI/DR-BA. Plano de Curso da habilitação técnica correspondente.',
+        'Materiais didáticos e referências técnicas indicadas para a unidade curricular.'
+      ];
+    }
+
+    return ctx;
   }
 
   function fromGeminiText(text, meta) {
